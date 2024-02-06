@@ -7,14 +7,13 @@ import { getAnalytics } from "firebase/analytics";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyBVgqpvgruTIrjmdNcF7_88PpPJ92QSteU",
-    authDomain: "foodapp-e55a3.firebaseapp.com",
-    databaseURL: "https://foodapp-e55a3-default-rtdb.firebaseio.com",
-    projectId: "foodapp-e55a3",
-    storageBucket: "foodapp-e55a3.appspot.com",
-    messagingSenderId: "1030901474274",
-    appId: "1:1030901474274:web:14324ebdffca2ba6b38fbb",
-    measurementId: "G-3MLFT3EF9Q"
+    apiKey: "AIzaSyAAGeDwS3FitEtUD8Yb3_y89qL6LMqa1Zc",
+    authDomain: "chatkro-b2b85.firebaseapp.com",
+    projectId: "chatkro-b2b85",
+    storageBucket: "chatkro-b2b85.appspot.com",
+    messagingSenderId: "210951248415",
+    appId: "1:210951248415:web:a42d404ddd3abf1705d32a",
+    measurementId: "G-DGSE9K1MFY"
 };
 
 // Initialize Firebase

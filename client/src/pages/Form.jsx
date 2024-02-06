@@ -2,6 +2,7 @@ import Input from "../components/Input"
 
 const Form = () => {
   return (
+    <div className="h-screen w-full flex justify-center items-center">
    <div className=" h-[600px] w-[400px] bg-gray-300 rounded-xl shadow-lg flex flex-col justify-center items-center">
     <form>
         <h1 className="text-center text-4xl font-bold pt-8 capitalize"> welcome</h1>
@@ -19,6 +20,7 @@ const Form = () => {
       <div className="py-2">Already have an account ? <span className="text-blue-500 capitalize"> sign in </span></div>
 
    </div>
+    </div>
   )
 }
 
