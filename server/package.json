@@ -1,0 +1,28 @@
+{
+  "name": "chatapp",
+  "version": "1.0.0",
+  "description": "this is the backend for the chatapp",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codERSunny812/ChatKro.git"
+  },
+  "author": "codersunny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codERSunny812/ChatKro/issues"
+  },
+  "homepage": "https://github.com/codERSunny812/ChatKro#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.1",
+    "nodemon": "^3.0.3"
+  }
+}
