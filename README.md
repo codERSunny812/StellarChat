@@ -17,7 +17,7 @@ ChatApp offers a comprehensive suite of features designed to facilitate seamless
 - **Data Persistence**: MongoDB ensures the persistence of user data and chat history.
 - **Responsive Design**: Enjoy a consistent and intuitive user experience across all platforms.
 
-# Process
+# ⛏️Process
 1. ### Planning and Setup
    The development process began with thorough planning to outline the project's requirements, features, and technologies to be used.
    
@@ -25,7 +25,7 @@ ChatApp offers a comprehensive suite of features designed to facilitate seamless
    We built the backend using Express.js to create RESTful APIs for user authentication, message handling, and video call functionality.
    
 3. ### Frontend Development
-   With the backend in place, we focused on frontend development using React. We designed and implemented the user interface, leveraging React hooks and state management libraries for efficiency.
+   With the backend in place, we focused on front-end development using React. We designed and implemented the user interface, leveraging React hooks and state management libraries for efficiency.
    
 4. ### Testing and Debugging
    Thorough testing was conducted to identify and address any bugs or issues. Unit tests, integration tests, and end-to-end tests were performed to ensure reliability.
