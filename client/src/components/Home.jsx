@@ -3,6 +3,9 @@ import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { IoSearchCircle, IoVideocam, IoSend } from "react-icons/io5";
 import { MdAddIcCall } from "react-icons/md";
 import { FaPlusCircle } from "react-icons/fa";
+import { BsFillEmojiSmileFill } from "react-icons/bs";
+import { useEffect, useState } from "react";
+
 
 const DashBoard = () => {
   const messages = [
@@ -42,9 +45,37 @@ const DashBoard = () => {
           img: avtar,
       },
   ];
+  const [allUser, setAllUser] = useState([]);
+  const [filteredUser, setFilteredUser] = useState([]);
+
+  console.log("filteredUser" , filteredUser)
+  const [searchWord,setSearchWord]=useState([]);
+
+  useEffect(() => {
+    setAllUser(messages);
+    console.log(filteredUser);
+    console.log(allUser);
+  },[]);
+
+
+
+  // search function for the user
+  const searchUser = ()=>{
+    console.log("the button is clicked")
+    const filterUser = allUser.filter((user)=>{
+      // console.log(user.name)
+      user?.name?.toLowerCase()?.includes(searchWord?.toLowerCase());
+     
+      console.log(user);
+      console.log(searchWord);
+    })
+    // console.log(filterUser);
+    setFilteredUser(filterUser)
+  }
+
   return (
     <div className="">
-      <div className="h-screen grid grid-cols-12">
+      <div className="h-screen grid grid-cols-12 overflow-hidden">
         {/* left box */}
         <div className="h-screen col-span-3 overflow-scroll">
           {/* top part */}
@@ -79,22 +110,50 @@ const DashBoard = () => {
                 type="search"
                 placeholder="search people"
                 className="border-2 border-black mx-2 my-2 w-3/4 border-none px-4 py-2 outline-blue-500 placeholder:px-1 placeholder:capitalize"
+                value={searchWord}
+                onChange={(e)=>setSearchWord(e.target.value)}
               />
-              <IoSearchCircle className="h-10 w-10 mx-1 my-1" />
+              <IoSearchCircle className="h-10 w-10 mx-1 my-1" 
+              onClick={searchUser}
+              />
             </div>
 
             <h1 className="capitalize px-3 mt-2">messages</h1>
-            {messages.map(({ name, status, img }) => {
-              return (
-                <div className=" flex  items-center px-4 py-4" key={name}>
-                  <img src={img} height={60} width={60} />
-                  <div className="accountInfo ml-6">
-                    <h1 className="text-lg">{name}</h1>
-                    <h2 className="text-sm font-light">{status}</h2>
-                  </div>
-                </div>
-              );
-            })}
+            {
+              filteredUser.length> 0 ? (
+             
+                  filteredUser.map(({ name, status, img }) => {
+                    return (
+                      <div className=" flex  items-center px-4 py-4" key={name}>
+                        <img src={img} height={60} width={60} alt={name} />
+                        <div className="accountInfo ml-6">
+                          <h1 className="text-lg">{name}</h1>
+                          <h2 className="text-sm font-light">{status}</h2>
+                        </div>
+                      </div>
+                    )
+                  })
+         
+               
+              ) : (
+              
+                    allUser.map(({ name, status, img })=>{
+                    return(
+                      <div className=" flex  items-center px-4 py-4" key={name}>
+                        <img src={img} height={60} width={60} alt={name} />
+                        <div className="accountInfo ml-6">
+                          <h1 className="text-lg">{name}</h1>
+                          <h2 className="text-sm font-light">{status}</h2>
+                        </div>
+                        <hr />
+                      
+                      </div>
+                     
+                    )
+                  })
+              
+              )
+            }
           </div>
         </div>
 
@@ -129,7 +188,7 @@ const DashBoard = () => {
 
           <div className=" h-[75%] overflow-scroll w-full">
             <div className=" mx-3 my-2">
-              <div className=" max-w-[40%] rounded-4xl bg-gray-300 text-black px-2 py-1 font-normal">
+              <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-1 font-normal">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
               <div className=" max-w-[40%] rounded-4xl bg-blue-500 text-white px-2 py-1 font-normal ml-auto">
@@ -143,26 +202,26 @@ const DashBoard = () => {
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
 
-              <div className=" max-w-[40%] rounded-4xl bg-gray-300 text-black px-2 py-1 font-normal">
+              <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-1 font-normal">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
               <div className=" max-w-[40%] rounded-4xl bg-blue-500 text-white px-2 py-1 font-normal ml-auto">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
 
-              <div className=" max-w-[40%] rounded-4xl bg-gray-300 text-black px-2 py-1 font-normal">
+              <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-1 font-normal">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
               <div className="max-w-[40%] rounded-4xl bg-blue-500 text-white px-2 py-1 font-normal ml-auto">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
-              <div className=" max-w-[40%] rounded-4xl bg-gray-300 text-black px-2 py-1 font-normal">
+              <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-1 font-normal">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
               <div className=" max-w-[40%] rounded-4xl bg-blue-500 text-white px-2 py-1 font-normal ml-auto">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
-              <div className=" max-w-[40%] rounded-4xl bg-gray-300 text-black px-2 py-1 font-normal">
+              <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-1 font-normal">
                 Lorem ipsum dolor sit, amet consectetur.
               </div>
               <div className=" max-w-[40%] rounded-4xl bg-blue-500 text-white px-2 py-1 font-normal ml-auto">
@@ -173,7 +232,10 @@ const DashBoard = () => {
           <hr />
 
           {/* input box for sending the  messages  */}
-          <div className="border-2 border-black mt-6 py-2 bg-gray-400 flex items-center">
+          <div className="my-2 py-3 mb-1 bg-gray-400 flex items-center justify-center">
+                     
+            <BsFillEmojiSmileFill/>         
+            
             <input
               type="text"
               name="message"
