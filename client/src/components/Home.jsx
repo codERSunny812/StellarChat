@@ -10,74 +10,81 @@ import { useEffect, useState } from "react";
 const DashBoard = () => {
   const messages = [
     {
+      id:1,
       name: "shivam",
       status: "online",
       img: avtar,
     },
     {
+      id:2,
       name: "varun",
       status: "online",
       img: avtar,
     },
     {
+      id:3,
       name: "manas",
       status: "online",
       img: avtar,
     },
     {
+      id:4,
       name: "anushka",
       status: "online",
       img: avtar,
     },
     {
+      id:5,
       name: "shivashish",
       status: "online",
       img: avtar,
     },
       {
-          name: "arun",
+        id:6,  
+        name: "arun",
           status: "online",
           img: avtar,
       },
       {
-          name: "jadoo",
+        id:7,  
+        name: "jadoo",
           status: "online",
           img: avtar,
       },
   ];
   const [allUser, setAllUser] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
-
-  console.log("filteredUser" , filteredUser)
-  const [searchWord,setSearchWord]=useState([]);
+  const [searchWord,setSearchWord]=useState('');
 
   useEffect(() => {
     setAllUser(messages);
-    console.log(filteredUser);
-    console.log(allUser);
   },[]);
 
 
 
   // search function for the user
-  const searchUser = ()=>{
-    console.log("the button is clicked")
-    const filterUser = allUser.filter((user)=>{
-      // console.log(user.name)
-      user?.name?.toLowerCase()?.includes(searchWord?.toLowerCase());
-     
-      console.log(user);
-      console.log(searchWord);
-    })
-    // console.log(filterUser);
-    setFilteredUser(filterUser)
-  }
+  // search function for the user
+  const searchUser = () => {
+    console.log("Search button clicked");
+    console.log("Search word:", searchWord);
+    console.log("All users:", allUser);
+
+    const filterUser = allUser.filter((user) => {
+      return user.name.toLowerCase().includes(searchWord.trim().toLowerCase());
+    });
+
+    console.log("Filtered users:", filterUser);
+
+    setFilteredUser(filterUser);
+    console.log("filtered user  in state : ", filteredUser);
+  };
+
 
   return (
     <div className="">
       <div className="h-screen grid grid-cols-12 overflow-hidden">
         {/* left box */}
-        <div className="h-screen col-span-3 overflow-scroll">
+        <div className="h-screen col-span-3 overflow-auto">
           {/* top part */}
           <div className="flex  items-center justify-between ">
             <div className="flex items-center px-4 py-4">
@@ -111,7 +118,12 @@ const DashBoard = () => {
                 placeholder="search people"
                 className="border-2 border-black mx-2 my-2 w-3/4 border-none px-4 py-2 outline-blue-500 placeholder:px-1 placeholder:capitalize"
                 value={searchWord}
-                onChange={(e)=>setSearchWord(e.target.value)}
+                onChange={(e)=>{
+                  e.preventDefault();
+                  
+                  setSearchWord(e.target.value);
+                  console.log(searchWord);
+                }}
               />
               <IoSearchCircle className="h-10 w-10 mx-1 my-1" 
               onClick={searchUser}
@@ -120,16 +132,17 @@ const DashBoard = () => {
 
             <h1 className="capitalize px-3 mt-2">messages</h1>
             {
-              filteredUser.length> 0 ? (
+              filteredUser.length != 0 ? (
              
                   filteredUser.map(({ name, status, img }) => {
                     return (
-                      <div className=" flex  items-center px-4 py-4" key={name}>
+                      <div className=" flex  items-center px-4 py-4 border-2 border-blue-500" key={name}>
                         <img src={img} height={60} width={60} alt={name} />
                         <div className="accountInfo ml-6">
                           <h1 className="text-lg">{name}</h1>
                           <h2 className="text-sm font-light">{status}</h2>
                         </div>
+                       
                       </div>
                     )
                   })
@@ -247,7 +260,9 @@ const DashBoard = () => {
           </div>
         </div>
         {/* right box */}
-        <div className="col-span-3 ">hello Im box 3</div>
+        <div className="col-span-3 flex items-center justify-center">
+          more info about the account here
+        </div>
       </div>
     </div>
   );

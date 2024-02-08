@@ -21,6 +21,20 @@ app.get('/',(req,res)=>{
     res.send("hello from the server");
 });
 
+// register route
+app.post('/api/register',(req,res)=>{
+    try {
+        // taking the data from the front end
+        const { fullName, email, password } = req.body;
+        
+
+    } catch (error) {
+        
+    }
+
+
+})
+
 
 
 

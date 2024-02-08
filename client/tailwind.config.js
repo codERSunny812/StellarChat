@@ -12,7 +12,11 @@ export default {
       borderRadius:{
         '4xl':'15px 0px 15px 15px',
         '5xl': '0px 15px 15px 15px'
-      }
+      },
+      gradientColorStops:theme => ({
+        'custom-purple-light': '#4B0082',
+        'custom-purple-dark': '#33006F',
+      }),
       
     },
   },

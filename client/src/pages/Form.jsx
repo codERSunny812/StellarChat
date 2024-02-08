@@ -2,22 +2,25 @@ import Input from "../components/Input"
 
 const Form = () => {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-   <div className=" h-[600px] w-[400px] bg-gray-300 rounded-xl shadow-lg flex flex-col justify-center items-center">
-    <form>
-        <h1 className="text-center text-4xl font-bold pt-8 capitalize"> welcome</h1>
-        <h2 className="text-center text-xl capitalize font-thin">sign up to get started</h2>
-        <Input label="name" type="text" placeholder="enter your name"
-        name="name"
-        />
-        <Input label="email id" type="email" placeholder="enter your email" name="email"/>
+    <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
+   <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
+    <form className=" my-4 flex flex-col">
 
-        <Input label="password" type="password" placeholder="enter your password" name="password" />
- </form>
+      <h1 className="capitalize text-center my-6 font-bold text-lg">sign up with the email</h1>
+      <p className="px-9 capitalize text-gray-400 my-5"> get chatting with your family and friends today by signing up for our chat app!</p>
 
-      <button type="submit" className="px-2 py-2 bg-black text-white capitalize rounded-lg w-1/2">sign up</button>
+      <Input label="  your name" type="text" placeholder="enter your full name"/>
 
-      <div className="py-2">Already have an account ? <span className="text-blue-500 capitalize"> sign in </span></div>
+      <Input label="your email" type="emial" placeholder="enter your email"/>
+
+      <Input label="your password" type="password" placeholder="enter your password"/>
+
+      <Input  label="confirm password" type="password" placeholder="re-enter your password"/>
+
+          <button type="submit" className=" my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize">create an account</button>
+
+    </form>
+    
 
    </div>
     </div>
