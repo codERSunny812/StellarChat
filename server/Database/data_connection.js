@@ -6,7 +6,7 @@ exports.connectDatabase = ()=>{
 
     // connect to the database 
 
-    mongoose.connect(`${URL}/chatkro`)
+    mongoose.connect(`${URL}chatkro`)
     .then(()=>{
 console.log("the mongodb is successfully connected");
     })
