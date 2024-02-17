@@ -1,17 +1,19 @@
 import DashBoard from "./components/Home"
 import Form from "./pages/Form"
-import {Outlet, createBrowserRouter} from 'react-router-dom'
+import {Outlet, createBrowserRouter, useParams} from 'react-router-dom'
 import Screen from "./pages/Screen"
 import { useEffect, useState } from "react"
 import AfterSplash from "./pages/AfterSplash"
 
-const App = () => {
+export const App = () => {
   const [showSplash , setSplash] = useState(true);
+  const {id} = useParams();
+  console.log(id);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setSplash(false); // Hide splash screen after timeout
-    }, 3000); // 3000 milliseconds (3 seconds)
+    }, 2000); // 2000 milliseconds (2 seconds)
 
     return () => clearTimeout(timer); // Clear the timer on component unmount
   }, []); // Run only once on component mount
@@ -29,9 +31,7 @@ const App = () => {
   )
 }
 
-export default App;
-
- export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path:'/',
     element:<App/>,
@@ -50,4 +50,6 @@ export default App;
        }
      ],
   }
-])
+]);
+
+export default router;
