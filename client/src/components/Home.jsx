@@ -145,7 +145,7 @@ const DashBoard = () => {
               ? filteredUser.map(({ name, status, img }) => {
                   return (
                     <div
-                      className=" flex  items-center px-4 py-4 border-2 border-blue-500 text-white border-b-2 border-b-rose-50"
+                      className=" flex  items-center px-4 py-4  text-white border-b-2 border-b-rose-50"
                       key={name}
 
                     >
