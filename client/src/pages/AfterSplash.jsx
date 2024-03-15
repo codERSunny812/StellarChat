@@ -1,9 +1,11 @@
-import Logo from '../assets/toplogo.png'
-
+import Logo from '../assets/toplogo.png';
 import { Link } from 'react-router-dom';
 import SocialMedia from '../components/SocialMedia';
+import { useContext } from 'react';
+import { UserStatusContext } from '../Context/Auth';
 
 const AfterSplash = () => {
+  const {setIsLoggedIn}= useContext(UserStatusContext);
   return (
    <div className="h-screen w-full flex justify-center items-center">
     <div className="h-screen w-[400px] bg-gradient-to-tr from-custom-purple-light to-custom-purple-dark flex flex-col  items-center text-white">
@@ -19,15 +21,15 @@ const AfterSplash = () => {
         <span className='px-2'>or</span>
         <hr className='w-44' />
       </div>
-              <Link to='/createaccount' className='border-none  text-black bg-white w-[60%] py-2 px-6 rounded-lg capitalize mt-9'>
+              <Link to='/register' className='border-none  text-black bg-white w-[60%] py-2 px-6 rounded-lg capitalize mt-9'>
                   <button type="submit" >sign up with the mail</button>
       </Link>
      
 
 
       <div className="my-2 text-gray-400">
-        existing account ? <Link to='/createaccount'>
-                      <span className='capitalize text-white cursor-pointer'>log in</span>
+        existing account ? <Link to='/login'>
+                      <span className='capitalize text-white cursor-pointer' onClick={()=> setIsLoggedIn(true)}>log in</span>
         </Link>
       </div>
     

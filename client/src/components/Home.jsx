@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { avtar } from "../../constant";
 import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { IoSearchCircle, IoVideocam, IoSend } from "react-icons/io5";
@@ -12,37 +13,37 @@ const DashBoard = () => {
   const messages = [
     {
       id: 1,
-      name: "shivam",
+      name: "shivam seth",
       status: "online",
       img: avtar,
     },
     {
       id: 2,
-      name: "varun",
+      name: "varun patel",
       status: "online",
       img: avtar,
     },
     {
       id: 3,
-      name: "manas",
+      name: "manas barnwal",
       status: "online",
       img: avtar,
     },
     {
       id: 4,
-      name: "anushka",
+      name: "anushka gupta",
       status: "online",
       img: avtar,
     },
     {
       id: 5,
-      name: "shivashish",
+      name: "shivashish kaushik",
       status: "online",
       img: avtar,
     },
     {
       id: 6,
-      name: "arun",
+      name: "arun pal",
       status: "online",
       img: avtar,
     },
@@ -52,40 +53,76 @@ const DashBoard = () => {
       status: "online",
       img: avtar,
     },
+    {
+      id: 8,
+      name: "aryan verma",
+      status: "online",
+      img: avtar,
+    }
   ];
+  //state for the user who is currently active/open chat window
   const [allUser, setAllUser] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
   const [searchWord, setSearchWord] = useState("");
   const [isLogoutDropDown,setLogOutDropDown] = useState(false);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user-details')));
+
+  //state to create a conversation with any user:
+  const [conversation , setConversation] = useState([]);
+
+
+  console.log("the register user in the local storage  is:"+user);
 
   useEffect(() => {
     setAllUser(messages);
+    const loggedInUser= JSON.parse(localStorage.getItem('user-details'));
+
+    console.log(`the data of the logged in user is ${loggedInUser}`);
+
+    // fetch for the user for  the conversation
+    const fetchConversation = async()=>{
+      const res = await fetch(`http://localhost:3000/api/conversation/${loggedInUser.id}`,{
+        method:"GET",
+        headers:{
+          "Content-Type":"application/json"
+        },
+      });
+      console.log(res); 
+      const resData = await  res.json();
+      setConversation(resData);
+
+    }
+    fetchConversation();
   }, []);
 
+  console.log(conversation);
 
 
-  // search function for the user
+
+  
   // search function for the user
   const searchUser = () => {
-    console.log("Search button clicked");
-    console.log("Search word:", searchWord);
-    console.log("All users:", allUser);
+    // console.log("Search button clicked");
+    // console.log("word is entered")
+    // console.log("Search word:", searchWord);
+    // console.log("All users:", allUser);
 
     const filterUser = allUser.filter((user) => {
       return user.name.toLowerCase().includes(searchWord.trim().toLowerCase());
     });
 
-    console.log("Filtered users:", filterUser);
+    // console.log("Filtered users:", filterUser);
 
     setFilteredUser(filterUser);
-    console.log("filtered user  in state : ", filteredUser);
+    // console.log("filtered user  in state : ", filteredUser);
   };
+
 
   return (
     <div className="">
       <div className="h-screen grid grid-cols-12 overflow-hidden">
         {/* left box */}
-        <div className="h-screen col-span-3 overflow-auto bg-[#5D3587]">
+        <div className="h-screen  md:block col-span-3 overflow-auto bg-[#5D3587]">
           {/* top part */}
           <div className="flex  items-center justify-between">
             <div className="flex items-center px-4 py-4">
@@ -100,7 +137,7 @@ const DashBoard = () => {
               </div>
 
               <div className="accountInfo ml-6 text-white">
-                <h1 className="text-xl capitalize">sunny</h1>
+                <h1 className="text-xl capitalize">{user.fullName}</h1>
                 <h2 className="text-lg font-light">my account</h2>
               </div>
             </div>
@@ -117,6 +154,7 @@ const DashBoard = () => {
             </div>
           </div>
           <hr />
+          
           {/* messages section  */}
           <div className="messages ">
             {/* search panel to search people */}
@@ -128,14 +166,14 @@ const DashBoard = () => {
                 value={searchWord}
                 onChange={(e) => {
                   e.preventDefault();
-
                   setSearchWord(e.target.value);
-                  console.log(searchWord);
+                  searchUser();
+                  // console.log(searchWord);
                 }}
               />
               <IoSearchCircle
                 className="h-10 w-10 mx-1 my-1"
-                onClick={searchUser}
+                
                 color="white"
               />
             </div>
@@ -145,8 +183,10 @@ const DashBoard = () => {
               ? filteredUser.map(({ name, status, img }) => {
                   return (
                     <div
-                      className=" flex  items-center px-4 py-4  text-white border-b-2 border-b-rose-50"
+                      className=" flex  items-center px-4 py-4  text-white border-b-2 border-b-rose-50
+                      border-2 border-white"
                       key={name}
+                      onClick={()=> console.log("hello")}
 
                     >
                       <img src={img} height={60} width={60} alt={name} />
@@ -159,7 +199,10 @@ const DashBoard = () => {
                 })
               : allUser.map(({ name, status, img }) => {
                   return (
-                    <div className=" flex  items-center px-4 py-4 border-b " key={name}>
+                    <div className=" flex  items-center px-4 py-4 border-b " 
+                    key={name}
+                    onClick={()=> console.log("hello ")}
+                    >
                       <img src={img} height={60} width={60} alt={name} />
                       <div className="accountInfo ml-6 text-white">
                         <h1 className="text-lg">{name}</h1>
@@ -183,9 +226,11 @@ const DashBoard = () => {
                 width={50}
                 className="py-1"
               />
-              <h1 className="px-4 capitalize font-medium text-lg text-white">
-                sunny
+              <h1 className="px-4  text-white">
+                <h1 className="capitalize font-medium text-lg">  sunny</h1>
+                <span>status</span>              
               </h1>
+              
             </div>
             <div className="icons flex mx-3">
               <MdAddIcCall

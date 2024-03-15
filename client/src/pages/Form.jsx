@@ -1,15 +1,80 @@
-import { useState } from "react"
+import { useContext , useState } from "react"
 import Input from "../components/Input"
 import SocialMedia from "../components/SocialMedia";
-import { useParams } from "react-router-dom";
+import { UserStatusContext } from "../Context/Auth";
+import {useNavigate} from 'react-router-dom'
 
 const Form = () => {
-  // dummy state to check the login page
-  const[isLoggedIn,setIsLoggedIn] = useState(true);
+
+  // tells the status of the user, if it is logged in or not.
+ const {isLoggedIn,setIsLoggedIn} = useContext(UserStatusContext);
+
+// for the navigation of the home page
+ const navigate = useNavigate()
+
+
+//  object to store the initial data of the user
+ const [data,setData]=useState({
+  ...(!isLoggedIn && {
+    fullName:" ",
+     email: " ",
+     password: " "
+  }),
+ 
+ });
+
+ console.log({data});
+
+  
+
+// function to handle the form submission 
+
+ const handleFormSubmit =async(e)=>{
+  e.preventDefault();
+
+  console.log("the form is submit");
+
+   const res = await fetch(`http://localhost:3000/api/${isLoggedIn ? 'login' : 'register'}`,{
+    method: "POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify(data),
+   });
+  console.log("the reponse of the data is:"); 
+  console.log(res);
+
+  //  check  the response of the api
+  if(res.status == 400){
+    alert("all field are required")
+  }
+  else if(res.status == 404){
+    alert("user not found");
+  }
+  else if(res.status == 401){
+    alert("invalid credentials")
+  }
+  else{
+    const responseData = await res.json();
+    console.log("the data is -->", responseData);
+    setIsLoggedIn(true);
+    console.log(responseData);
+    if (responseData.user.token) {
+      console.log("inside")
+      localStorage.setItem("user-token", responseData.user.token);
+      localStorage.setItem("user-details",JSON.stringify(responseData.user));
+      navigate("/home")
+    }
+  }
+   
+
+ }
+
+ 
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
    <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
-    <form className=" my-4 flex flex-col">
+    <form className=" my-4 flex flex-col" >
 
 
 
@@ -48,25 +113,37 @@ const Form = () => {
 
      
        {
-            !isLoggedIn && <Input label="  your name" type="text"  />
+            !isLoggedIn && <Input label="your full name" type="text"
+            value={data.fullName}
+              onChange={(e) => {
+                setData({ ...data, fullName: e.target.value });
+              }}
+            />
        }
 
-      <Input label="your email" type="email" />
+          <Input label="Your Email"
+            type="email"
+            value={data.email}
+            onChange={(e)=>{
+              setData({ ...data, email: e.target.value });
+            }}
+          />
 
-      <Input label="your password" type="password" />
+          <Input label="Your Password"
+            type="password"
+            value={data.password}
+            onChange={(e) => {
+              setData({ ...data, password: e.target.value });
+            }}
+          />
 
       {
             !isLoggedIn && <Input label="confirm password" type="password"  />
       }
 
-      {
-        isLoggedIn ? (
-              <button type="submit" className=" my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize">log in</button>
-        ) :
-        (
-                <button type="submit" className=" my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize">create an account</button>
-        )
-      }
+          <button type="submit" className="my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize" onClick={handleFormSubmit}>
+            {isLoggedIn ? "Log In" : "Create an Account"}
+          </button>
 
      
 
