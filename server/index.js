@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 require('dotenv').config();
 const jwt   = require("jsonwebtoken");
 const {connectDatabase} = require('./Database/data_connection')
+const cors = require('cors');
 
 // connect to the database
 connectDatabase();
@@ -14,14 +15,17 @@ const {userModal} = require('./models/UserModal')
 const {conversationModal} = require('./models/ConversationModel')
 const {messageModal} = require('./models/MessageModal')
 
+
 const app = express();
+// env file import
 const port =process.env.PORT;
 
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors());
 
-// home route
+//home route
 app.get('/',(req,res)=>{
     res.send("hello from the server");
 });
@@ -35,7 +39,7 @@ app.post('/api/register', async (req, res, next) => {
         // checking that the data is present or not
         if (!fullName || !email || !password) {
             return res.status(400).json({
-                status: "incomplete",
+                status: "403",
                 message: "please provide all the details"
             });
         }
@@ -45,13 +49,13 @@ app.post('/api/register', async (req, res, next) => {
 
         if (isAlreadyExist) {
             return res.status(400).json({
-                status: "incomplete",
+                status: "400",
                 message: "user already exist"
             });
         }
 
-        // Hashing the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // Hashing the password before storing it into the database
+        const hashedPassword = await bcrypt.hash(password, 20);
 
         // Creating a new user with hashed password
         const newUser = await userModal.create({
@@ -67,25 +71,26 @@ app.post('/api/register', async (req, res, next) => {
 
         });
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.log(error);
         return res.status(500).json({
             status: "error",
-            message: "Internal server error"
+            message: "Internal server error , can't register the user at this time"
         });
     }
 });
 
 
-// login route
-app.post('/api/login',async(req,res)=>{
+// login route for  login the user 
+app.post('/api/login',async(req,res,next)=>{
     try {
         const {email,password}= req.body;
 
         // checking whether the field are empty or not
         if(!email || !password ){
             return res.status(400).json({
-                status:'fail',
+                status:'403',
                 message: "Email and password are required"
             })}
 
@@ -93,21 +98,22 @@ app.post('/api/login',async(req,res)=>{
 
             if(!user){
                 res.status(404).json({
-                    status:'fail',
+                    status:'400',
                     message: "User not found"
                 })
             }
 
-            // it will check the user entered password with the user password which is saved into the database
+            // it will check the user's entered password with the user password which is saved into the database
             const validateUser= await  bcrypt.compare(password,user.password);
 
             if(!validateUser){
-                res.status(400).json({
-                    status:"fail",
+                res.status(401).json({
+                    status:"401",
                     message:"email or password is incorrect"
                 })
             }
             else{
+                // create a token on the sucessfull login of the user 
                 const payLoad={
                     userId:user._id,
                     email:user.email
@@ -118,13 +124,19 @@ app.post('/api/login',async(req,res)=>{
                 jwt.sign(payLoad,JWT_SECRET_KEY,{expiresIn:8400},async (err,token)=>{
                     await  userModal.updateOne({_id : user._id} ,{$set:{token}});
                     user.save();
-                    next();
+                    return res.status(200).json({
+                        status: 'sucess',
+                        message: "user logged in successfully",
+                        user:{
+                            id:user._id,
+                            email:user.email,
+                            fullName:user.fullName,
+                            token:token
+
+                        },
+                    })
                 })
-                res.status(200).json({
-                    status: 'sucess',
-                    message:"user logged in successfully",
-                    data:user
-                })
+                
 
             }
 
@@ -136,7 +148,7 @@ app.post('/api/login',async(req,res)=>{
 });
 
 
-// conversation route - to create a new conversation
+// conversation route -> to create a new conversation
 app.post('/api/conversation',async(req,res)=> {
     try {
         const {senderId,receiverId}= req.body;
@@ -153,7 +165,7 @@ app.post('/api/conversation',async(req,res)=> {
 });
 
 
-// route to get info about the conversation 
+// route to get info about the conversation of a particular user  
 app.get('/api/conversation/:userId',async (req,res)=>{ 
     try {
         const userId = req.params.userId;
@@ -175,12 +187,14 @@ app.get('/api/conversation/:userId',async (req,res)=>{
 app.post("/api/message",async (req,res)=> {
     try {
         const {conversationId, senderId , message , receiverId=''} = req.body;
-        const newMessage = messageModal({conversationId,senderId,message});
-        if(!senderId || !message) return res.status(200).json({
-            status:"bad",
-            message:"please fill all the required field"
+        if (!senderId || !message) return res.status(200).json({
+            status: "403",
+            message: "please fill all the required field"
         })
-        if(!conversationId && receiverId){
+        const newMessage = messageModal({conversationId,senderId,message});
+       
+
+        if (!conversationId && receiverId || conversationId && receiverId){
             const newConversation = conversationModal({ members: [senderId, receiverId] });
             await newConversation.save();
             res.status(200).json({
@@ -190,12 +204,10 @@ app.post("/api/message",async (req,res)=> {
             })  
         }else{
         res.status(200).json({
-            status:"bad",
-            message:"please fill all the field"
+            status:"403",
+            message:"something is missing"
         })
         }
-        
-
 
         await  newMessage.save();
         res.status(200).json({
@@ -203,6 +215,7 @@ app.post("/api/message",async (req,res)=> {
             message:"message is sent successfully",
             data:newMessage
         })
+        ``
     }catch (error) {
      console.log(`getting error in sending the message ${error}`);
      res.status(404).json({
@@ -242,7 +255,7 @@ app.get('/api/users',async(req,res)=>{
     const user = await userModal.find();
     // if we want only specific data of the user 
     const userData = Promise.all(user.map((userInfo) =>{
-        return {userInfo:{email:userInfo.email,fullName:userInfo.fullName}, userId:userInfo._id}
+        return { userInfo: { email: userInfo.email, fullName: userInfo.fullName, userId: userInfo._id }}
     }));
     // res.status(400).json({
     //     status:'good',
