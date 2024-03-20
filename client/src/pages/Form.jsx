@@ -9,6 +9,8 @@ const Form = () => {
   // tells the status of the user, if it is logged in or not.
  const {isLoggedIn,setIsLoggedIn} = useContext(UserStatusContext);
 
+ console.log(isLoggedIn);
+
 // for the navigation of the home page
  const navigate = useNavigate()
 
@@ -41,6 +43,7 @@ const Form = () => {
     },
     body: JSON.stringify(data),
    });
+   
   console.log("the reponse of the data is:"); 
   console.log(res);
 
@@ -108,10 +111,6 @@ const Form = () => {
             </div>
        }
 
-
-
-
-     
        {
             !isLoggedIn && <Input label="your full name" type="text"
             value={data.fullName}
