@@ -12,6 +12,7 @@ import MobileView from "./Mobile View/MobileView";
 
 const DashBoard = () => {
 
+  // list of the  user
   const messages = [
     {
       id: 1,
@@ -60,10 +61,34 @@ const DashBoard = () => {
       name: "aryan verma",
       status: "online",
       img: avtar,
+    },
+    {
+      id: 9,
+      name: "sachin mishra",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 10,
+      name: "ashish",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 11,
+      name: "govind",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 12,
+      name: "khushi",
+      status: "online",
+      img: avtar,
     }
   ];
 
-  //state for the user who is currently active/open chat window
+
   const [allUser, setAllUser] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
   const [searchWord, setSearchWord] = useState("");
@@ -76,14 +101,11 @@ const DashBoard = () => {
 
   console.log("in the home route");
 
-
   // getting the local storage data here
   // console.log(JSON.stringify(user));
 
-
-  // console.log("the register user in the local storage  is:"+user);
-
   useEffect(() => {
+
     // all the user of the above object
     setAllUser(messages);
 
@@ -102,10 +124,11 @@ const DashBoard = () => {
 
     const loggedInUser= JSON.parse(localStorage.getItem('user-details'));
 
-    console.log(`the data of the logged in user is ${loggedInUser}`);
+    console.log(`the data of the logged in user is ${JSON.stringify(loggedInUser)}`);
 
     // fetch for the user for  the conversation
     const fetchConversation = async()=>{
+
       const res = await fetch(`http://localhost:3000/api/conversation/${loggedInUser.id}`,{
         method:"GET",
         headers:{
@@ -117,22 +140,17 @@ const DashBoard = () => {
       setConversation(resData);
 
     }
+
     fetchConversation();
 
     // Cleanup function to remove event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-
-
-
   }, []);
 
   // console.log(conversation);
 
-
-
-  
   // search function for the user
   const searchUser = () => {
     // console.log("Search button clicked");
@@ -153,10 +171,10 @@ const DashBoard = () => {
 
   return (
     <div className="">
-
       {
-        isMobileView ? <MobileView/> :(
+        isMobileView ? <MobileView messages={messages} searchUser={searchUser}/> :(
           <div className="h-screen grid grid-cols-12 overflow-hidden">
+
             {/* left box */}
             <div className="h-screen  md:block col-span-3 overflow-auto bg-[#5D3587]">
               {/* top part */}
@@ -200,7 +218,7 @@ const DashBoard = () => {
                     placeholder="search people"
                     className="border-2 border-black mx-2 my-2 w-3/4 border-none bg-transparent  px-4 py-2 outline-blue-500 placeholder:px-1 placeholder:capitalize"
                     value={searchWord}
-                    onClick={(e) => {
+                    onChange={(e) => {
                       e.preventDefault();
                       setSearchWord(e.target.value);
                       searchUser();
@@ -250,6 +268,7 @@ const DashBoard = () => {
                   })}
               </div>
             </div>
+
 
             {/* middle box  or the chat section */}
             <div className=" col-span-6">
@@ -341,10 +360,12 @@ const DashBoard = () => {
                 <FaPlusCircle className="h-5 w-5 mx-2 cursor-pointer" color="white" />
               </div>
             </div>
+
             {/* right box  or the converstion section */}
             <div className="col-span-3 flex items-center justify-center bg-[#5D3587] text-white">
               conversation section is here
             </div>
+            
           </div>
         )
       }
