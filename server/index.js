@@ -10,15 +10,16 @@ const cors = require('cors');
 // connect to the database
 connectDatabase();
 
-// import the files 
+// import the  modals 
 const {userModal} = require('./models/UserModal')
 const {conversationModal} = require('./models/ConversationModel')
 const {messageModal} = require('./models/MessageModal')
+const port = process.env.PORT;
+
 
 
 const app = express();
-// env file import
-const port =process.env.PORT;
+
 
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,16 +28,19 @@ app.use(cors());
 
 //home route
 app.get('/',(req,res)=>{
-    res.send("hello from the server");
+    res.send("hello from the home route");
 });
 
 // registration route
 app.post('/api/register', async (req, res, next) => {
     try {
+       
+        console.log("Inside the  register route"); 
+
         // taking the data from the front end
         const { fullName, email, password } = req.body;
 
-        console.log("Inside the  register route");
+        
 
         // checking that the data is present or not
         if ( !fullName || !email || !password ) {
@@ -50,16 +54,16 @@ app.post('/api/register', async (req, res, next) => {
 
         }
 
-        console.log("user already present is checking");
+        console.log("validating the user");
 
         //checking that the user is already exist or not in the database
 
         const isAlreadyExist = await userModal.findOne({ email });
 
-        console.log("user is present is checked");
+        console.log("user is validated");
 
         if (isAlreadyExist) {
-            console.log("the  user with this email id is already exists");
+            console.log("user already exit no need to create the new  user");
             return res.status(400).json({
                 status: "400",
                 message: "user already exist"
@@ -70,6 +74,7 @@ app.post('/api/register', async (req, res, next) => {
         console.log("password hashing start");
         // Hashing the password before storing it into the database
         const hashedPassword = await bcrypt.hash(password, 10);
+
         console.log("password  hashing  end");
 
 
@@ -105,6 +110,8 @@ app.post('/api/register', async (req, res, next) => {
 // login route for  login the user 
 app.post('/api/login',async(req,res,next)=>{
     try {
+        console.log("inside the login route");
+        
         const {email,password}= req.body;
 
         // checking whether the field are empty or not
@@ -168,15 +175,22 @@ app.post('/api/login',async(req,res,next)=>{
 });
 
 
-// conversation route -> to create a new conversation
+// conversation route -> to create a new conversation btw two people
+
 app.post('/api/conversation',async(req,res)=> {
     try {
+        console.log("inside the conversation route ");
+
         const {senderId,receiverId}= req.body;
+
+        // creating a instance of the conversation
         const newConversation = conversationModal({members:[senderId,receiverId]});
+        // saving that into the database
         await  newConversation.save() ;
+        // sending back the response
         res.status(200).json({
             status:"completed",
-            message: `new Conversation is created`,
+            message: `new Conversation is created between the two user`,
             data:newConversation
         })        
     }
@@ -186,19 +200,22 @@ app.post('/api/conversation',async(req,res)=> {
 });
 
 
-// route to get info about the conversation of a particular user  
+// route to get info about the all conversation of a user
 app.get('/api/conversation/:userId',async (req,res)=>{ 
     try {
         const userId = req.params.userId;
         const conversation = await  conversationModal.find({ members: {$in:[userId]} });
-        const conversationUserData = Promise.all(conversation.map(async(conversation)=>{
+        const conversationUserData = await Promise.all(conversation.map(async(conversation)=>{
             // it will get  the reciever id from the member array whose id is not equal to the senderId
             const receiverId = await conversation.members.find(member=> member!== userId );
+            // checking in the DB for the data of the reciever
             const user = await userModal.findById(receiverId);
+
             return { user: { email: user.email, fullName: user.fullName, conversationId: conversation._id }};
         }));
 
         res.status(201).json(await conversationUserData);
+
     } catch (error) {
         console.log(`getting error in  this ${error}`);
     }
@@ -221,6 +238,7 @@ app.post("/api/message", async (req, res) => {
             console.log("hello from the block 1")
             const newConversation = conversationModal({ members: [senderId, receiverId] });
             await newConversation.save(); // await the saving of the new conversation
+            
             const newMessage = messageModal({ conversationId: newConversation._id, senderId, message });
             await newMessage.save(); // await the saving of the new message
             return res.status(200).json({
@@ -232,6 +250,7 @@ app.post("/api/message", async (req, res) => {
             console.log("hello  from the block 2")
             // If conversationId is provided, save the message to the existing conversation
             const newMessage = messageModal({ conversationId, senderId, message, receiverId });
+            console.log(newMessage);
             await newMessage.save(); // await the saving of the new message
             return res.status(200).json({
                 status: "completed",
@@ -259,10 +278,12 @@ app.post("/api/message", async (req, res) => {
 app.get('/api/message/:conversationId',async(req,res)=>{
 try {
     const conversationId = req.params.conversationId;
+
     if(!conversationId) return res.json({
         status:"bad",
         message:"conversation id is required"
     })
+
     const message = await messageModal.find({conversationId});
     const messageUserData = Promise.all(message.map(async(message)=>{
         const user = await userModal.findById(message.senderId);

@@ -6,11 +6,88 @@ import { RiContactsLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState } from "react";
 import { WiDirectionLeft } from "react-icons/wi";
+import { avtar } from "../../../constant";
 
-const MobileView = ({ messages }) => {
+const MobileView = () => {
   
   const [isSearchBarVisible , setIsSearchBarVisible] = useState(false);
   const [searchWord , setSearchWord] = useState("");
+
+  // list of the  user
+  const messages = [
+    {
+      id: 1,
+      name: "shivam seth",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 2,
+      name: "varun patel",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 3,
+      name: "manas barnwal",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 4,
+      name: "anushka gupta",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 5,
+      name: "shivashish kaushik",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 6,
+      name: "arun pal",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 7,
+      name: "jadoo",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 8,
+      name: "aryan verma",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 9,
+      name: "sachin mishra",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 10,
+      name: "ashish",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 11,
+      name: "govind",
+      status: "online",
+      img: avtar,
+    },
+    {
+      id: 12,
+      name: "khushi",
+      status: "online",
+      img: avtar,
+    }
+  ];
 
 
   const handleSearchBar = () => {
@@ -38,7 +115,7 @@ const MobileView = ({ messages }) => {
                 onChange={(e) => {
                   const searchTerm = e.target.value;
                   setSearchWord(searchTerm);
-                  searchUser(searchTerm); // Invoke searchUser with the current search term
+                
                 }}
 
               /> 

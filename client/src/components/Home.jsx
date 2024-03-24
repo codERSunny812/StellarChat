@@ -8,106 +8,25 @@ import { BsFillEmojiSmileFill } from "react-icons/bs";
 import { CiLogout } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import MobileView from "./Mobile View/MobileView";
+import NoMessage from '../anim/NoMessage.json';
+import Lottie from "lottie-react";
 
 
 const DashBoard = () => {
 
-  // list of the  user
-  const messages = [
-    {
-      id: 1,
-      name: "shivam seth",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 2,
-      name: "varun patel",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 3,
-      name: "manas barnwal",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 4,
-      name: "anushka gupta",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 5,
-      name: "shivashish kaushik",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 6,
-      name: "arun pal",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 7,
-      name: "jadoo",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 8,
-      name: "aryan verma",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 9,
-      name: "sachin mishra",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 10,
-      name: "ashish",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 11,
-      name: "govind",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 12,
-      name: "khushi",
-      status: "online",
-      img: avtar,
-    }
-  ];
-
-
-  const [allUser, setAllUser] = useState([]);
-  const [filteredUser, setFilteredUser] = useState([]);
   const [searchWord, setSearchWord] = useState("");
   const [isLogoutDropDown,setLogOutDropDown] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user-details')));
   const [isMobileView , setIsMobileView] = useState(false);
-
-  //state to create a conversation with any user:
+  const[messages, setMessages] = useState([]);
   const [conversation , setConversation] = useState([]);
 
-  console.log("in the home route");
+  // console.log("in the home route");
 
   // getting the local storage data here
   // console.log(JSON.stringify(user));
 
   useEffect(() => {
-
-    // all the user of the above object
-    setAllUser(messages);
 
     const handleResize = () => {
       // Set isMobileView to true if window width is less than or equal to 768px
@@ -120,39 +39,37 @@ const DashBoard = () => {
     // Add event listener to handle window resize
     window.addEventListener("resize", handleResize);
 
-    
-
-    const loggedInUser= JSON.parse(localStorage.getItem('user-details'));
-
-    console.log(`the data of the logged in user is ${JSON.stringify(loggedInUser)}`);
-
     // fetch for the user for  the conversation
     const fetchConversation = async()=>{
 
-      const res = await fetch(`http://localhost:3000/api/conversation/${loggedInUser.id}`,{
+      const res = await fetch(`http://localhost:3000/api/conversation/${user.id}`,{
         method:"GET",
         headers:{
           "Content-Type":"application/json"
         },
       });
-      console.log(res); 
       const resData = await  res.json();
       setConversation(resData);
+      // console.log("respose data for  the  conversation api is : ");
+      // console.log(resData);
 
     }
 
+    //calling the function
     fetchConversation();
 
     // Cleanup function to remove event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
+
   }, []);
 
-  // console.log(conversation);
+  
 
   // search function for the user
   const searchUser = () => {
+
     // console.log("Search button clicked");
     // console.log("word is entered")
     // console.log("Search word:", searchWord);
@@ -168,16 +85,46 @@ const DashBoard = () => {
     // console.log("filtered user  in state : ", filteredUser);
   };
 
+  // console.log("the user's who are involved  in the conversation are:");
+  // console.log(conversation);
+
+
+
+  // function  to fetch the message of a user from server and display it in chat box
+  const  fetchMessages = async(conversationId) => {
+   try {
+    console.log("hello im clicked");
+    console.log(conversationId);
+     const res = await  fetch(`http://localhost:3000/api/message/${conversationId}`,{
+      method:'GET',
+      headers:{
+        'Content-type':'application/json'
+      }
+     });
+     const resData = await res.json();
+     console.log(resData);
+     setMessages(resData);
+    
+   } catch (error) {
+    console.log("error in fetching the message route")
+   }
+  }
 
   return (
     <div className="">
       {
-        isMobileView ? <MobileView messages={messages} searchUser={searchUser}/> :(
+        isMobileView ? 
+        // mobile view
+        <MobileView  searchUser={searchUser}/> :(
+          // laptop view 
           <div className="h-screen grid grid-cols-12 overflow-hidden">
 
-            {/* left box */}
+            {/* left  part of the  home*/}
+
             <div className="h-screen  md:block col-span-3 overflow-auto bg-[#5D3587]">
+
               {/* top part */}
+
               <div className="flex  items-center justify-between">
                 <div className="flex items-center px-4 py-4">
                   <div className="image border-2 border-black rounded-full">
@@ -207,12 +154,14 @@ const DashBoard = () => {
 
                 </div>
               </div>
+
               <hr />
 
               {/* messages section  of the user  */}
               <div className="messages ">
                 {/* search panel to search people */}
                 <div className="searchBar  flex items-center">
+
                   <input
                     type="search"
                     placeholder="search people"
@@ -227,50 +176,46 @@ const DashBoard = () => {
                   />
                   <IoSearchCircle
                     className="h-10 w-10 mx-1 my-1"
-
                     color="white"
                   />
                 </div>
 
                 <h1 className="capitalize px-3 mt-2 text-white">messages</h1>
-                {filteredUser.length != 0
-                  ? filteredUser.map(({ name, status, img }) => {
-                    return (
-                      <div
-                        className=" flex  items-center px-4 py-4  text-white border-b-2 border-b-rose-50
-                      border-2 border-white"
-                        key={name}
-                        onClick={() => console.log("hello")}
+                {
+                  conversation.length > 0 ? (
+                      conversation.map(({ user: { email, fullName, conversationId } } ) => {
+                       
+                        console.log(email)
+                        return (
+                          <div className=" cursor-pointer flex  items-center px-4 py-4 border-b "
+                            key={Math.random()}
+                            onClick={() => { fetchMessages(conversationId)}}
+                          >
+                            <img src={avtar} height={60} width={60} alt={fullName} />
+                            <div className="accountInfo ml-6 text-white">
+                              <h1 className="text-lg">{fullName}</h1>
+                              <h2 className="text-sm font-light">{email}</h2>
+                            </div>
+                            <hr />
+                          </div>
+                        );
 
-                      >
-                        <img src={img} height={60} width={60} alt={name} />
-                        <div className="accountInfo ml-6">
-                          <h1 className="text-lg">{name}</h1>
-                          <h2 className="text-sm font-light">{status}</h2>
-                        </div>
-                      </div>
-                    );
-                  })
-                  : allUser.map(({ name, status, img }) => {
-                    return (
-                      <div className=" flex  items-center px-4 py-4 border-b "
-                        key={name}
-                        onClick={() => console.log("hello ")}
-                      >
-                        <img src={img} height={60} width={60} alt={name} />
-                        <div className="accountInfo ml-6 text-white">
-                          <h1 className="text-lg">{name}</h1>
-                          <h2 className="text-sm font-light">{status}</h2>
-                        </div>
-                        <hr />
-                      </div>
-                    );
-                  })}
+                      }) 
+                  ) : (
+                  <div className="border-2 border-white flex items-center justify-center mt-6">
+                   
+                      
+                      <Lottie animationData={NoMessage}/>
+                  
+      
+                  </div>
+                  )
+                }
               </div>
             </div>
 
 
-            {/* middle box  or the chat section */}
+            {/* mid part  of the  home*/}
             <div className=" col-span-6">
               <div className=" flex items-center justify-between bg-[#392467] shadow-3xl rounded-lg py-1 mt-2 mx-1">
                 <div className="px-4 flex items-center ">
@@ -361,7 +306,7 @@ const DashBoard = () => {
               </div>
             </div>
 
-            {/* right box  or the converstion section */}
+            {/* right part of the  home */}
             <div className="col-span-3 flex items-center justify-center bg-[#5D3587] text-white">
               conversation section is here
             </div>
