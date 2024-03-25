@@ -17,6 +17,9 @@ export default {
         'custom-purple-light': '#4B0082',
         'custom-purple-dark': '#33006F',
       }),
+      fontFamily:{
+        'edu-nsw': ['"Edu NSW ACT Foundation"', 'cursive'],
+      }
       
     },
   },
