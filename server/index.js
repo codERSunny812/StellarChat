@@ -183,10 +183,22 @@ app.post('/api/conversation',async(req,res)=> {
 
         const {senderId,receiverId}= req.body;
 
+        // let's store the name of the sender and receiver  in the conversation modal
+        const senderName = await userModal.findOne( { _id : senderId } );
+        const receiverName = await userModal.findOne({_id:receiverId});
+
         // creating a instance of the conversation
-        const newConversation = conversationModal({members:[senderId,receiverId]});
+        const newConversation = conversationModal({
+            members: [
+                senderId,
+                receiverId,
+                {senderName:senderName.fullName},
+                {receiverName:receiverName.fullName}
+            ]});
+
         // saving that into the database
         await  newConversation.save() ;
+
         // sending back the response
         res.status(200).json({
             status:"completed",
@@ -200,23 +212,28 @@ app.post('/api/conversation',async(req,res)=> {
 });
 
 
-// route to get info about the all conversation of a user
+// route to get info about the all conversation of any user using the his id
 app.get('/api/conversation/:userId',async (req,res)=>{ 
     try {
+
         const userId = req.params.userId;
+
         const conversation = await  conversationModal.find({ members: {$in:[userId]} });
+        
         const conversationUserData = await Promise.all(conversation.map(async(conversation)=>{
             // it will get  the reciever id from the member array whose id is not equal to the senderId
             const receiverId = await conversation.members.find(member=> member!== userId );
             // checking in the DB for the data of the reciever
             const user = await userModal.findById(receiverId);
 
-            return { user: { email: user.email, fullName: user.fullName, conversationId: conversation._id }};
+            return { user: { receiverId: user._id, email: user.email, fullName: user.fullName }, conversationId: conversation._id };
+
         }));
 
         res.status(201).json(await conversationUserData);
 
-    } catch (error) {
+    }
+    catch (error){
         console.log(`getting error in  this ${error}`);
     }
 })
@@ -234,13 +251,30 @@ app.post("/api/message", async (req, res) => {
             });
         }
 
+
+        // lets also store the sender and receiver  name
+        const senderName = await userModal.findOne({ _id: senderId });
+        const receiverName = await userModal.findOne({ _id: receiverId });
+        // console.log(senderName)
+
         if (!conversationId && receiverId) {
-            console.log("hello from the block 1")
-            const newConversation = conversationModal({ members: [senderId, receiverId] });
+
+            console.log("hello from the block 1");
+
+            const newConversation = conversationModal({
+                members: [
+                    senderId,
+                    receiverId,
+                    {senderName:senderName.fullName},
+                    {receiverName:receiverName.fullName}
+                ] });
+
             await newConversation.save(); // await the saving of the new conversation
             
             const newMessage = messageModal({ conversationId: newConversation._id, senderId, message });
+
             await newMessage.save(); // await the saving of the new message
+
             return res.status(200).json({
                 status: "completed",
                 message: "New Conversation and Message are created",
@@ -250,12 +284,13 @@ app.post("/api/message", async (req, res) => {
             console.log("hello  from the block 2")
             // If conversationId is provided, save the message to the existing conversation
             const newMessage = messageModal({ conversationId, senderId, message, receiverId });
-            console.log(newMessage);
+
             await newMessage.save(); // await the saving of the new message
+            
             return res.status(200).json({
                 status: "completed",
                 message: "Message is sent successfully",
-                data: { conversationId, messageId: newMessage._id }
+                data: { conversationId:conversationId, messageId: newMessage._id , senderUserName:senderName.fullName , receiverUserName:receiverName.fullName }
             });
         } else {
             console.log("hello from the block 3");
@@ -282,12 +317,14 @@ try {
     if(!conversationId) return res.json({
         status:"bad",
         message:"conversation id is required"
-    })
+    }); 
+
+    
 
     const message = await messageModal.find({conversationId});
     const messageUserData = Promise.all(message.map(async(message)=>{
         const user = await userModal.findById(message.senderId);
-        return {user:{email:user.email,fullName:user.fullName} , message:message.message}
+        return { user: { id: user._id, email: user.email, fullName: user.fullName }  , message: message.message, senderUserName:message.senderUserName , receiverUserName:message.receiverUserName}
     }))
     res.status(400).json({
         status:"good",

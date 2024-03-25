@@ -12,6 +12,9 @@ const messageSchema = mongoose.Schema({
     },
     message:{
         type:String
+    },
+    receiverId:{
+        type:String
     }
 });
 
