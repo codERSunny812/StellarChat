@@ -144,7 +144,7 @@ const Form = () => {
             !isLoggedIn && <Input label="confirm password" type="password"  />
       }
 
-          <button type="submit" className="my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize" onClick={handleFormSubmit}>
+          <button type="submit" className="my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize active:bg-black active:text-white" onClick={handleFormSubmit}>
             {isLoggedIn ? "Log In" : "Create an Account"}
           </button>
 
