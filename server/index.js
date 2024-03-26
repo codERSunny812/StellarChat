@@ -188,7 +188,7 @@ app.post('/api/conversation',async(req,res)=> {
         const receiverName = await userModal.findOne({_id:receiverId});
 
         // creating a instance of the conversation
-        const newConversation = conversationModal({
+        const newConversation = await conversationModal({
             members: [
                 senderId,
                 receiverId,
@@ -335,7 +335,7 @@ try {
 
 } catch (error) {
     console.log(`getting error in fetching the message data of the user`)
-}
+} 
 });
 
 
