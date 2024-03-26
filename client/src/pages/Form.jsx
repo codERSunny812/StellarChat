@@ -1,4 +1,4 @@
-import { useContext , useState } from "react"
+import { useContext , useState} from "react"
 import Input from "../components/Input"
 import SocialMedia from "../components/SocialMedia";
 import { UserStatusContext } from "../Context/Auth";
@@ -11,27 +11,27 @@ const Form = () => {
 
  console.log(isLoggedIn);
 
-// for the navigation of the home page
+// for navigation to the home page
  const navigate = useNavigate()
 
 
-//  object to store the initial data of the user
- const [data,setData]=useState({
-  ...(!isLoggedIn && {
-    fullName:" ",
-     email: " ",
-     password: " "
-  }),
- 
- });
 
- console.log({data});
+  const initialData = {
+    fullName: "",
+    email: "",
+    password: ""
+  } 
+
+  const [data, setData] = useState(initialData);
+  console.log(data);
+
 
   
 
 // function to handle the form submission 
 
  const handleFormSubmit =async(e)=>{
+
   e.preventDefault();
 
   console.log("the form is submit");
@@ -44,10 +44,10 @@ const Form = () => {
     body: JSON.stringify(data),
    });
    
-  console.log("the reponse of the data is:"); 
-  console.log(res);
+  // console.log("the reponse of the data is:"); 
+  // console.log(res);
 
-  //  check  the response of the api
+  //handle the response
   if(res.status == 400){
     alert("all field are required")
   }
@@ -57,45 +57,48 @@ const Form = () => {
   else if(res.status == 401){
     alert("invalid credentials")
   }
-  else{
-    const responseData = await res.json();
-    console.log("the data is -->", responseData);
-    setIsLoggedIn(true);
-    console.log(responseData);
-    if (responseData.user.token) {
-      console.log("inside")
-      localStorage.setItem("user-token", responseData.user.token);
-      localStorage.setItem("user-details",JSON.stringify(responseData.user));
-      navigate("/home")
-    }
-  }
+   else {
+     const responseData = await res.json();
+     setIsLoggedIn(true);
+    // Clear the form data after successful submission
+   
+
+     if (isLoggedIn && responseData.user.token) {
+       console.log("inside");
+       localStorage.setItem("user-token", responseData.user.token);
+       localStorage.setItem("user-details", JSON.stringify(responseData.user));
+       navigate("/home");
+     }
+   }
+
    
 
  }
+
+
+
 
  
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
    <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
-    <form className=" my-4 flex flex-col" >
-
-
+    <form className=" my-4 flex flex-col" autoComplete="off">
 
       {
         isLoggedIn ? (
-              <h1 className="capitalize text-center my-6 font-bold text-lg">log in to chatkro</h1> 
+        <h1 className="capitalize text-center my-6 font-bold text-lg">log in to chatkro</h1> 
         ) : 
         (
-                <h1 className="capitalize text-center my-6 font-bold text-lg">sign up with the email</h1>
+        <h1 className="capitalize text-center my-6 font-bold text-lg">sign up with the email</h1>
         )
       }
 
       {
         isLoggedIn ? (
-              <p className="px-9 capitalize text-gray-400 my-5"> welcome back ! sign in using  your social account or email to continue us</p>
+        <p className="px-9 capitalize text-gray-400 my-5"> welcome back ! sign in using  your social account or email to continue us</p>
         ) :
         (
-                <p className="px-9 capitalize text-gray-400 my-5"> get chatting with your family and friends today by signing up for our chat app!</p>
+        <p className="px-9 capitalize text-gray-400 my-5"> get chatting with your family and friends today by signing up for our chat app!</p>
         )
       }
 
@@ -117,6 +120,7 @@ const Form = () => {
               onChange={(e) => {
                 setData({ ...data, fullName: e.target.value });
               }}
+              
             />
        }
 
