@@ -1,4 +1,4 @@
-// input fcomponent
+// input component
 const Input = ({ label, type, value, onChange}) => {
   return (
     <div className="  py-6 px-3 my-1">
