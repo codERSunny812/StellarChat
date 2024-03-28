@@ -1,12 +1,12 @@
-import DashBoard from "./components/Home"
-import Form from "./pages/Form"
-import {Outlet, createBrowserRouter} from 'react-router-dom'
-import Screen from "./pages/Screen"
-import { useEffect, useState } from "react"
-import AfterSplash from "./pages/AfterSplash"
+import DashBoard from "./components/Home";
+import Form from "./pages/Form";
+import { Outlet, createBrowserRouter } from "react-router-dom";
+import Screen from "./pages/Screen";
+import { useEffect, useState } from "react";
+import AfterSplash from "./pages/AfterSplash";
 
 export const App = () => {
-  const [showSplash , setSplash] = useState(true);
+  const [showSplash, setSplash] = useState(true);
   // const {id} = useParams();
   // console.log(id);
 
@@ -18,42 +18,32 @@ export const App = () => {
     return () => clearTimeout(timer); // Clear the timer on component unmount
   }, []); // Run only once on component mount
 
-
-  return (
-    <div className="">
-      {showSplash ? (
-        <Screen />
-      ) : (
-        <Outlet />
-      )}
-     
-    </div>
-  )
-}
+  return <div className="">{showSplash ? <Screen /> : <Outlet />}</div>;
+};
 
 const router = createBrowserRouter([
   {
-    path:'/',
-    element:<App/>,
-     children: [
-       {
-        path: '/',
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
         element: <AfterSplash />,
-       },
-       {
-        path: '/home',
+      },
+      {
+        path: "/home",
         element: <DashBoard />,
-       },
-       {
-        path:'/register',
-        element:<Form/>
-       },
-       {
-        path:'/login',
-        element:<Form/>
-       }
-     ],
-  }
+      },
+      {
+        path: "/register",
+        element: <Form />,
+      },
+      {
+        path: "/login",
+        element: <Form />,
+      },
+    ],
+  },
 ]);
 
 export default router;
