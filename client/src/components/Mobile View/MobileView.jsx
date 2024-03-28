@@ -6,88 +6,20 @@ import { RiContactsLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState } from "react";
 import { WiDirectionLeft } from "react-icons/wi";
-import { avtar } from "../../../constant";
+import ChatSection from "./ChatSection.";
+import CallSection from "./CallSection";
+import ContactSection  from './ContactSection';
+import Conversation from './ConversationSection';
+import Setting from  './SettingSection';
 
 const MobileView = () => {
   
   const [isSearchBarVisible , setIsSearchBarVisible] = useState(false);
   const [searchWord , setSearchWord] = useState("");
+  const [showState , setShowState] = useState(Conversation);
+  console.log(showState);
 
-  // list of the  user
-  const messages = [
-    {
-      id: 1,
-      name: "shivam seth",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 2,
-      name: "varun patel",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 3,
-      name: "manas barnwal",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 4,
-      name: "anushka gupta",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 5,
-      name: "shivashish kaushik",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 6,
-      name: "arun pal",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 7,
-      name: "jadoo",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 8,
-      name: "aryan verma",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 9,
-      name: "sachin mishra",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 10,
-      name: "ashish",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 11,
-      name: "govind",
-      status: "online",
-      img: avtar,
-    },
-    {
-      id: 12,
-      name: "khushi",
-      status: "online",
-      img: avtar,
-    }
-  ];
+
 
 
   const handleSearchBar = () => {
@@ -96,6 +28,15 @@ const MobileView = () => {
     if (!isSearchBarVisible) setSearchWord("");
   };
 
+
+  const handleState = (state)=>{
+
+    console.log('im clicked');
+    console.log(state);
+
+    setShowState(state);
+
+  }
  
 
   return (
@@ -150,7 +91,8 @@ const MobileView = () => {
       <div className="chatSection  bg-white rounded-t-3xl h-screen">
         
         <div className="chats my-1 py-3 h-[650px] overflow-scroll">
-          { messages.map((message, index) => (
+
+          {/* { messages.map((message, index) => (
             <div key={index} className='mx-2 my-6'>
               <div className="personChat flex items-center px-4 gap-5">
                 <img src={message.img} className='h-16 w-16' alt="Profile" />
@@ -162,7 +104,24 @@ const MobileView = () => {
                
               </div>
             </div>
-          ))}
+          ))} */}
+          {
+            showState == Conversation && <Conversation/>
+          }
+
+          {
+            showState == CallSection && <CallSection />
+          }
+
+          {
+            showState == ContactSection && <ContactSection />
+
+          }
+
+          {
+            showState == Setting && <Setting/>
+          }
+
         </div>
 
       </div>
@@ -171,22 +130,22 @@ const MobileView = () => {
 
       <div className="endSection  bg-white w-full h-[80px] flex items-center justify-around capitalize fixed bottom-0 shadow-3xl font-semibold">
 
-        <div className="messageIcon flex flex-col items-center">
+        <div className="messageIcon flex flex-col items-center cursor-pointer" onClick={()=>handleState(Conversation)}>
           <AiOutlineMessage className='h-6 w-6' />
           <h1>message</h1>
         </div>
 
-        <div className="callIcon flex flex-col items-center">
+        <div className="callIcon flex flex-col items-center cursor-pointer" onClick={() => handleState(CallSection)}>
           <PiPhoneCall className='h-6 w-6' />
           <h1>call</h1>
         </div>
 
-        <div className="contactIcon flex flex-col items-center">
+        <div className="contactIcon flex flex-col items-center cursor-pointer" onClick={() => handleState(ContactSection)}>
           <RiContactsLine className='h-6 w-6' />
           <h1>contacts</h1>
         </div>
 
-        <div className="settingIcon flex flex-col items-center">
+        <div className="settingIcon flex flex-col items-center cursor-pointer" onClick={() =>  handleState(Setting)}>
           <IoSettingsOutline className='h-6 w-6' />
           <h1>setting</h1>
         </div>
