@@ -1,138 +1,133 @@
-import { useContext , useState} from "react"
-import Input from "../components/Input"
+import { useContext, useState } from "react";
+import Input from "../components/Input";
 import SocialMedia from "../components/SocialMedia";
 import { UserStatusContext } from "../Context/Auth";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 const Form = () => {
-
   // tells the status of the user, if it is logged in or not.
- const {isLoggedIn,setIsLoggedIn} = useContext(UserStatusContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
 
- console.log(isLoggedIn);
+  console.log(isLoggedIn);
 
-// for navigation to the home page
- const navigate = useNavigate()
-
-
+  // for navigation to the home page
+  const navigate = useNavigate();
 
   const initialData = {
     fullName: "",
     email: "",
-    password: ""
-  } 
+    password: "",
+  };
 
   const [data, setData] = useState(initialData);
   console.log(data);
 
+  // function to handle the form submission
 
-  
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
 
-// function to handle the form submission 
+    console.log("the form is submit");
 
- const handleFormSubmit =async(e)=>{
+    const res = await fetch(
+      `http://localhost:3000/api/${isLoggedIn ? "login" : "register"}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
-  e.preventDefault();
+    // console.log("the reponse of the data is:");
+    // console.log(res);
 
-  console.log("the form is submit");
+    //handle the response
+    if (res.status == 400) {
+      alert("all field are required");
+    } else if (res.status == 404) {
+      alert("user not found");
+    } else if (res.status == 401) {
+      alert("invalid credentials");
+    } else {
+      const responseData = await res.json();
+      setIsLoggedIn(true);
+      // Clear the form data after successful submission
 
-   const res = await fetch(`http://localhost:3000/api/${isLoggedIn ? 'login' : 'register'}`,{
-    method: "POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify(data),
-   });
-   
-  // console.log("the reponse of the data is:"); 
-  // console.log(res);
+      if (isLoggedIn && responseData.user.token) {
+        console.log("inside");
+        localStorage.setItem("user-token", responseData.user.token);
+        localStorage.setItem("user-details", JSON.stringify(responseData.user));
+        navigate("/home");
+      }
+    }
+  };
 
-  //handle the response
-  if(res.status == 400){
-    alert("all field are required")
-  }
-  else if(res.status == 404){
-    alert("user not found");
-  }
-  else if(res.status == 401){
-    alert("invalid credentials")
-  }
-   else {
-     const responseData = await res.json();
-     setIsLoggedIn(true);
-    // Clear the form data after successful submission
-   
-
-     if (isLoggedIn && responseData.user.token) {
-       console.log("inside");
-       localStorage.setItem("user-token", responseData.user.token);
-       localStorage.setItem("user-details", JSON.stringify(responseData.user));
-       navigate("/home");
-     }
-   }
-
-   
-
- }
-
-
-
-
- 
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
-   <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
-    <form className=" my-4 flex flex-col" autoComplete="off">
+      <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
+        <form className=" my-4 flex flex-col" autoComplete="off">
+          {isLoggedIn ? (
+            <h1 className="capitalize text-center my-6 font-bold text-lg">
+              log in to chatkro
+            </h1>
+          ) : (
+            <h1 className="capitalize text-center my-6 font-bold text-lg">
+              sign up with the email
+            </h1>
+          )}
 
-      {
-        isLoggedIn ? (
-        <h1 className="capitalize text-center my-6 font-bold text-lg">log in to chatkro</h1> 
-        ) : 
-        (
-        <h1 className="capitalize text-center my-6 font-bold text-lg">sign up with the email</h1>
-        )
-      }
+          {isLoggedIn ? (
+            <p className="px-9 capitalize text-gray-400 my-5">
+              {" "}
+              welcome back ! sign in using your social account or email to
+              continue us
+            </p>
+          ) : (
+            <p className="px-9 capitalize text-gray-400 my-5">
+              {" "}
+              get chatting with your family and friends today by signing up for
+              our chat app!
+            </p>
+          )}
 
-      {
-        isLoggedIn ? (
-        <p className="px-9 capitalize text-gray-400 my-5"> welcome back ! sign in using  your social account or email to continue us</p>
-        ) :
-        (
-        <p className="px-9 capitalize text-gray-400 my-5"> get chatting with your family and friends today by signing up for our chat app!</p>
-        )
-      }
-
-       {
-            isLoggedIn && <div className="flex items-center justify-center"><SocialMedia /></div>
-       }
-
-       {
-            isLoggedIn && <div className=" uppercase text-sm  flex items-center mt-10">
-              <hr className='w-44' />
-              <span className='px-2'>or</span>
-              <hr className='w-44' />
+          {isLoggedIn && (
+            <div className="flex items-center justify-center">
+              <SocialMedia />
             </div>
-       }
+          )}
 
-       {
-            !isLoggedIn && <Input label="your full name" type="text"
-            value={data.fullName}
+          {isLoggedIn && (
+            <div className=" uppercase text-sm  flex items-center mt-10">
+              <hr className="w-44" />
+              <span className="px-2">or</span>
+              <hr className="w-44" />
+            </div>
+          )}
+
+          {!isLoggedIn && (
+            <Input
+              label="your full name"
+              type="text"
+              value={data.fullName}
               onChange={(e) => {
                 setData({ ...data, fullName: e.target.value });
               }}
-              
             />
-       }
+          )}
 
-          <Input label="Your Email"
+          <Input
+            label="Your Email"
             type="email"
             value={data.email}
-            onChange={(e)=>{
+            onChange={(e) => {
               setData({ ...data, email: e.target.value });
             }}
           />
 
-          <Input label="Your Password"
+          <Input
+            label="Your Password"
             type="password"
             value={data.password}
             onChange={(e) => {
@@ -140,24 +135,19 @@ const Form = () => {
             }}
           />
 
-      {
-            !isLoggedIn && <Input label="confirm password" type="password"  />
-      }
+          {!isLoggedIn && <Input label="confirm password" type="password" />}
 
-          <button type="submit" className="my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize active:bg-black active:text-white" onClick={handleFormSubmit}>
+          <button
+            type="submit"
+            className="my-3 w-3/4 py-2 mx-auto px-3 rounded-2xl bg-[#24786D] text-white capitalize active:bg-black active:text-white"
+            onClick={handleFormSubmit}
+          >
             {isLoggedIn ? "Log In" : "Create an Account"}
           </button>
-
-     
-
-          
-
-    </form>
-    
-
-   </div>
+        </form>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Form
+export default Form;
