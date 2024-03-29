@@ -6,11 +6,11 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { connectDatabase } = require("./Database/data_connection");
 const cors = require("cors");
-const io = require("socket.io")(3001, {
-  cors: {
-    origin: "http://localhost:5173/",
-  },
-});
+const io = require( "socket.io" )(3002,{
+  cors:{
+    origin:'http://localhost:3000/'
+  }
+})
 
 // connect to the database
 connectDatabase();
@@ -28,13 +28,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-// socketio
+// Socket.io
 
-// emit is  used  to emit(trigger) any action and on is used to hanle that action
-io.on("connection", (socket) => {
-  // console.log(socket);
-  console.log(`a new user is connected with the socket id ${socket.id}`);
-});
+// if we want  to recieve  something from the  frontend then we use socket and if we want to send something to the frontend then we use io
+
+let addedUser=[];
+io.on("connection",(socket)=>{
+  console.log('user connected'+ " " +socket.id);
+  socket.on("addUser",(userId)=>{
+    const isUserExist = addedUser.find(user=> user.userId === userId);
+    if(!isUserExist){
+      const users = {userId,socketId:socket.id};
+      addedUser.push(users);
+      // Emitting to all other clients except the sender
+      socket.broadcast.emit("getUser", JSON.stringify(addedUser));
+    }
+    
+  })
+})
+
 
 //home route
 app.get("/", (req, res) => {
@@ -53,7 +65,7 @@ app.post("/api/register", async (req, res, next) => {
     if (!fullName || !email || !password) {
       console.log("something is missing");
 
-      return res.status(400).json({
+      return res.status(100).json({
         status: "403",
         message: "please provide all the details",
       });
@@ -69,7 +81,7 @@ app.post("/api/register", async (req, res, next) => {
 
     if (isAlreadyExist) {
       console.log("user already exit no need to create the new  user");
-      return res.status(400).json({
+      return res.status(500).json({
         status: "400",
         message: "user already exist",
       });
@@ -115,7 +127,7 @@ app.post("/api/login", async (req, res, next) => {
 
     // checking whether the field are empty or not
     if (!email || !password) {
-      return res.status(400).json({
+      return res.status(100).json({
         status: "403",
         message: "Email and password are required",
       });
@@ -250,7 +262,7 @@ app.post("/api/message", async (req, res) => {
     const { conversationId, senderId, message, receiverId = "" } = req.body;
 
     if (!senderId || !message) {
-      return res.status(400).json({
+      return res.status(100).json({
         status: "403",
         message: "Please fill all the required fields (senderId, message)",
       });
@@ -315,7 +327,7 @@ app.post("/api/message", async (req, res) => {
       });
     } else {
       console.log("hello from the block 3");
-      return res.status(400).json({
+      return res.status(100).json({
         status: "incomplete",
         message: "Conversation ID or Receiver ID is required",
       });
@@ -335,7 +347,7 @@ app.get("/api/message/:conversationId", async (req, res) => {
     const conversationId = req.params.conversationId;
 
     if (!conversationId)
-      return res.json({
+      return res.status(100).json({
         status: "bad",
         message: "conversation id is required",
       });
@@ -352,7 +364,7 @@ app.get("/api/message/:conversationId", async (req, res) => {
         };
       })
     );
-    res.status(400).json({
+    res.status(200).json({
       status: "good",
       message:
         "these are the message which are recieved by the  user from other users ",
@@ -379,11 +391,7 @@ app.get("/api/users", async (req, res) => {
       };
     })
   );
-  // res.status(400).json({
-  //     status:'good',
-  //     message:"these are the all user ",
-  //     data:user
-  // })
+
   res.json(await userData);
 });
 
