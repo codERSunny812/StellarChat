@@ -11,7 +11,9 @@ export default {
       },
       borderRadius:{
         '4xl':'15px 0px 15px 15px',
-        '5xl': '0px 15px 15px 15px'
+        '5xl': '0px 15px 15px 15px',
+        '6xl':'35px 35px 0px 0px'
+
       },
       gradientColorStops:theme => ({
         'custom-purple-light': '#4B0082',
@@ -19,7 +21,8 @@ export default {
       }),
       fontFamily:{
         'edu-nsw': ['"Edu NSW ACT Foundation"', 'cursive'],
-      }
+      },
+      
       
     },
   },

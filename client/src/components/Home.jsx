@@ -1,22 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { avtar } from "../../constant";
-import { PiDotsThreeCircleFill } from "react-icons/pi";
-import { IoSearchCircle, IoVideocam, IoSend } from "react-icons/io5";
-import { MdAddIcCall } from "react-icons/md";
-import { FaPlusCircle } from "react-icons/fa";
-import { BsFillEmojiSmileFill } from "react-icons/bs";
-import { CiLogout } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import MobileView from "./Mobile View/MobileView";
-import NoMessage from "../anim/NoMessage";
-import Lottie from "lottie-react";
-import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
-
+import ConversationList from "./ConversationList";
+import MessageViewList from "./MessageViewList";
+import People from "./People";
+import {io} from 'socket.io-client'
 const DashBoard = () => {
-  // all the state variable
-  const [searchWord, setSearchWord] = useState("");
-  const [isLogoutDropDown, setLogOutDropDown] = useState(false);
+
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user-details"))
   );
@@ -25,22 +15,34 @@ const DashBoard = () => {
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
   const [showAllUser, setShowAllUser] = useState([]);
-  const logoutNavigate = useNavigate();
-  const [socket, setSocket] = useState(null);
+  const [socket , setSocket] = useState(null);
 
-  // getting the local storage data here
-  // console.log(JSON.stringify(user));
 
-  // connnecting with the socket when the page is loaded
+
+  // connect with the socket
+  useEffect(()=>{
+    setSocket(io('http://localhost:3002/'))
+  },[])
+
+  // console.log(socket)
+
+  // event in socket
   useEffect(() => {
-    setSocket(io("http://localhost:3001/"));
-  }, []);
+    if (socket) {
+      socket?.emit("addUser", user.id);
+      socket?.on("getUser",(users)=>{
+        console.log('active users -->'+ users);
+      })
+    }
+  }, [socket]);
 
-  // to check for mobile view
+
+
+
+  
   useEffect(() => {
-    console.log("inside the mobile view useEffect");
+    
     const handleResize = () => {
-      // Set isMobileView to true if window width is less than or equal to 768px
       setIsMobileView(window.innerWidth <= 768);
     };
 
@@ -56,59 +58,51 @@ const DashBoard = () => {
     };
   }, []);
 
-  // to load the all the conversation of the user with other users when the page loads
   useEffect(() => {
-    console.log("inside the conversation array  useEffect");
-    const fetchConversation = async () => {
-      const res = await fetch(
-        `http://localhost:3000/api/conversation/${user.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const resData = await res.json();
+   try {
+     const fetchConversation = async () => {
+       const res = await fetch(
+         `http://localhost:3000/api/conversation/${user.id}`,
+         {
+           method: "GET",
+           headers: {
+             "Content-Type": "application/json",
+           },
+         }
+       );
+       const resData = await res.json();
+      //  console.log(resData);
+       setConversation(prevConversation => [...prevConversation, ...resData]);
+     };
 
-      console.log(
-        "the response of the api call to load all the conversation of the current logged in user is:"
-      );
-      console.log(resData);
-      setConversation(resData);
-    };
+     fetchConversation();
+   } catch (error) {
+    console.log(error)
+   }
+  },[]);
 
-    //calling the function
-    fetchConversation();
+  useEffect(() => {
+ try {
+   const fetchAllUser = async () => {
+     const res = await fetch("http://localhost:3000/api/users", {
+       method: "GET",
+       headers: {
+         "Content-type": "application/json",
+       },
+     });
+
+     const resData = await res.json();
+     setShowAllUser(resData);
+   };
+   fetchAllUser();
+ } catch (error) {
+  console.log(error)
+ }
   }, []);
 
-  // to fetch all the user
-  useEffect(() => {
-    console.log("inside the all user  useEffect");
-
-    const fetchAllUser = async () => {
-      const res = await fetch("http://localhost:3000/api/users", {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
-
-      const resData = await res.json();
-      setShowAllUser(resData);
-    };
-    fetchAllUser();
-  }, []);
-
-  // search function for the user
-  const searchUser = () => {};
-
-  console.log("all use effect are finish");
-
-  // function  to fetch the message of a user from server and display it in chat box
   const fetchMessages = async (conversationId, fullName, receiverId) => {
     try {
-      console.log("hello im fetch message function is running");
+   
       const res = await fetch(
         `http://localhost:3000/api/message/${conversationId}`,
         {
@@ -119,10 +113,6 @@ const DashBoard = () => {
         }
       );
       const resData = await res.json();
-      console.log(
-        "the response of the api to fetch the message of the user is:"
-      );
-      console.log(resData);
       setMessages({
         data: resData,
         name: fullName,
@@ -134,10 +124,9 @@ const DashBoard = () => {
     }
   };
 
-  // function  to send message to any user
   const sendMessage = async () => {
     try {
-      console.log("inside the message sending function");
+
       const response = await fetch("http://localhost:3000/api/message", {
         method: "POST",
         headers: {
@@ -165,22 +154,13 @@ const DashBoard = () => {
       // Optionally, you can handle error cases here
     }
   };
-
-  // function to logout from the  chat application
-  const logOutHandler = () => {
-    console.log("inside the logout function handler");
-    localStorage.removeItem("user-details");
-    localStorage.removeItem("user-token");
-    logoutNavigate("/");
-  };
-
+ 
   const createConversation = async ({ senderId, receiverId }) => {
     try {
-      console.log("inside the create conversation function");
-
+    
       // Check if conversation already exists
       const existingConversation = conversation.find(
-        (conv) => conv.user.receiverId == receiverId
+        (conv) => conv.user.receiverId === receiverId
       );
 
       console.log("the value of existingConversation is:");
@@ -202,256 +182,37 @@ const DashBoard = () => {
       const responseData = await response.json();
       console.log("the response of the api of creating a convo is:");
       console.log(responseData);
+    
     } catch (error) {
       console.log("error in creating the conversation");
     }
   };
 
-  console.log("the value of the conversation is:");
-  console.log(conversation);
+  const updateSentMessage = (newSentMessage) => {
+    setSentMessage(newSentMessage);
+  };
 
-  console.log("the value of the messages is :");
-  console.log(messages);
-
-  console.log("the sent message is:");
-  console.log(sentMessage);
-
-  console.log("the data in showAllUser is:");
-  console.log(showAllUser);
-
-  console.log("the user in the local storage is");
-  console.log(user);
 
   return (
     <div className="">
       {isMobileView ? (
-        // mobile view
-        <MobileView searchUser={searchUser} />
+  
+        <MobileView conversations={conversation} showAllUser={showAllUser} user={user}  />
       ) : (
-        // laptop view
+    
         <div className="h-screen grid grid-cols-12 overflow-hidden">
           {/* left  part of the  home*/}
-          <div className="h-screen  md:block col-span-3 overflow-auto bg-[#5D3587]">
-            {/* top part */}
-
-            <div className="flex  items-center justify-between">
-              <div className="flex items-center px-4 py-4">
-                <div className="image border-2 border-black rounded-full">
-                  <img
-                    src={avtar}
-                    alt="user image"
-                    height={60}
-                    width={60}
-                    className="rounded-full"
-                  />
-                </div>
-
-                <div className="accountInfo ml-6 text-white">
-                  <h1 className="text-xl capitalize">{user.fullName}</h1>
-                  <h2 className="text-lg font-light">my account</h2>
-                </div>
-              </div>
-
-              <div className="end_icons">
-                <PiDotsThreeCircleFill
-                  className="h-9 w-9 cursor-pointer"
-                  onClick={() => setLogOutDropDown(!isLogoutDropDown)}
-                  color="white"
-                />
-                {isLogoutDropDown && (
-                  <div
-                    className=" h-10 w-25 absolute left-[245px] bg-[#A367B1] top-[60px] capitalize text-white flex items-center justify-center rounded-lg px-3 cursor-pointer border-2 border-white"
-                    onClick={logOutHandler}
-                  >
-                    <h1>log out</h1>
-                    <CiLogout />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <hr />
-
-            {/* messages section  of the user  */}
-            <div className="messages ">
-              {/* search panel to search people */}
-              <div className="searchBar  flex items-center">
-                <input
-                  type="search"
-                  placeholder="search people"
-                  className="border-2 border-black mx-2 my-2 w-3/4 border-none bg-transparent  px-4 py-2 outline-blue-500 placeholder:px-1 placeholder:capitalize"
-                  value={searchWord}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setSearchWord(e.target.value);
-                    searchUser();
-                  }}
-                />
-                <IoSearchCircle className="h-10 w-10 mx-1 my-1" color="white" />
-              </div>
-
-              <h1 className="capitalize px-3 mt-2 text-white">messages</h1>
-              {conversation.length > 0 ? (
-                conversation.map(
-                  ({
-                    user: { email, fullName, receiverId },
-                    conversationId,
-                  }) => {
-                    return (
-                      <div
-                        className=" cursor-pointer flex  items-center px-4 py-4 border-b "
-                        key={conversationId}
-                        onClick={() => {
-                          fetchMessages(conversationId, fullName, receiverId);
-                        }}
-                      >
-                        <img
-                          src={avtar}
-                          height={60}
-                          width={60}
-                          alt={fullName}
-                        />
-                        <div className="accountInfo ml-6 text-white">
-                          <h1 className="text-lg">{fullName}</h1>
-                          <h2 className="text-sm font-light">{email}</h2>
-                        </div>
-                        <hr />
-                      </div>
-                    );
-                  }
-                )
-              ) : (
-                <div className="border-2 border-white flex items-center justify-center mt-6">
-                  <Lottie animationData={NoMessage} />
-                </div>
-              )}
-            </div>
-          </div>
+            <ConversationList conversations={conversation} fetchMessages={fetchMessages} />
+         
 
           {/* mid part  of the  home*/}
-          <div className=" col-span-6  h-screen">
-            {messages.name && (
-              <div className="flex items-center justify-between bg-[#392467] shadow-3xl rounded-lg py-1 mt-2 mx-1 relative top-0">
-                <div className="px-4 flex items-center ">
-                  <img
-                    src={avtar}
-                    alt="user image"
-                    height={50}
-                    width={50}
-                    className="py-1"
-                  />
-                  <h1 className="px-4  text-white">
-                    <h1 className="capitalize font-medium text-lg">
-                      {messages.name || <h1> xyz</h1>}
-                    </h1>
-                    <span>status</span>
-                  </h1>
-                </div>
-                <div className="icons flex mx-3">
-                  <MdAddIcCall
-                    className="mr-2 h-6 w-6 cursor-pointer"
-                    color="white"
-                  />
-                  <IoVideocam
-                    className="mr-2 h-6 w-6 cursor-pointer"
-                    color="white"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* chats section */}
-
-            <div className=" h-[80%] overflow-scroll w-full">
-              <div className=" mx-3 my-2">
-                {messages.name ? (
-                  messages?.data?.data?.map(
-                    ({ conversationId, message, senderId, _id }) => {
-                      //  console.log(message);
-                      return (
-                        <div className="mx-3 my-2 " key={_id}>
-                          {senderId == user.id ? (
-                            <div className=" max-w-[40%] rounded-4xl  bg-[#A367B1] text-white px-2 py-2  ml-auto font-edu-nsw">
-                              {message}
-                            </div>
-                          ) : (
-                            <div className=" max-w-[40%] rounded-5xl bg-gray-300 text-black px-2 py-2  font-edu-nsw">
-                              {message}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-                  )
-                ) : (
-                  <div className="text capitalize flex items-center justify-center my-80 text-2xl font-bold">
-                    <h1>no conversation found</h1>
-                  </div>
-                )}
-              </div>
-            </div>
-            <hr />
-
-            {/* input box for sending the  messages  */}
-
-            {messages.name && (
-              <div className="my-2 mx-2  py-3 mb-1 bg-[#392467] flex items-center justify-center rounded-lg">
-                <BsFillEmojiSmileFill color="white" />
-
-                <input
-                  type="text"
-                  name="message"
-                  className="border-none py-2 w-3/4 outline-none bg-transparent placeholder:capitalize placeholder:px-2 bg-white rounded-lg mx-4"
-                  placeholder="type your message.... "
-                  value={sentMessage}
-                  onChange={(e) => setSentMessage(e.target.value)}
-                />
-                <IoSend
-                  className="h-5 w-5 mx-2 cursor-pointer"
-                  color="white"
-                  onClick={() => {
-                    sendMessage();
-                  }}
-                />
-                <FaPlusCircle
-                  className="h-5 w-5 mx-2 cursor-pointer"
-                  color="white"
-                />
-              </div>
-            )}
-          </div>
+            <MessageViewList messages={messages} user={user} sentMessage={sentMessage} sendMessage={sendMessage}
+              updateSentMessage={updateSentMessage}
+            />
 
           {/* right part of the  home */}
-          <div className="col-span-3  bg-[#5D3587] text-white h-screen">
-            <div className="top capitalize h-[10%] mx-4 mt-16 font-semibold text-lg ">
-              <h1>people</h1>
-            </div>
-            {/* show all the user which */}
-            <div className="people h-3/4 overflow-scroll">
-              {showAllUser.map(({ userInfo: { email, fullName, userId } }) => {
-                // Use parentheses for conditional rendering
-                return userId !== user.id ? (
-                  <div
-                    className="cursor-pointer flex items-center px-4 py-4 border-b"
-                    key={Math.random()}
-                    onClick={() => {
-                      createConversation({
-                        senderId: user.id,
-                        receiverId: userId,
-                      });
-                    }}
-                  >
-                    <img src={avtar} height={60} width={60} alt="h" />
-                    <div className="accountInfo ml-6 text-white">
-                      <h1 className="text-lg">{fullName}</h1>
-                      <h2 className="text-sm font-light">{email}</h2>
-                    </div>
-                    <hr />
-                  </div>
-                ) : null; // Return null if the condition is not met
-              })}
-            </div>
-          </div>
+            <People showAllUser={showAllUser} user={user} createConversation={createConversation} />
+            
         </div>
       )}
     </div>
