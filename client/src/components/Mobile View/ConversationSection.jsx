@@ -1,24 +1,28 @@
+/* eslint-disable react/prop-types */
 import  {avtar} from '../../../constant.js'
 
-const ConversationSection = (props) => {
-  // console.log(props.conversations);
+const ConversationSection = ({conversations , handleConversationClick}) => {
+  
 
   return (
     <div>
-      { props.conversations.map((props) => (
+      {conversations.map(({user:{email , fullName , receiverId} , conversationId}) => (
         
-            <div key={props.conversationId} className='mx-2 my-6'>
-              <div className="personChat flex items-center px-4 gap-5">
+            <div key={conversationId} className='mx-2 my-6'>
+              <div className="personChat flex items-center px-4 gap-5 cursor-pointer" 
+              onClick={()=> handleConversationClick(conversationId , fullName , receiverId)}
+              >
                 <img src={avtar} className='h-16 w-16' alt="Profile" />
                 <div className="">
-                  <h1 className='capitalize text-xl'>{props.user.fullName}</h1>
-                  <p className='text-gray-500'>hello </p>
+                  <h1 className='capitalize text-xl'>{fullName}</h1>
+                  <p className='text-gray-500'>{email}</p>
 
                 </div>
                
               </div>
             </div>
           ))}
+        
     </div>
   )
 }

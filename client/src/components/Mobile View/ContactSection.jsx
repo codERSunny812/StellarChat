@@ -1,25 +1,27 @@
+/* eslint-disable react/prop-types */
 import { avtar } from "../../../constant"
 
-const ContactSection = ({ showAllUser }) => {
-  console.log(showAllUser)
+const ContactSection = ({ showAllUser , user }) => {
+  console.log(user)
   return (
     <div>
       {
-      showAllUser.map((props) => {
+      showAllUser.map(({userInfo:{email,fullName,userId}}) => {
         // Use parentheses for conditional rendering
-        return(
+        return user.id  != userId ? (
           <div
             className="cursor-pointer flex items-center px-4 py-4 border-b"
-            key={Math.random()}
+            key={userId}
           >
             <img src={avtar} height={60} width={60} alt="h" />
             <div className="accountInfo ml-6 text-white">
-              <h1 className="text-lg text-black">{props?.userInfo?.fullName}</h1>
-              <h2 className="text-sm font-light text-black">{props?.userInfo?.email}</h2>
+              <h1 className="text-lg text-black">{fullName}</h1>
+              <h2 className="text-sm font-light text-black">{email}</h2>
             </div>
             <hr />
           </div>
-        )
+        ):
+        null
       })}
     </div>
   )

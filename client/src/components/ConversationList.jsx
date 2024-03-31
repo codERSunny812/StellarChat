@@ -8,18 +8,13 @@ import Lottie from "lottie-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ConversationList = ({conversations, fetchMessages} ) => {
-    // console.log(conversations);
-    
+const ConversationList = ({conversations, fetchMessages , user} ) => {
+    console.log(conversations)
 
     const [isLogoutDropDown, setLogOutDropDown] = useState(false);
-    const [user, setUser] = useState(
-        JSON.parse(localStorage.getItem("user-details"))
-    );
     const logoutNavigate = useNavigate();
 
     const logOutHandler = () => {
-
         localStorage.removeItem("user-details");
         localStorage.removeItem("user-token");
         logoutNavigate("/");
@@ -44,7 +39,7 @@ const ConversationList = ({conversations, fetchMessages} ) => {
 
                       <div className="accountInfo ml-6 text-white">
                           <h1 className="text-xl capitalize">{user.fullName}</h1>
-                          <h2 className="text-lg font-light">my account</h2>
+                          <h2 className="text-lg font-light">सर्वेषाम् स्वस्तिर्भवतु🫰</h2>
                       </div>
                   </div>
 
@@ -91,7 +86,7 @@ const ConversationList = ({conversations, fetchMessages} ) => {
                               return (
                                   <div
                                       className=" cursor-pointer flex  items-center px-4 py-4 border-b "
-                                      key={conversationId}
+                                      key={Math.random()}
                                       onClick={() => {
                                           fetchMessages(conversationId, fullName, receiverId);
                                       }}

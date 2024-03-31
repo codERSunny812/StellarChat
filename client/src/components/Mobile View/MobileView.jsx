@@ -13,18 +13,21 @@ import Conversation from './ConversationSection';
 import Setting from  './SettingSection';
 import { avtar } from "../../../constant";
 
+
 const CONVERSATION = 'CONVERSATION';
 const CALL_SECTION = 'CALL_SECTION';
 const CONTACT_SECTION = 'CONTACT_SECTION';
 const SETTING_SECTION = 'SETTING_SECTION';
 
-const MobileView = ({conversations , showAllUser ,user}) => {
+const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessages, messages, sentMessage, updateSentMessageForMobile }) => {
 
 
   
   const [isSearchBarVisible , setIsSearchBarVisible] = useState(false);
   const [searchWord , setSearchWord] = useState("");
   const [showState , setShowState] = useState(CONVERSATION);
+  const [isChatVisible , setIsChatVisible] = useState(false);
+
  
 
 
@@ -40,11 +43,32 @@ const MobileView = ({conversations , showAllUser ,user}) => {
     setShowState(state);
   }
 
+  const  handleConversationClick = (conversationId , fullName , receiverId) =>{
+    console.log("im clicked");
+    fetchMessages(conversationId, fullName, receiverId);
+    setIsChatVisible(conversationId);
+
+  }
+
+  const handleArrowInChat = ()=>{
+ setIsChatVisible(false);
+  }
+
+  
+
 
  
 
-  return (
+  return isChatVisible ? <ChatSection 
+  messages={messages} 
+  handleArrowInChat={handleArrowInChat} 
+  user={user} 
+  sendMessage={sendMessage}
+    sentMessage={sentMessage}
+    updateSentMessageForMobile={updateSentMessageForMobile}/> :  (
     <div className="mobileView h-screen overflow-hidden bg-[#1E1E1E] sticky top-0 left-0">
+    
+
       {/* top section */}
       <div className="topsection flex justify-between items-center text-white mx-[24px] my-[10px]">
 
@@ -99,15 +123,23 @@ const MobileView = ({conversations , showAllUser ,user}) => {
 
           
           {
-            showState === CONVERSATION && <Conversation conversations={conversations} />
+            showState === CONVERSATION && (
+              
+                <Conversation conversations={conversations}
+                  handleConversationClick={handleConversationClick} />
+            
+             
+                
+          
+            ) 
           }
 
           {
-            showState === CALL_SECTION && <CallSection />
+            showState === CALL_SECTION && <CallSection showAllUser={showAllUser} user={user}/>
           }
 
           {
-            showState === CONTACT_SECTION && <ContactSection showAllUser={showAllUser} />
+            showState === CONTACT_SECTION && <ContactSection showAllUser={showAllUser} user={user} />
           }
 
           {
@@ -151,6 +183,7 @@ const MobileView = ({conversations , showAllUser ,user}) => {
           <h1>setting</h1>
         </div>
       </div>
+
 
 
     </div>

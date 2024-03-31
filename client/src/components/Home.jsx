@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MobileView from "./Mobile View/MobileView";
 import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
 import People from "./People";
-import {io} from 'socket.io-client'
+// import {io} from 'socket.io-client'
+
 const DashBoard = () => {
 
   const [user, setUser] = useState(
@@ -15,31 +16,41 @@ const DashBoard = () => {
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
   const [showAllUser, setShowAllUser] = useState([]);
-  const [socket , setSocket] = useState(null);
 
-
-
-  // connect with the socket
-  useEffect(()=>{
-    setSocket(io('http://localhost:3002/'))
-  },[])
-
-  // console.log(socket)
-
-  // event in socket
-  useEffect(() => {
-    if (socket) {
-      socket?.emit("addUser", user.id);
-      socket?.on("getUser",(users)=>{
-        console.log('active users -->'+ users);
-      })
-    }
-  }, [socket]);
-
-
-
+  // connecting the front end with the  socket server
+//   const socket = useMemo(() => io('http://localhost:3000'),[]);
 
   
+//   useEffect(()=>{ 
+//   socket.on('connect',()=>{
+
+//     console.log(`socket is connected ${socket.id}`);
+
+//     // event to send the id of loggedIn user
+//     socket?.emit("addUser",user?.id);
+
+//     socket.on("getUser",(data)=>{
+//       console.log(`active users are` , data);
+//     })
+
+//     socket.on('getMessage',(data)=>{
+//       console.log(data);
+
+//       setMessages((prev)=>({
+//         ...prev,
+//         messages:[...prev , {user:data.user,message:data.message}]
+//     }))
+
+
+
+
+//   })
+
+// })
+// },[socket]);
+
+
+  // handle responsiveness
   useEffect(() => {
     
     const handleResize = () => {
@@ -58,29 +69,32 @@ const DashBoard = () => {
     };
   }, []);
 
+  // fetch conversations of  the loggedIn user
+  const fetchConversation = async () => {
+    const res = await fetch(
+      `http://localhost:3000/api/conversation/${user.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const resData = await res.json();
+    setConversation(resData);
+  };
+
+  // update the conversationList on component mount
   useEffect(() => {
    try {
-     const fetchConversation = async () => {
-       const res = await fetch(
-         `http://localhost:3000/api/conversation/${user.id}`,
-         {
-           method: "GET",
-           headers: {
-             "Content-Type": "application/json",
-           },
-         }
-       );
-       const resData = await res.json();
-      //  console.log(resData);
-       setConversation(prevConversation => [...prevConversation, ...resData]);
-     };
-
      fetchConversation();
-   } catch (error) {
+   }
+   catch (error) {
     console.log(error)
    }
   },[]);
 
+  // fetch all the users
   useEffect(() => {
  try {
    const fetchAllUser = async () => {
@@ -95,14 +109,14 @@ const DashBoard = () => {
      setShowAllUser(resData);
    };
    fetchAllUser();
- } catch (error) {
+ }
+ catch (error) {
   console.log(error)
  }
   }, []);
 
   const fetchMessages = async (conversationId, fullName, receiverId) => {
     try {
-   
       const res = await fetch(
         `http://localhost:3000/api/message/${conversationId}`,
         {
@@ -119,13 +133,22 @@ const DashBoard = () => {
         conversationId,
         receiverId,
       });
-    } catch (error) {
-      console.log("error in fetching the message route");
+    }
+    catch (error) {
+    console.log("error in fetching the message route");
     }
   };
 
   const sendMessage = async () => {
+
     try {
+      // sending a message event 
+      // socket.emit("send-message",{
+      //   conversationId: messages?.conversationId,
+      //   senderId: user?.id,
+      //   message: sentMessage, // Corrected field name to 'message'
+      //   receiverId: messages?.receiverId, 
+      // })
 
       const response = await fetch("http://localhost:3000/api/message", {
         method: "POST",
@@ -135,41 +158,37 @@ const DashBoard = () => {
         body: JSON.stringify({
           conversationId: messages?.conversationId,
           senderId: user?.id,
-          message: sentMessage, // Corrected field name to 'message'
+          message: sentMessage,
           receiverId: messages?.receiverId,
         }),
       });
-      // clearing the state after sending the message
-      setSentMessage("");
 
       if (response.ok) {
         console.log("Message sent successfully");
-        // Optionally, you can handle any logic here after successful message sending
-      } else {
+        setSentMessage("");
+      } 
+      else {
         console.error("Failed to send message");
-        // Optionally, you can handle error cases here
       }
-    } catch (error) {
-      console.log("Error in sending the message:", error);
-      // Optionally, you can handle error cases here
+    } 
+    catch (error) {
+    console.log("Error in sending the message:", error);
     }
   };
  
+
   const createConversation = async ({ senderId, receiverId }) => {
     try {
-    
       // Check if conversation already exists
       const existingConversation = conversation.find(
         (conv) => conv.user.receiverId === receiverId
       );
 
-      console.log("the value of existingConversation is:");
       console.log(existingConversation);
 
       if (existingConversation) {
-        console.log("Conversation already exists:", existingConversation);
         alert("conversation is already created");
-        return; // Exit the function if conversation already exists
+        return; 
       }
 
       const response = await fetch("http://localhost:3000/api/conversation", {
@@ -179,11 +198,17 @@ const DashBoard = () => {
         },
         body: JSON.stringify({ senderId, receiverId }),
       });
-      const responseData = await response.json();
-      console.log("the response of the api of creating a convo is:");
-      console.log(responseData);
-    
-    } catch (error) {
+
+      if (response.ok) {
+        console.log("Conversation created successfully");
+        // Fetch the newly created conversation
+        await fetchConversation();
+      }
+      else {
+        console.error("Failed to create conversation");
+      }
+    }
+    catch (error) {
       console.log("error in creating the conversation");
     }
   };
@@ -192,26 +217,55 @@ const DashBoard = () => {
     setSentMessage(newSentMessage);
   };
 
+  const updateSentMessageForMobile = (newSentMessageFromMobile)=>{
+    setSentMessage(newSentMessageFromMobile);
+  };
+  
+
+
+  console.log(messages);
 
   return (
     <div className="">
       {isMobileView ? (
   
-        <MobileView conversations={conversation} showAllUser={showAllUser} user={user}  />
+        <MobileView 
+        conversations={conversation} 
+        showAllUser={showAllUser} 
+        user={user} 
+        sendMessage={sendMessage} 
+        fetchMessages={fetchMessages} 
+        messages={messages}
+        sentMessage={sentMessage}
+       updateSentMessageForMobile={updateSentMessageForMobile}  
+        />
       ) : (
     
         <div className="h-screen grid grid-cols-12 overflow-hidden">
+
           {/* left  part of the  home*/}
-            <ConversationList conversations={conversation} fetchMessages={fetchMessages} />
+            <ConversationList 
+            conversations={conversation} 
+            fetchMessages={fetchMessages} 
+            user={user}
+            />
          
 
           {/* mid part  of the  home*/}
-            <MessageViewList messages={messages} user={user} sentMessage={sentMessage} sendMessage={sendMessage}
-              updateSentMessage={updateSentMessage}
+            <MessageViewList 
+            messages={messages} 
+            user={user} 
+            sentMessage={sentMessage} 
+            sendMessage={sendMessage}
+            updateSentMessage={updateSentMessage}
             />
 
           {/* right part of the  home */}
-            <People showAllUser={showAllUser} user={user} createConversation={createConversation} />
+            <People 
+            showAllUser={showAllUser} 
+            user={user} 
+            createConversation={createConversation} 
+            />
             
         </div>
       )}

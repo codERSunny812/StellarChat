@@ -4,17 +4,23 @@ import { MdAddIcCall } from "react-icons/md";
 import { FaPlusCircle } from "react-icons/fa";
 import { BsFillEmojiSmileFill } from "react-icons/bs";
 import { avtar } from "../../constant";
+import NoChat from '../anim/NoChat.json'
+import Lottie from "lottie-react";
 
 const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentMessage }) => {
 
     const handleSentMessageChange = (e) => {
         updateSentMessage(e.target.value);
     };
+
+
+    // console.log(messages)
   return (
     <>
 
           <div className=" col-span-6  h-screen">
-              {messages.name && (
+              {
+              messages.name && (
                   <div className="flex items-center justify-between bg-[#392467] shadow-3xl rounded-lg py-1 mt-2 mx-1 relative top-0">
                       <div className="px-4 flex items-center ">
                           <img
@@ -42,16 +48,17 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
                           />
                       </div>
                   </div>
-              )}
+              )
+              }
 
               {/* chats section */}
 
               <div className=" h-[80%] overflow-scroll w-full">
                   <div className=" mx-3 my-2">
                       {messages.name ? (
+                        messages.data.data.length > 0 ?(
                           messages?.data?.data?.map(
                               ({ conversationId, message, senderId, _id }) => {
-                                  //  console.log(message);
                                   return (
                                       <div className="mx-3 my-2 " key={_id}>
                                           {senderId == user.id ? (
@@ -66,7 +73,13 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
                                       </div>
                                   );
                               }
-                          )
+                          ) 
+                        ) : (
+                            <div className=" flex flex-col items-center justify-center mt-6">
+                                <Lottie animationData={NoChat}/>
+                                <h1 className="font-semibold uppercase text-4xl">no chat found</h1>
+                            </div>
+                        )
                       ) : (
                           <div className="text capitalize flex items-center justify-center my-80 text-2xl font-bold">
                               <h1>no conversation found</h1>
