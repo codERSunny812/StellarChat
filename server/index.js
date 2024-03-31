@@ -6,47 +6,108 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { connectDatabase } = require("./Database/data_connection");
 const cors = require("cors");
-const io = require( "socket.io" )(3002,{
-  cors:{
-    origin:'http://localhost:3000/'
-  }
-})
+// const {Server} = require('socket.io')
+// const {createServer} = require('http')
 
-// connect to the database
+
+
+
+// connecting  to the database
 connectDatabase();
 
 // import the  modals
 const { userModal } = require("./models/UserModal");
 const { conversationModal } = require("./models/ConversationModel");
 const { messageModal } = require("./models/MessageModal");
+
 const port = process.env.PORT;
 
 const app = express();
+
+// const server = createServer(app);
 
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-// Socket.io
+//socket server instance 
+// const io = new Server(server,{
+//   cors:{
+//     origin:"*",
+//     methods:["GET","POST"],
+//     credentials:true,
+//   }
+// })
 
-// if we want  to recieve  something from the  frontend then we use socket and if we want to send something to the frontend then we use io
+//connecting  to the entire  socket server 
+// let allConnectedUser = [];
 
-let addedUser=[];
-io.on("connection",(socket)=>{
-  console.log('user connected'+ " " +socket.id);
-  socket.on("addUser",(userId)=>{
-    const isUserExist = addedUser.find(user=> user.userId === userId);
-    if(!isUserExist){
-      const users = {userId,socketId:socket.id};
-      addedUser.push(users);
-      // Emitting to all other clients except the sender
-      socket.broadcast.emit("getUser", JSON.stringify(addedUser));
-    }
-    
-  })
-})
+// io.on("connection",(socket)=>{
+// console.log(`user connected ${socket.id}`);
 
+// // handle the event
+// socket.on("addUser",(data)=>{
+
+//   // check the user is already present in the array or not
+
+//   const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
+
+//   if(!isUserPresent){
+
+//     const user = {
+//       userId: data,
+//       socketId: socket.id
+//     }
+
+//     //save the user details in array 
+//     allConnectedUser.push(user);
+
+//     io.emit("getUser",allConnectedUser);
+
+
+//   }
+
+  
+
+// });
+
+// // handling the socket message event
+//   socket.on("send-message",async({conversationId , senderId , message , receiverId})=>{
+//   //  check for the receiverId
+//   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
+//   const receiver = allConnectedUser.find((users)=> users.userId === receiverId);
+
+//     const sender = allConnectedUser.find((users) => users.userId === senderId);
+
+//     const user = await userModal.findById(senderId);
+
+
+//   if(receiver){
+//     io.to(receiver.socketId).to(sender.socketId).emit("getMessage",{
+//       senderId,
+//       conversationId,
+//       message,
+//       receiverId,
+//       user:{
+//         id:user._id,
+//         fullName:user.fullName,
+//         email:user.email
+//       }
+//     })
+//   }
+
+
+//   });
+
+
+
+
+// socket.on('disconnect',()=>{
+//   allConnectedUser = allConnectedUser.filter((user)=> user.socketId === socket.id);
+//   io.emit("getUser",allConnectedUser);
+// });
+// })
 
 //home route
 app.get("/", (req, res) => {
@@ -214,7 +275,10 @@ app.post("/api/conversation", async (req, res) => {
     res.status(200).json({
       status: "completed",
       message: `new Conversation is created between the two user`,
-      data: newConversation,
+      data: {
+        newConversation,
+        fullName:receiverName.fullName
+      },
     });
   } catch (error) {
     console.log(`getting error in the conversation and that is ${error}`);
