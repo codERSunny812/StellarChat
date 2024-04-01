@@ -4,7 +4,7 @@ import MobileView from "./Mobile View/MobileView";
 import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
 import People from "./People";
-// import {io} from 'socket.io-client'
+import {io} from 'socket.io-client'
 
 const DashBoard = () => {
 
@@ -18,36 +18,32 @@ const DashBoard = () => {
   const [showAllUser, setShowAllUser] = useState([]);
 
   // connecting the front end with the  socket server
-//   const socket = useMemo(() => io('http://localhost:3000'),[]);
+  const socket = useMemo(() => io('http://localhost:3000'),[]);
 
   
-//   useEffect(()=>{ 
-//   socket.on('connect',()=>{
+  useEffect(()=>{ 
+  socket.on('connect',()=>{
 
-//     console.log(`socket is connected ${socket.id}`);
+    console.log(`socket is connected ${socket.id}`);
 
-//     // event to send the id of loggedIn user
-//     socket?.emit("addUser",user?.id);
+    // event to send the id of loggedIn user
+    socket?.emit("addUser",user?.id);
 
-//     socket.on("getUser",(data)=>{
-//       console.log(`active users are` , data);
-//     })
+    socket.on("getUser",(data)=>{
+      console.log(`active users are` , data);
+    })
 
-//     socket.on('getMessage',(data)=>{
-//       console.log(data);
+    socket.on('getMessage',(data)=>{
+      console.log(data);
+      setMessages(prevMessages => ({
+        ...prevMessages,
+        [messages.conversationId]: [...(prevMessages[messages.conversationId] || []), messages]
+      }));
 
-//       setMessages((prev)=>({
-//         ...prev,
-//         messages:[...prev , {user:data.user,message:data.message}]
-//     }))
+  })
 
-
-
-
-//   })
-
-// })
-// },[socket]);
+})
+},[socket]); 
 
 
   // handle responsiveness
@@ -129,7 +125,7 @@ const DashBoard = () => {
       const resData = await res.json();
       setMessages({
         data: resData,
-        name: fullName,
+        name: fullName, //name of the receiver
         conversationId,
         receiverId,
       });
@@ -143,12 +139,12 @@ const DashBoard = () => {
 
     try {
       // sending a message event 
-      // socket.emit("send-message",{
-      //   conversationId: messages?.conversationId,
-      //   senderId: user?.id,
-      //   message: sentMessage, // Corrected field name to 'message'
-      //   receiverId: messages?.receiverId, 
-      // })
+      socket.emit("send-message",{
+        conversationId: messages?.conversationId,
+        senderId: user?.id,
+        message: sentMessage, // Corrected field name to 'message'
+        receiverId: messages?.receiverId, 
+      })
 
       const response = await fetch("http://localhost:3000/api/message", {
         method: "POST",

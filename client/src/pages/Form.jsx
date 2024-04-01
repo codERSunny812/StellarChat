@@ -7,25 +7,31 @@ import { useNavigate } from "react-router-dom";
 const Form = () => {
   // tells the status of the user, if it is logged in or not.
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
-
-  console.log(isLoggedIn);
-
-  // for navigation to the home page
-  const navigate = useNavigate();
+  const [profilePicture , setProfilePicture] = useState(null);
 
   const initialData = {
     fullName: "",
     email: "",
     password: "",
+    profilePicture:""
   };
-
   const [data, setData] = useState(initialData);
-  console.log(data);
 
-  // function to handle the form submission
+  // for navigation to the home page
+  const navigate = useNavigate();
+
+
+//upload the file and set it  in the state  variable
+  const onFileUpload = (e) => {
+    setProfilePicture(e.target.files[0]);
+  }
+
+  
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    
 
     console.log("the form is submit");
 
@@ -36,12 +42,9 @@ const Form = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body:JSON.stringify(data),
       }
     );
-
-    // console.log("the reponse of the data is:");
-    // console.log(res);
 
     //handle the response
     if (res.status == 400) {
@@ -67,7 +70,7 @@ const Form = () => {
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
       <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
-        <form className=" my-4 flex flex-col" autoComplete="off">
+        <form className=" my-2 flex flex-col" autoComplete="off">
           {isLoggedIn ? (
             <h1 className="capitalize text-center my-6 font-bold text-lg">
               log in to chatkro
@@ -85,7 +88,7 @@ const Form = () => {
               continue us
             </p>
           ) : (
-            <p className="px-9 capitalize text-gray-400 my-5">
+            <p className="px-9 capitalize text-gray-400 my-2">
               {" "}
               get chatting with your family and friends today by signing up for
               our chat app!
@@ -136,6 +139,8 @@ const Form = () => {
           />
 
           {!isLoggedIn && <Input label="confirm password" type="password" />}
+
+          {!isLoggedIn && <Input type="file" label="choose any picture" onChange={onFileUpload} />}
 
           <button
             type="submit"
