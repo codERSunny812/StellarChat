@@ -6,8 +6,8 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { connectDatabase } = require("./Database/data_connection");
 const cors = require("cors");
-// const {Server} = require('socket.io')
-// const {createServer} = require('http')
+const {Server} = require('socket.io')
+const {createServer} = require('http')
 
 
 
@@ -22,9 +22,10 @@ const { messageModal } = require("./models/MessageModal");
 
 const port = process.env.PORT;
 
+
 const app = express();
 
-// const server = createServer(app);
+const server = createServer(app);
 
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -32,82 +33,83 @@ app.use(express.json());
 app.use(cors());
 
 //socket server instance 
-// const io = new Server(server,{
-//   cors:{
-//     origin:"*",
-//     methods:["GET","POST"],
-//     credentials:true,
-//   }
-// })
+const io = new Server(server,{
+  cors:{
+    origin:"*",
+    methods:["GET","POST"],
+    credentials:true,
+  }
+})
 
 //connecting  to the entire  socket server 
-// let allConnectedUser = [];
+let allConnectedUser = [];
 
-// io.on("connection",(socket)=>{
-// console.log(`user connected ${socket.id}`);
+io.on("connection",(socket)=>{
+console.log(`user connected ${socket.id}`);
 
-// // handle the event
-// socket.on("addUser",(data)=>{
+// handle the event
+socket.on("addUser",(data)=>{
 
-//   // check the user is already present in the array or not
+  // check the user is already present in the array or not
 
-//   const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
+  const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
 
-//   if(!isUserPresent){
+  if(!isUserPresent){
 
-//     const user = {
-//       userId: data,
-//       socketId: socket.id
-//     }
+    const user = {
+      userId: data,
+      socketId: socket.id
+    }
 
-//     //save the user details in array 
-//     allConnectedUser.push(user);
+    //save the user details in array 
+    allConnectedUser.push(user);
 
-//     io.emit("getUser",allConnectedUser);
+    io.emit("getUser",allConnectedUser);
 
 
-//   }
+  }
 
   
 
-// });
+});
 
-// // handling the socket message event
-//   socket.on("send-message",async({conversationId , senderId , message , receiverId})=>{
-//   //  check for the receiverId
-//   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
-//   const receiver = allConnectedUser.find((users)=> users.userId === receiverId);
+// handling the socket message event
+  socket.on("send-message",async({conversationId , senderId , message , receiverId})=>{
+  //  check for the receiverId
+  // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
+  const receiver = allConnectedUser.find((users)=> users.userId === receiverId);
 
-//     const sender = allConnectedUser.find((users) => users.userId === senderId);
+    const sender = allConnectedUser.find((users) => users.userId === senderId);
 
-//     const user = await userModal.findById(senderId);
-
-
-//   if(receiver){
-//     io.to(receiver.socketId).to(sender.socketId).emit("getMessage",{
-//       senderId,
-//       conversationId,
-//       message,
-//       receiverId,
-//       user:{
-//         id:user._id,
-//         fullName:user.fullName,
-//         email:user.email
-//       }
-//     })
-//   }
+    const user = await userModal.findById(senderId);
 
 
-//   });
+  if(receiver){
+    io.to(receiver.socketId).to(sender.socketId).emit("getMessage",{
+      senderId,
+      conversationId,
+      message,
+      receiverId,
+      user:{
+        id:user._id,
+        fullName:user.fullName,
+        email:user.email
+      }
+    })
+  }
+
+
+  });
 
 
 
 
-// socket.on('disconnect',()=>{
-//   allConnectedUser = allConnectedUser.filter((user)=> user.socketId === socket.id);
-//   io.emit("getUser",allConnectedUser);
-// });
-// })
+socket.on('disconnect',()=>{
+  allConnectedUser = allConnectedUser.filter((user)=> user.socketId === socket.id);
+  io.emit("getUser",allConnectedUser);
+});
+
+})
 
 //home route
 app.get("/", (req, res) => {
@@ -120,50 +122,43 @@ app.post("/api/register", async (req, res, next) => {
     console.log("Inside the  register route");
 
     // taking the data from the front end
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password , profilePicture } = req.body;
+
+
+    console.log("uploaded file is:")
+    const file = profilePicture;
+    console.log(file);
+
+   
 
     // checking that the data is present or not
     if (!fullName || !email || !password) {
-      console.log("something is missing");
-
       return res.status(100).json({
         status: "403",
         message: "please provide all the details",
       });
     }
 
-    console.log("validating the user");
-
-    //checking that the user is already exist or not in the database
-
     const isAlreadyExist = await userModal.findOne({ email });
 
-    console.log("user is validated");
+   
 
     if (isAlreadyExist) {
-      console.log("user already exit no need to create the new  user");
+    
       return res.status(500).json({
         status: "400",
         message: "user already exist",
       });
     }
-
-    console.log("password hashing start");
-    // Hashing the password before storing it into the database
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("password  hashing  end");
 
-    console.log("creation of the user in the DB started");
-
-    // Creating a new user with hashed password
     const newUser = await userModal.create({
       email: email,
       fullName: fullName,
-      password: hashedPassword, // Set the hashed password
+      password: hashedPassword, 
     });
 
-    console.log("user creation is done in the DB");
 
     return res.status(200).json({
       status: "success",
@@ -173,7 +168,7 @@ app.post("/api/register", async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      status: "error",
+     
       message: "Internal server error , can't register the user at this time",
     });
   }
@@ -247,7 +242,6 @@ app.post("/api/login", async (req, res, next) => {
 });
 
 // conversation route -> to create a new conversation btw two people
-
 app.post("/api/conversation", async (req, res) => {
   try {
     console.log("inside the conversation route ");
@@ -417,17 +411,20 @@ app.get("/api/message/:conversationId", async (req, res) => {
       });
 
     const message = await messageModal.find({ conversationId });
-    const messageUserData = Promise.all(
-      message.map(async (message) => {
-        const user = await userModal.findById(message.senderId);
-        return {
-          user: { id: user._id, email: user.email, fullName: user.fullName },
-          message: message.message,
-          senderUserName: message.senderUserName,
-          receiverUserName: message.receiverUserName,
-        };
-      })
-    );
+
+    // const messageUserData = Promise.all(
+    //   message.map(async (message) => {
+    //     const user = await userModal.findById(message.senderId);
+    //     return {
+    //       user: { id: user._id, email: user.email, fullName: user.fullName },
+    //       message: message.message,
+    //       senderUserName: message.senderUserName,
+    //       receiverUserName: message.receiverUserName,
+    //     };
+    //   })
+    // );
+    
+    
     res.status(200).json({
       status: "good",
       message:
@@ -460,6 +457,7 @@ app.get("/api/users", async (req, res) => {
 });
 
 // starting the server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+

@@ -6,9 +6,8 @@ const URL = process.env.MONGO_URL;
 
 exports.connectDatabase = () => {
   // connect to the database
-
   mongoose
-    .connect(`${URL}chatkro`)
+    .connect(`mongodb+srv://codeERASunny:Sunnynjr%401234%40@chatkroapp.o7rlluw.mongodb.net/`)
     .then(() => {
       console.log("the mongodb is successfully connected");
     })
