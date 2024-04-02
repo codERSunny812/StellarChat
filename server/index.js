@@ -8,14 +8,13 @@ const { connectDatabase } = require("./Database/data_connection");
 const cors = require("cors");
 const {Server} = require('socket.io')
 const {createServer} = require('http')
-
-
+const multer = require('multer')
 
 
 // connecting  to the database
 connectDatabase();
 
-// import the  modals
+// import the  data modals
 const { userModal } = require("./models/UserModal");
 const { conversationModal } = require("./models/ConversationModel");
 const { messageModal } = require("./models/MessageModal");
@@ -42,30 +41,42 @@ const io = new Server(server,{
 })
 
 //connecting  to the entire  socket server 
+
+  // Storing the data of all the connected user in a array
+
 let allConnectedUser = [];
+
+
+console.log("the  connected user array is:");
+console.log(allConnectedUser);
+
 
 io.on("connection",(socket)=>{
 
-console.log(`user connected ${socket.id}`);
+console.log("a new user is connected: ",socket.id);
+
 
 //listing to the event
 socket.on("addUser",(data)=>{
 
-  // check the user is already present in the array or not
-
+  // check the user is already present in the array or not.
   const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
 
   if(!isUserPresent){
+
     const user = {
       userId: data,
-      socketId: socket.id
+      socketId: socket.id,
+      message:"the logged in  user is added in the array"
     }
 
     //save the user details in array 
     allConnectedUser.push(user);
 
+    console.log("the value of the arrray after the user login is:");
     console.log(allConnectedUser);
 
+    // emiting an event to get the data of the added user in the front end page
     io.emit("getUser",allConnectedUser);
 
 
@@ -77,14 +88,23 @@ socket.on("addUser",(data)=>{
 
 // handling the socket message event
   socket.on("send-message",async({conversationId , senderId , message , receiverId})=>{
+
   //  check for the receiverId
   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
-  const receiver = allConnectedUser.find((users)=> users.userId === receiverId);
+  const receiver = await allConnectedUser.find((users)=> users.userId === receiverId);
 
-  const sender = allConnectedUser.find((users) => users.userId === senderId);
-
+  const sender = await allConnectedUser.find((users) => users.userId === senderId);
+  
   const user = await userModal.findById(senderId);
+  
+  console.log("the value of the receiver is:");
+  console.log(receiver);
+  
+  console.log("the value of the sender is:")
+  console.log(sender);
 
+  console.log("the value which is recieved by the front end is:");
+  console.log(conversationId, senderId , message , receiverId);
 
 
   if(receiver){
@@ -121,24 +141,17 @@ app.get("/", (req, res) => {
 });
 
 // registration route
-app.post("/api/register", async (req, res, next) => {
+app.post("/api/register",async (req, res, next) => {
   try {
-    console.log("Inside the  register route");
-
     // taking the data from the front end
-    const { fullName, email, password , profilePicture } = req.body;
+    console.log(req);
 
-
-    console.log("uploaded file is:")
-    const file = profilePicture;
-    console.log(file);
-
-   
+    const { fullName, email, password } = req.body;
 
     // checking that the data is present or not
     if (!fullName || !email || !password) {
       return res.status(100).json({
-        status: "403",
+        status: "100",
         message: "please provide all the details",
       });
     }
@@ -150,7 +163,7 @@ app.post("/api/register", async (req, res, next) => {
     if (isAlreadyExist) {
     
       return res.status(500).json({
-        status: "400",
+        status: "500",
         message: "user already exist",
       });
     }
@@ -167,7 +180,7 @@ app.post("/api/register", async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "user register successfully",
-      data: newUser,
+       data:newUser
     });
   } catch (error) {
     console.log(error);
@@ -181,8 +194,7 @@ app.post("/api/register", async (req, res, next) => {
 // login route for  login the user
 app.post("/api/login", async (req, res, next) => {
   try {
-    console.log("inside the login route");
-
+    
     const { email, password } = req.body;
 
     // checking whether the field are empty or not
@@ -248,8 +260,7 @@ app.post("/api/login", async (req, res, next) => {
 // conversation route -> to create a new conversation btw two people
 app.post("/api/conversation", async (req, res) => {
   try {
-    console.log("inside the conversation route ");
-
+    
     const { senderId, receiverId } = req.body;
 
     // let's store the name of the sender and receiver  in the conversation modal
@@ -336,8 +347,7 @@ app.post("/api/message", async (req, res) => {
     // console.log(senderName)
 
     if (!conversationId && receiverId) {
-      console.log("hello from the block 1");
-
+      
       const newConversation = conversationModal({
         members: [
           senderId,
@@ -366,7 +376,7 @@ app.post("/api/message", async (req, res) => {
         },
       });
     } else if (conversationId) {
-      console.log("hello  from the block 2");
+    
       // If conversationId is provided, save the message to the existing conversation
       const newMessage = messageModal({
         conversationId,
