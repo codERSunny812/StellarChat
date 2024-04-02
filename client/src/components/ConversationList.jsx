@@ -5,20 +5,22 @@ import { IoSearchCircle } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import NoMessage from "../anim/NoMessage";
 import Lottie from "lottie-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserStatusContext } from "../Context/Auth";
 
 const ConversationList = ({conversations, fetchMessages , user} ) => {
     
-    console.log(conversations)
-
     const [isLogoutDropDown, setLogOutDropDown] = useState(false);
     const logoutNavigate = useNavigate();
+    const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
 
     const logOutHandler = () => {
         localStorage.removeItem("user-details");
         localStorage.removeItem("user-token");
         logoutNavigate("/");
+        setIsLoggedIn(!isLoggedIn);
+        
     };
 
   return (
@@ -108,8 +110,9 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                           }
                       )
                   ) : (
-                      <div className="border-2 border-white flex items-center justify-center mt-6">
+                      <div className="mt-6 mx-2 px-5">
                           <Lottie animationData={NoMessage} />
+                          <h1 className="text-center capitalize text-white font-semibold text-lg my-4">no conversation is available</h1>
                       </div>
                   )}
               </div>

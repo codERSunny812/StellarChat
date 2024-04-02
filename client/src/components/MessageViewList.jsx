@@ -13,8 +13,6 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
         updateSentMessage(e.target.value);
     };
 
-
-    // console.log(messages)
   return (
     <>
 
@@ -30,12 +28,12 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
                               width={50}
                               className="py-1"
                           />
-                          <h1 className="px-4  text-white">
+                          <div className="px-4  text-white">
                               <h1 className="capitalize font-medium text-lg">
                                   {messages.name || <h1> xyz</h1>}
                               </h1>
                               <span>status</span>
-                          </h1>
+                          </div>
                       </div>
                       <div className="icons flex mx-3">
                           <MdAddIcCall

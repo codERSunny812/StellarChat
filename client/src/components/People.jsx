@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { avtar } from "../../constant";
+import NoPeople from '../anim/NoPeople.json'
+import Lottie from "lottie-react";
 
 const People = ({ showAllUser, user, createConversation }) => {
   return (
@@ -10,7 +12,10 @@ const People = ({ showAllUser, user, createConversation }) => {
               </div>
               {/* show all the user which */}
               <div className="people h-3/4 overflow-scroll">
-                  {showAllUser.map(({ userInfo: { email, fullName, userId } }) => {
+                  {
+                //    check that user are present or not
+                showAllUser.length > 0 ? ( 
+                  showAllUser.map(({ userInfo: { email, fullName, userId } }) => {
                       // Use parentheses for conditional rendering
                       return userId !== user.id ? (
                           <div
@@ -31,7 +36,17 @@ const People = ({ showAllUser, user, createConversation }) => {
                               <hr />
                           </div>
                       ) : null; // Return null if the condition is not met
-                  })}
+                  })
+                ) : (
+                    <>
+                    <Lottie animationData={NoPeople} />
+                    <h1 className="text-center capitalize font-bold text-xl">no people are available</h1>
+
+                    </>
+                    
+                )
+                  
+                  }
               </div>
           </div>
    </>

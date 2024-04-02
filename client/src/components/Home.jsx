@@ -31,17 +31,19 @@ const DashBoard = () => {
       
     // listing to the event
     socket.on("getUser",(data)=>{
-      console.log(`active users are` , data);
+      console.log(`active users are >>> ` , data);
     })
 
     socket.on('getMessage',(data)=>{
       console.log(data);
-      setMessages(prevMessages => ({
-        ...prevMessages,
-        [messages.conversationId]: [...(prevMessages[messages.conversationId] || []), messages]
-      }));
+      setMessages(prev => ({
+        ...prev,
+        messages: [...prev.messages, { user: data.user, message: data.message }]
+      }))
+      // setMessages(data.message);
+      console.log(messages);
 
-  })
+  });
 
 })
 },[socket]); 
@@ -217,10 +219,13 @@ const DashBoard = () => {
   const updateSentMessageForMobile = (newSentMessageFromMobile)=>{
     setSentMessage(newSentMessageFromMobile);
   };
+
+
+  console.log("the value of the  message : ",sentMessage);
+  console.log("the value of the message in the convo is: ", messages)
+  console.log("the value of the conversation is:",conversation);
+  console.log("the value of the all the user is:",showAllUser);
   
-
-
-  console.log(messages);
 
   return (
     <div className="">
@@ -240,29 +245,27 @@ const DashBoard = () => {
     
         <div className="h-screen grid grid-cols-12 overflow-hidden">
 
-          {/* left  part of the  home*/}
-            <ConversationList 
-            conversations={conversation} 
-            fetchMessages={fetchMessages} 
-            user={user}
-            />
+          <ConversationList 
+          conversations={conversation} 
+          fetchMessages={fetchMessages} 
+          user={user}
+          />
          
 
-          {/* mid part  of the  home*/}
-            <MessageViewList 
-            messages={messages} 
-            user={user} 
-            sentMessage={sentMessage} 
-            sendMessage={sendMessage}
-            updateSentMessage={updateSentMessage}
-            />
+         
+          <MessageViewList 
+          messages={messages} 
+          user={user} 
+          sentMessage={sentMessage} 
+          sendMessage={sendMessage}
+          updateSentMessage={updateSentMessage}
+          />
 
-          {/* right part of the  home */}
-            <People 
-            showAllUser={showAllUser} 
-            user={user} 
-            createConversation={createConversation} 
-            />
+          <People 
+          showAllUser={showAllUser} 
+          user={user} 
+          createConversation={createConversation} 
+          />
             
         </div>
       )}
