@@ -45,9 +45,10 @@ const io = new Server(server,{
 let allConnectedUser = [];
 
 io.on("connection",(socket)=>{
+
 console.log(`user connected ${socket.id}`);
 
-// handle the event
+//listing to the event
 socket.on("addUser",(data)=>{
 
   // check the user is already present in the array or not
@@ -55,7 +56,6 @@ socket.on("addUser",(data)=>{
   const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
 
   if(!isUserPresent){
-
     const user = {
       userId: data,
       socketId: socket.id
@@ -63,6 +63,8 @@ socket.on("addUser",(data)=>{
 
     //save the user details in array 
     allConnectedUser.push(user);
+
+    console.log(allConnectedUser);
 
     io.emit("getUser",allConnectedUser);
 
@@ -79,9 +81,10 @@ socket.on("addUser",(data)=>{
   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
   const receiver = allConnectedUser.find((users)=> users.userId === receiverId);
 
-    const sender = allConnectedUser.find((users) => users.userId === senderId);
+  const sender = allConnectedUser.find((users) => users.userId === senderId);
 
-    const user = await userModal.findById(senderId);
+  const user = await userModal.findById(senderId);
+
 
 
   if(receiver){
@@ -108,6 +111,7 @@ socket.on('disconnect',()=>{
   allConnectedUser = allConnectedUser.filter((user)=> user.socketId === socket.id);
   io.emit("getUser",allConnectedUser);
 });
+
 
 })
 

@@ -28,7 +28,8 @@ const DashBoard = () => {
 
     // event to send the id of loggedIn user
     socket?.emit("addUser",user?.id);
-
+      
+    // listing to the event
     socket.on("getUser",(data)=>{
       console.log(`active users are` , data);
     })
