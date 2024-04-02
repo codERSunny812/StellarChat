@@ -7,14 +7,14 @@ import { UserStatusContext } from "../Context/Auth";
 const AfterSplash = () => {
   const { setIsLoggedIn } = useContext(UserStatusContext);
   return (
-    <div className="md:h-screen h-full w-full flex md:justify-center items-center">
-      <div className="border-2 border-yellow-500 md:h-screen h-screen md:w-[400px] bg-gradient-to-tr from-custom-purple-light to-custom-purple-dark flex flex-col  items-center text-white">
+    <div className="h-screen  w-full flex justify-center items-center">
+      <div className="h-screen w-[400px] bg-gradient-to-tr from-custom-purple-light to-custom-purple-dark flex flex-col  items-center text-white">
         <img
           src={Logo}
           alt="App logo"
-          className="  border-white h-11 w-26 md:my-7 my-5"
+          className=" h-11 w-26 my-7"
         />
-        <h1 className="md:text-7xl text-6xl capitalize px-5 font-sans md:my-5 my-3">
+        <h1 className="text-7xl  capitalize px-5 font-sans my-5">
           connect friends{" "}
           <span className="font-semibold my-2">easily & quickly</span>
         </h1>
@@ -26,7 +26,7 @@ const AfterSplash = () => {
         {/* login throught social media */}
         <SocialMedia />
 
-        <div className=" uppercase text-sm  flex items-center md:mt-10 mt-6">
+        <div className=" uppercase text-sm  flex items-center mt-10">
           <hr className="w-44" />
           <span className="px-2">or</span>
           <hr className="w-44" />

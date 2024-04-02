@@ -12,9 +12,9 @@ const Form = () => {
   const initialData = {
     fullName: "",
     email: "",
-    password: "",
-    profilePicture:""
+    password: ""
   };
+
   const [data, setData] = useState(initialData);
 
   // for navigation to the home page
@@ -23,17 +23,34 @@ const Form = () => {
 
 //upload the file and set it  in the state  variable
   const onFileUpload = (e) => {
-    setProfilePicture(e.target.files[0]);
-  }
+    const file = e.target.files[0];
+    console.log("Selected file:", file);
+    setProfilePicture(file); // Set the FormData object in state
+  };
 
+
+
+
+
+  console.log(data);
+  console.log(profilePicture);
+
+  
   
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("the form is submit");
+    
+    // Create a FormData object to send the form data including the profile picture
+    const formData = new FormData();
+    formData.append("fullName", data.fullName);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("profilePicture", profilePicture);
     
 
-    console.log("the form is submit");
 
     const res = await fetch(
       `http://localhost:3000/api/${isLoggedIn ? "login" : "register"}`,
@@ -42,12 +59,12 @@ const Form = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body:JSON.stringify(data),
+        body: JSON.stringify(formData),
       }
     );
 
     //handle the response
-    if (res.status == 400) {
+    if (res.status == 500) {
       alert("all field are required");
     } else if (res.status == 404) {
       alert("user not found");
@@ -70,7 +87,7 @@ const Form = () => {
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
       <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">
-        <form className=" my-2 flex flex-col" autoComplete="off">
+        <form className=" my-2 flex flex-col" autoComplete="off" encType="multipart/form-data">
           {isLoggedIn ? (
             <h1 className="capitalize text-center my-6 font-bold text-lg">
               log in to chatkro
