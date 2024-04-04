@@ -7,7 +7,7 @@ const URL = process.env.MONGO_URL;
 exports.connectDatabase = () => {
   // connect to the database
   mongoose
-    .connect(`${URL}`)
+    .connect(`${URL}chatkro`)
     .then(() => {
       console.log("the mongodb is successfully connected");
     })

@@ -8,7 +8,7 @@ const { connectDatabase } = require("./Database/data_connection");
 const cors = require("cors");
 const {Server} = require('socket.io')
 const {createServer} = require('http')
-const multer = require('multer')
+const multer = require('multer');
 
 
 // connecting  to the database
@@ -57,23 +57,25 @@ console.log("a new user is connected: ",socket.id);
 
 
 //listing to the event
-socket.on("addUser",(data)=>{
+socket.on("addUser",({id , name})=>{
+  // console.log(name);
 
   // check the user is already present in the array or not.
-  const isUserPresent = allConnectedUser.find((user)=> user.userId === data);
+  const isUserPresent = allConnectedUser.find((user)=> user.userId === id);
 
   if(!isUserPresent){
 
     const user = {
-      userId: data,
+      userId: id,
+      userName:name,
       socketId: socket.id,
       message:"the logged in  user is added in the array"
     }
 
-    //save the user details in array 
+  //   //save the user details in array 
     allConnectedUser.push(user);
 
-    console.log("the value of the arrray after the user login is:");
+  //   console.log("the value of the arrray after the user login is:");
     console.log(allConnectedUser);
 
     // emiting an event to get the data of the added user in the front end page
@@ -91,6 +93,7 @@ socket.on("addUser",(data)=>{
 
   //  check for the receiverId
   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
+
   const receiver = await allConnectedUser.find((users)=> users.userId === receiverId);
 
   const sender = await allConnectedUser.find((users) => users.userId === senderId);
@@ -104,6 +107,7 @@ socket.on("addUser",(data)=>{
   console.log(sender);
 
   console.log("the value which is recieved by the front end is:");
+  
   console.log(conversationId, senderId , message , receiverId);
 
 
@@ -143,8 +147,9 @@ app.get("/", (req, res) => {
 // registration route
 app.post("/api/register",async (req, res, next) => {
   try {
+
+    console.log("registration route");
     // taking the data from the front end
-    console.log(req);
 
     const { fullName, email, password } = req.body;
 
@@ -162,12 +167,13 @@ app.post("/api/register",async (req, res, next) => {
 
     if (isAlreadyExist) {
     
-      return res.status(500).json({
-        status: "500",
+      return res.status(204).json({
+        status: "204",
         message: "user already exist",
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const hashedPassword = await bcrypt.hash(password,5);
 
 
     const newUser = await userModal.create({
@@ -182,13 +188,16 @@ app.post("/api/register",async (req, res, next) => {
       message: "user register successfully",
        data:newUser
     });
-  } catch (error) {
+
+  }
+  catch (error) {
     console.log(error);
     return res.status(500).json({
      
       message: "Internal server error , can't register the user at this time",
     });
   }
+
 });
 
 // login route for  login the user
@@ -199,7 +208,7 @@ app.post("/api/login", async (req, res, next) => {
 
     // checking whether the field are empty or not
     if (!email || !password) {
-      return res.status(100).json({
+      return res.status(400).json({
         status: "403",
         message: "Email and password are required",
       });
@@ -207,14 +216,15 @@ app.post("/api/login", async (req, res, next) => {
 
     const user = await userModal.findOne({ email });
 
-    if (!user) {
+    if (!user){
       res.status(404).json({
-        status: "400",
+        status: "404",
         message: "User not found",
       });
     }
 
     // it will check the user's entered password with the user password which is saved into the database
+
     const validateUser = await bcrypt.compare(password, user.password);
 
     if (!validateUser) {
@@ -222,7 +232,8 @@ app.post("/api/login", async (req, res, next) => {
         status: "401",
         message: "email or password is incorrect",
       });
-    } else {
+    }
+    else {
       // create a token on the sucessfull login of the user
       const payLoad = {
         userId: user._id,
@@ -252,7 +263,8 @@ app.post("/api/login", async (req, res, next) => {
         }
       );
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.log(`error in logging of the user ${error}`);
   }
 });
@@ -289,7 +301,8 @@ app.post("/api/conversation", async (req, res) => {
         fullName:receiverName.fullName
       },
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.log(`getting error in the conversation and that is ${error}`);
   }
 });
