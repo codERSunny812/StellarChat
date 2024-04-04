@@ -27,7 +27,13 @@ const DashBoard = () => {
     console.log(`socket is connected ${socket.id}`);
 
     // event to send the id of loggedIn user
-    socket?.emit("addUser",user?.id);
+
+    const userData = {
+      id: user?.id,
+      name:  user?.fullName,
+    }
+
+    socket?.emit("addUser",userData);
       
     // listing to the event
     socket.on("getUser",(data)=>{

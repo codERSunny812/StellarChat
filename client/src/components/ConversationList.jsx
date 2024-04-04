@@ -14,12 +14,13 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
     const [isLogoutDropDown, setLogOutDropDown] = useState(false);
     const logoutNavigate = useNavigate();
     const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
+    console.log(isLoggedIn);
 
     const logOutHandler = () => {
         localStorage.removeItem("user-details");
         localStorage.removeItem("user-token");
         logoutNavigate("/");
-        setIsLoggedIn(!isLoggedIn);
+        setIsLoggedIn(false);
         
     };
 

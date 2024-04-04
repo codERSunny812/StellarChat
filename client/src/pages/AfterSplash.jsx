@@ -5,7 +5,8 @@ import { useContext } from "react";
 import { UserStatusContext } from "../Context/Auth";
 
 const AfterSplash = () => {
-  const { setIsLoggedIn } = useContext(UserStatusContext);
+  const {  isLoggedIn ,  setIsLoggedIn } = useContext(UserStatusContext);
+  console.log(isLoggedIn);
   return (
     <div className="h-screen  w-full flex justify-center items-center">
       <div className="h-screen w-[400px] bg-gradient-to-tr from-custom-purple-light to-custom-purple-dark flex flex-col  items-center text-white">

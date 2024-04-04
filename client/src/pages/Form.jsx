@@ -8,6 +8,8 @@ const Form = () => {
   // tells the status of the user, if it is logged in or not.
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
   const [profilePicture , setProfilePicture] = useState(null);
+  console.log(isLoggedIn);
+
 
   const initialData = {
     fullName: "",
@@ -33,7 +35,7 @@ const Form = () => {
 
 
   console.log(data);
-  console.log(profilePicture);
+  // console.log(profilePicture);
 
   
   
@@ -42,15 +44,7 @@ const Form = () => {
     e.preventDefault();
 
     console.log("the form is submit");
-    
-    // Create a FormData object to send the form data including the profile picture
-    const formData = new FormData();
-    formData.append("fullName", data.fullName);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("profilePicture", profilePicture);
-    
-
+  
 
     const res = await fetch(
       `http://localhost:3000/api/${isLoggedIn ? "login" : "register"}`,
@@ -59,7 +53,7 @@ const Form = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body:JSON.stringify(data),
       }
     );
 

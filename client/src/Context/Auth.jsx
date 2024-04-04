@@ -4,6 +4,7 @@ export const UserStatusContext = createContext();
 
 const UserStatusContextProvider = (props) => {
   // state variable
+  //initially the user is not loggedIn
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (

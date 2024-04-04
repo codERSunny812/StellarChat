@@ -14,7 +14,8 @@ const People = ({ showAllUser, user, createConversation }) => {
               <div className="people h-3/4 overflow-scroll">
                   {
                 //    check that user are present or not
-                showAllUser.length > 0 ? ( 
+                // we have added 1 because  of our own profile in array so subtracting it
+                showAllUser.length > 1 ? ( 
                   showAllUser.map(({ userInfo: { email, fullName, userId } }) => {
                       // Use parentheses for conditional rendering
                       return userId !== user.id ? (
