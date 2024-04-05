@@ -12,7 +12,12 @@ const DashBoard = () => {
     JSON.parse(localStorage.getItem("user-details"))
   );
   const [isMobileView, setIsMobileView] = useState(false);
-  const [messages, setMessages] = useState({});
+  const [messages, setMessages] = useState({
+    data:[], // Initialize with an empty array or an appropriate initial value
+    name: '', // Initialize with an empty string or an appropriate initial value
+    conversationId: '',
+    receiverId: '',
+  });
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
   const [showAllUser, setShowAllUser] = useState([]);
@@ -21,39 +26,58 @@ const DashBoard = () => {
   const socket = useMemo(() => io('http://localhost:3000'),[]);
 
   
-  useEffect(()=>{ 
-  socket.on('connect',()=>{
+  useEffect(() => {
+    // Set up socket event listeners
+    socket.on('connect', () => {
+      console.log(`User is connected with socketId: ${socket.id}`);
 
-    console.log(`socket is connected ${socket.id}`);
+      // Event to send the id of the loggedIn user
+      const userData = {
+        id: user?.id,
+        name: user?.fullName,
+      }
+      socket?.emit("addUser", userData);
 
-    // event to send the id of loggedIn user
+      // Listen for incoming messages
+      socket.on("getMessage", handleMessage);
 
-    const userData = {
-      id: user?.id,
-      name:  user?.fullName,
-    }
+      // List active users
+      socket.on("getUser", (data) => {
+        console.log(`Active users are -> `, data);
+      });
+    });
 
-    socket?.emit("addUser",userData);
-      
-    // listing to the event
-    socket.on("getUser",(data)=>{
-      console.log(`active users are >>> ` , data);
-    })
+    // Clean up event listeners on component unmount
+    return () => {
+      socket.off("getMessage", handleMessage);
+      socket.off("connect");
+      socket.off("getUser");
+    };
+  }, [socket, user]);
 
-    socket.on('getMessage',(data)=>{
-      console.log(data);
-      setMessages(prev => ({
-        ...prev,
-        messages: [...prev.messages, { user: data.user, message: data.message }]
-      }))
-      // setMessages(data.message);
-      console.log(messages);
 
-  });
+  // Function to handle incoming messages
+  const handleMessage = (data) => {
+    console.log("Inside the getMessage event");
+    console.log(data);
 
-})
-},[socket]); 
+    // Extract message data from the received object
+    const { senderId, conversationId, message, receiverId } = data;
 
+    // Update the messages state with the received message
+    setMessages(prevMessages => ({
+      ...prevMessages,
+      data: [
+        ...prevMessages.data,
+        {
+          senderId,
+          conversationId,
+          message,
+          receiverId
+        }
+      ]
+    }));
+  };
 
   // handle responsiveness
   useEffect(() => {
@@ -132,11 +156,17 @@ const DashBoard = () => {
         }
       );
       const resData = await res.json();
-      setMessages({
-        data: resData,
-        name: fullName, //name of the receiver
-        conversationId,
-        receiverId,
+      // console.log(resData.data);
+      // Append new messages to the existing ones in the state and take care of the previous state too.
+      setMessages(prevMessages => {
+        return{
+          ...prevMessages,
+          data: [...prevMessages.data, ...resData.data],
+          name: fullName,
+          conversationId,
+          receiverId,
+        }
+        
       });
     }
     catch (error) {
@@ -227,10 +257,10 @@ const DashBoard = () => {
   };
 
 
-  console.log("the value of the  message : ",sentMessage);
-  console.log("the value of the message in the convo is: ", messages)
-  console.log("the value of the conversation is:",conversation);
-  console.log("the value of the all the user is:",showAllUser);
+  // console.log("the value of the typed message is : ",sentMessage);
+  console.log("the value of the message in the convo between users is: ", messages)
+  // console.log("the value of the conversation is:",conversation);
+  // console.log("the value of the all the user is:",showAllUser);
   
 
   return (

@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+
 import {  IoVideocam, IoSend } from "react-icons/io5";
 import { MdAddIcCall } from "react-icons/md";
 import { FaPlusCircle } from "react-icons/fa";
@@ -54,8 +55,8 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
               <div className=" h-[80%] overflow-scroll w-full">
                   <div className=" mx-3 my-2">
                       {messages.name ? (
-                        messages.data.data.length > 0 ?(
-                          messages?.data?.data?.map(
+                        messages?.data?.length > 0 ?(
+                          messages?.data?.map(
                               ({ conversationId, message, senderId, _id }) => {
                                   return (
                                       <div className="mx-3 my-2 " key={_id}>

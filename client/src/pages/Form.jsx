@@ -14,25 +14,23 @@ const Form = () => {
   const initialData = {
     fullName: "",
     email: "",
-    password: ""
+    password: "",
+    image_Id:"",
   };
 
+  // state to store the initialData 
   const [data, setData] = useState(initialData);
 
   // for navigation to the home page
   const navigate = useNavigate();
 
 
-//upload the file and set it  in the state  variable
-  const onFileUpload = (e) => {
-    const file = e.target.files[0];
-    console.log("Selected file:", file);
-    setProfilePicture(file); // Set the FormData object in state
-  };
-
-
-
-
+// //upload the file and set it  in the state  variable
+//   const onFileUpload = (e) => {
+//     const file = e.target.files[0];
+//     console.log("Selected file:", file);
+//     setProfilePicture(file); // Set the FormData object in state
+//   };
 
   console.log(data);
   // console.log(profilePicture);
@@ -43,7 +41,8 @@ const Form = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("the form is submit");
+    console.log(`the ${isLoggedIn ? "login" : "registration"} is completed`);
+
   
 
     const res = await fetch(
@@ -58,22 +57,24 @@ const Form = () => {
     );
 
     //handle the response
-    if (res.status == 500) {
+    if (res.status == 100) {
       alert("all field are required");
     } else if (res.status == 404) {
       alert("user not found");
     } else if (res.status == 401) {
       alert("invalid credentials");
+    } else if (res.status == 204) {
+      alert("user already exist");
     } else {
       const responseData = await res.json();
       setIsLoggedIn(true);
       // Clear the form data after successful submission
 
       if (isLoggedIn && responseData.user.token) {
-        console.log("inside");
         localStorage.setItem("user-token", responseData.user.token);
         localStorage.setItem("user-details", JSON.stringify(responseData.user));
         navigate("/home");
+        console.log("user loggedIn successfully");
       }
     }
   };
@@ -151,7 +152,17 @@ const Form = () => {
 
           {!isLoggedIn && <Input label="confirm password" type="password" />}
 
-          {!isLoggedIn && <Input type="file" label="choose any picture" onChange={onFileUpload} />}
+          {!isLoggedIn && <Input type="file" label="choose any picture" 
+            onChange={(e) => {
+              const selectedFile = e.target.files[0];
+              if (selectedFile) {
+                setProfilePicture(selectedFile);
+                setData({ ...data, image_Id:selectedFile.name});
+              } else {
+                console.error('No file selected or invalid file type');
+              }
+            }}
+          />}
 
           <button
             type="submit"

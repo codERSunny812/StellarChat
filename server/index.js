@@ -53,22 +53,22 @@ console.log(allConnectedUser);
 
 io.on("connection",(socket)=>{
 
-console.log("a new user is connected: ",socket.id);
+console.log("a new user is connected: ",socket?.id);
 
 
 //listing to the event
-socket.on("addUser",({id , name})=>{
+socket?.on("addUser",({id , name})=>{
   // console.log(name);
 
   // check the user is already present in the array or not.
-  const isUserPresent = allConnectedUser.find((user)=> user.userId === id);
+  const isUserPresent = allConnectedUser.find((user)=> user?.userId === id);
 
   if(!isUserPresent){
 
     const user = {
       userId: id,
       userName:name,
-      socketId: socket.id,
+      socketId: socket?.id,
       message:"the logged in  user is added in the array"
     }
 
@@ -94,9 +94,9 @@ socket.on("addUser",({id , name})=>{
   //  check for the receiverId
   // it will check the user Id of the all the people who are present in the array that who have the id equal to receiverId
 
-  const receiver = await allConnectedUser.find((users)=> users.userId === receiverId);
+  const receiver = await allConnectedUser.find((users)=> users?.userId === receiverId);
 
-  const sender = await allConnectedUser.find((users) => users.userId === senderId);
+  const sender = await allConnectedUser.find((users) => users?.userId === senderId);
   
   const user = await userModal.findById(senderId);
   
@@ -106,21 +106,21 @@ socket.on("addUser",({id , name})=>{
   console.log("the value of the sender is:")
   console.log(sender);
 
-  console.log("the value which is recieved by the front end is:");
-  
+  console.log("the value which is recieved by the front end is:")
+
   console.log(conversationId, senderId , message , receiverId);
 
 
   if(receiver){
-    io.to(receiver.socketId).to(sender.socketId).emit("getMessage",{
+    io.to(receiver?.socketId).to(sender?.socketId).emit("getMessage",{
       senderId,
       conversationId,
       message,
       receiverId,
       user:{
-        id:user._id,
-        fullName:user.fullName,
-        email:user.email
+        id:user?._id,
+        fullName:user?.fullName,
+        email:user?.email
       }
     })
   }
@@ -151,7 +151,13 @@ app.post("/api/register",async (req, res, next) => {
     console.log("registration route");
     // taking the data from the front end
 
-    const { fullName, email, password } = req.body;
+    // console.log(req.file);
+
+    const { fullName, email, password , image_Id } = req.body;
+
+    // const { image_Id } = req.files;
+
+    console.log(image_Id);
 
     // checking that the data is present or not
     if (!fullName || !email || !password) {
@@ -208,8 +214,8 @@ app.post("/api/login", async (req, res, next) => {
 
     // checking whether the field are empty or not
     if (!email || !password) {
-      return res.status(400).json({
-        status: "403",
+      return res.status(100).json({
+        status: "100",
         message: "Email and password are required",
       });
     }
@@ -306,6 +312,7 @@ app.post("/api/conversation", async (req, res) => {
     console.log(`getting error in the conversation and that is ${error}`);
   }
 });
+
 
 // route to get info about the all conversation of any user using the his id
 app.get("/api/conversation/:userId", async (req, res) => {
