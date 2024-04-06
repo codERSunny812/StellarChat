@@ -16,7 +16,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                 //    check that user are present or not
                 // we have added 1 because  of our own profile in array so subtracting it
                 showAllUser.length > 1 ? ( 
-                  showAllUser.map(({ userInfo: { email, fullName, userId } }) => {
+                          showAllUser.map(({ userInfo: { email, fullName, userId, img } }) => {
                       // Use parentheses for conditional rendering
                       return userId !== user.id ? (
                           <div
@@ -29,7 +29,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                                   });
                               }}
                           >
-                              <img src={avtar} height={60} width={60} alt="user image" />
+                              <img src={img} height={50} width={50} className="rounded-full" alt="user image" />
                               <div className="accountInfo ml-6 text-white">
                                   <h1 className="text-lg">{fullName}</h1>
                                   <h2 className="text-sm font-light">{email}</h2>

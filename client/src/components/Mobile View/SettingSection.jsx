@@ -16,7 +16,7 @@ const SettingSection = ({user}) => {
     
 
         <div className="flex items-center  mx-[24px] my-[10px] px-3">
-          <img src={avtar} alt="user image" className="h-14 w-14" />
+          <img src={user?.imageId} alt="user image" className="h-14 w-14" />
           <div className="userBio mx-7 capitalize">
             <h1 className="font-semibold text-[24px]">{user.fullName}</h1>
             <p className="text-[15px]">सर्वेषाम् स्वस्तिर्भवतु🫰</p>

@@ -14,6 +14,9 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
         updateSentMessage(e.target.value);
     };
 
+
+    console.log(messages);
+
   return (
     <>
 
@@ -23,10 +26,10 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
                   <div className="flex items-center justify-between bg-[#392467] shadow-3xl rounded-lg py-1 mt-2 mx-1 relative top-0">
                       <div className="px-4 flex items-center ">
                           <img
-                              src={avtar}
+                              src={messages.img}
                               alt="user image"
-                              height={50}
-                              width={50}
+                              height={40}
+                              width={40}
                               className="py-1"
                           />
                           <div className="px-4  text-white">

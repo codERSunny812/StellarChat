@@ -33,7 +33,7 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                   <div className="flex items-center px-4 py-4">
                       <div className="image border-2 border-black rounded-full">
                           <img
-                              src={avtar}
+                              src={user.imageId}
                               alt="user image"
                               height={60}
                               width={60}
@@ -84,7 +84,7 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                   {conversations.length > 0 ? (
                       conversations.map(
                           ({
-                              user: { email, fullName, receiverId },
+                              user: { email, fullName, receiverId , img },
                               conversationId,
                           }) => {
                               return (
@@ -92,11 +92,11 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                                       className=" cursor-pointer flex  items-center px-4 py-4 border-b "
                                       key={Math.random()}
                                       onClick={() => {
-                                          fetchMessages(conversationId, fullName, receiverId);
+                                          fetchMessages(conversationId, fullName, receiverId , img);
                                       }}
                                   >
                                       <img
-                                          src={avtar}
+                                          src={img}
                                           height={60}
                                           width={60}
                                           alt={fullName}

@@ -144,7 +144,7 @@ const DashBoard = () => {
  }
   }, []);
 
-  const fetchMessages = async (conversationId, fullName, receiverId) => {
+  const fetchMessages = async (conversationId, fullName, receiverId , img) => {
     try {
       const res = await fetch(
         `http://localhost:3000/api/message/${conversationId}`,
@@ -165,6 +165,7 @@ const DashBoard = () => {
           name: fullName,
           conversationId,
           receiverId,
+          img
         }
         
       });

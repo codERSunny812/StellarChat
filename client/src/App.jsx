@@ -4,6 +4,8 @@ import { Outlet, createBrowserRouter } from "react-router-dom";
 import Screen from "./pages/Screen";
 import { useEffect, useState } from "react";
 import AfterSplash from "./pages/AfterSplash";
+import LoginPage from "./pages/LoginPage";
+import Registration from "./pages/Registration";
 
 export const App = () => {
   const [showSplash, setSplash] = useState(true);
@@ -36,11 +38,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/register",
-        element: <Form />,
+        element:<Registration/>,
       },
       {
         path: "/login",
-        element: <Form />,
+        element:<LoginPage/>,
       },
     ],
   },
