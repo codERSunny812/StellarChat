@@ -9,12 +9,13 @@ const cors = require("cors");
 const {Server} = require('socket.io')
 const {createServer} = require('http')
 const multer = require('multer');
+const {connectCloudinary} = require('./utility/Cloudinary.integrate')
 
 
 // connecting  to the database
 connectDatabase();
 
-// import the  data modals
+// import the modals
 const { userModal } = require("./models/UserModal");
 const { conversationModal } = require("./models/ConversationModel");
 const { messageModal } = require("./models/MessageModal");
@@ -25,6 +26,19 @@ const port = process.env.PORT;
 const app = express();
 
 const server = createServer(app);
+
+// set up multure storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+   return cb(null,'./uploads')
+  },
+  filename: function (req, file, cb) {
+  return cb(null,`${Date.now()}-${file.originalname}`);  
+  }
+})
+
+// initilizing multer
+const upload = multer({storage});
 
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,13 +61,13 @@ const io = new Server(server,{
 let allConnectedUser = [];
 
 
-console.log("the  connected user array is:");
-console.log(allConnectedUser);
+// console.log("the  connected user array is:");
+// console.log(allConnectedUser);
 
 
 io.on("connection",(socket)=>{
 
-console.log("a new user is connected: ",socket?.id);
+// console.log("a new user is connected: ",socket?.id);
 
 
 //listing to the event
@@ -76,7 +90,7 @@ socket?.on("addUser",({id , name})=>{
     allConnectedUser.push(user);
 
   //   console.log("the value of the arrray after the user login is:");
-    console.log(allConnectedUser);
+    // console.log(allConnectedUser);
 
     // emiting an event to get the data of the added user in the front end page
     io.emit("getUser",allConnectedUser);
@@ -100,15 +114,15 @@ socket?.on("addUser",({id , name})=>{
   
   const user = await userModal.findById(senderId);
   
-  console.log("the value of the receiver is:");
-  console.log(receiver);
+  // console.log("the value of the receiver is:");
+  // console.log(receiver);
   
-  console.log("the value of the sender is:")
-  console.log(sender);
+  // console.log("the value of the sender is:")
+  // console.log(sender);
 
-  console.log("the value which is recieved by the front end is:")
+  // console.log("the value which is recieved by the front end is:")
 
-  console.log(conversationId, senderId , message , receiverId);
+  // console.log(conversationId, senderId , message , receiverId);
 
 
   if(receiver){
@@ -145,7 +159,7 @@ app.get("/", (req, res) => {
 });
 
 // registration route
-app.post("/api/register",async (req, res, next) => {
+app.post("/api/register", upload.single('uploaded_file'),async (req, res, next) => {
   try {
 
     console.log("registration route");
@@ -153,11 +167,24 @@ app.post("/api/register",async (req, res, next) => {
 
     // console.log(req.file);
 
-    const { fullName, email, password , image_Id } = req.body;
+    const { fullName, email, password } = req.body;
+    const profilePicturePath = req.file.path;
 
-    // const { image_Id } = req.files;
+    console.log(req.body);
 
-    console.log(image_Id);
+    console.log(req.file.path);
+
+    const imageLink = await connectCloudinary(profilePicturePath, {
+      transformation: [
+        { width: 50, height: 50, crop: "fill" },
+        { radius: "max" }
+      ]
+    });
+
+
+    console.log(imageLink);
+
+   
 
     // checking that the data is present or not
     if (!fullName || !email || !password) {
@@ -179,13 +206,14 @@ app.post("/api/register",async (req, res, next) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password,5);
+    const hashedPassword = await bcrypt.hash(password,10);
 
 
     const newUser = await userModal.create({
       email: email,
       fullName: fullName,
       password: hashedPassword, 
+      image_Id:imageLink?.secure_url,
     });
 
 
@@ -209,8 +237,13 @@ app.post("/api/register",async (req, res, next) => {
 // login route for  login the user
 app.post("/api/login", async (req, res, next) => {
   try {
+
+    console.log("inside the login route");
     
     const { email, password } = req.body;
+
+    console.log(req.body);
+
 
     // checking whether the field are empty or not
     if (!email || !password) {
@@ -221,6 +254,8 @@ app.post("/api/login", async (req, res, next) => {
     }
 
     const user = await userModal.findOne({ email });
+
+    console.log(user);
 
     if (!user){
       res.status(404).json({
@@ -264,6 +299,7 @@ app.post("/api/login", async (req, res, next) => {
               email: user.email,
               fullName: user.fullName,
               token: token,
+              imageId: user.image_Id,
             },
           });
         }
@@ -285,6 +321,8 @@ app.post("/api/conversation", async (req, res) => {
     const senderName = await userModal.findOne({ _id: senderId });
     const receiverName = await userModal.findOne({ _id: receiverId });
 
+
+
     // creating a instance of the conversation
     const newConversation = await conversationModal({
       members: [
@@ -304,7 +342,8 @@ app.post("/api/conversation", async (req, res) => {
       message: `new Conversation is created between the two user`,
       data: {
         newConversation,
-        fullName:receiverName.fullName
+        fullName:receiverName.fullName,
+        img:receiverName.image_Id
       },
     });
   }
@@ -323,6 +362,8 @@ app.get("/api/conversation/:userId", async (req, res) => {
       members: { $in: [userId] },
     });
 
+    // console.log(conversation);
+
     const conversationUserData = await Promise.all(
       conversation.map(async (conversation) => {
         // it will get  the reciever id from the member array whose id is not equal to the senderId
@@ -332,11 +373,14 @@ app.get("/api/conversation/:userId", async (req, res) => {
         // checking in the DB for the data of the reciever
         const user = await userModal.findById(receiverId);
 
+        console.log(user);
+
         return {
           user: {
             receiverId: user._id,
             email: user.email,
             fullName: user.fullName,
+            img: user.image_Id,
           },
           conversationId: conversation._id,
         };
@@ -366,6 +410,10 @@ app.post("/api/message", async (req, res) => {
     const receiverName = await userModal.findOne({ _id: receiverId });
     // console.log(senderName)
 
+    const img = receiverName.image_Id;
+
+    
+
     if (!conversationId && receiverId) {
       
       const newConversation = conversationModal({
@@ -374,6 +422,7 @@ app.post("/api/message", async (req, res) => {
           receiverId,
           { senderName: senderName.fullName },
           { receiverName: receiverName.fullName },
+          {img:receiverName.image_Id},
         ],
       });
 
@@ -403,6 +452,7 @@ app.post("/api/message", async (req, res) => {
         senderId,
         message,
         receiverId,
+        img
       });
 
       await newMessage.save(); // await the saving of the new message
@@ -415,6 +465,7 @@ app.post("/api/message", async (req, res) => {
           messageId: newMessage._id,
           senderUserName: senderName.fullName,
           receiverUserName: receiverName.fullName,
+          img: receiverName.image_Id
         },
       });
     } else {
@@ -475,6 +526,7 @@ app.get("/api/message/:conversationId", async (req, res) => {
 app.get("/api/users", async (req, res) => {
   const user = await userModal.find();
   // if we want only specific data of the user
+  console.log(user)
   const userData = Promise.all(
     user.map((userInfo) => {
       return {
@@ -482,6 +534,7 @@ app.get("/api/users", async (req, res) => {
           email: userInfo.email,
           fullName: userInfo.fullName,
           userId: userInfo._id,
+          img:userInfo.image_Id
         },
       };
     })

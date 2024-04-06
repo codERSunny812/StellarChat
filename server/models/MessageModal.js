@@ -15,6 +15,9 @@ const messageSchema = mongoose.Schema({
   receiverId: {
     type: String,
   },
+  img:{
+    type:String
+  }
 });
 
 exports.messageModal = mongoose.model("messageModal", messageSchema);
