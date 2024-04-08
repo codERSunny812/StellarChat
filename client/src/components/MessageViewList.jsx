@@ -1,14 +1,12 @@
 /* eslint-disable react/prop-types */
-
 import {  IoVideocam, IoSend } from "react-icons/io5";
 import { MdAddIcCall } from "react-icons/md";
 import { FaPlusCircle } from "react-icons/fa";
 import { BsFillEmojiSmileFill } from "react-icons/bs";
-import { avtar } from "../../constant";
 import NoChat from '../anim/NoChat.json'
 import Lottie from "lottie-react";
 
-const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentMessage }) => {
+const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentMessage , isOnline }) => {
 
     const handleSentMessageChange = (e) => {
         updateSentMessage(e.target.value);
@@ -28,15 +26,22 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
                           <img
                               src={messages.img}
                               alt="user image"
-                              height={40}
-                              width={40}
-                              className="py-1"
+                              className="py-1 h-16 w-16 rounded-full"
                           />
                           <div className="px-4  text-white">
                               <h1 className="capitalize font-medium text-lg">
                                   {messages.name || <h1> xyz</h1>}
                               </h1>
-                              <span>status</span>
+                              <span>
+                                {
+                                    isOnline ? (
+                                     <h1 className="text-green-500 text-sm font-semibold
+                                    ">online</h1>
+                                    ) : (
+                                    <h1 className="text-red-500 text-sm font-semibold">offline</h1>
+
+                                    )
+                                }</span>
                           </div>
                       </div>
                       <div className="icons flex mx-3">
@@ -124,4 +129,4 @@ const MessageViewList = ({ messages, user, sentMessage, sendMessage, updateSentM
   )
 }
 
-export default MessageViewList
+export default MessageViewList;
