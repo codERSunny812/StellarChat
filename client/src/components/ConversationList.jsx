@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { avtar } from "../../constant";
 import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { IoSearchCircle } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
@@ -14,8 +13,12 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
     const [isLogoutDropDown, setLogOutDropDown] = useState(false);
     const logoutNavigate = useNavigate();
     const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
+
     console.log(isLoggedIn);
 
+
+
+    // function to logout the user
     const logOutHandler = () => {
         localStorage.removeItem("user-details");
         localStorage.removeItem("user-token");
@@ -27,17 +30,15 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
   return (
     <>
           <div className="h-screen  md:block col-span-3 overflow-auto bg-[#5D3587]">
-              {/* top part */}
 
+              {/* top part */}
               <div className="flex  items-center justify-between">
                   <div className="flex items-center px-4 py-4">
-                      <div className="image border-2 border-black rounded-full">
+                      <div className="image rounded-full">
                           <img
                               src={user.imageId}
                               alt="user image"
-                              height={60}
-                              width={60}
-                              className="rounded-full"
+                              className="h-20 w-20 rounded-full"
                           />
                       </div>
 
@@ -67,8 +68,9 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
 
               <hr />
 
-              {/* messages section  of the user  */}
+              {/* conversation list of the user */}
               <div className="messages ">
+                
                   {/* search panel to search people */}
                   <div className="searchBar  flex items-center">
                       <input
@@ -97,8 +99,7 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                                   >
                                       <img
                                           src={img}
-                                          height={60}
-                                          width={60}
+                                          className="h-[68px] w-[68px]  rounded-full"
                                           alt={fullName}
                                       />
                                       <div className="accountInfo ml-6 text-white">
