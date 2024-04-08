@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { IoSearch } from "react-icons/io5";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { AiOutlineMessage } from "react-icons/ai";
@@ -19,7 +20,7 @@ const CALL_SECTION = 'CALL_SECTION';
 const CONTACT_SECTION = 'CONTACT_SECTION';
 const SETTING_SECTION = 'SETTING_SECTION';
 
-const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessages, messages, sentMessage, updateSentMessageForMobile }) => {
+const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessages, messages, sentMessage, updateSentMessageForMobile , isOnline }) => {
 
 
   
@@ -43,7 +44,7 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
     setShowState(state);
   }
 
-  const  handleConversationClick = (conversationId , fullName , receiverId) =>{
+  const  handleConversationClick = (conversationId , fullName , receiverId , img) =>{
     console.log("im clicked");
     fetchMessages(conversationId, fullName, receiverId);
     setIsChatVisible(conversationId);

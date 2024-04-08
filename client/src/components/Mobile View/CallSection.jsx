@@ -1,4 +1,6 @@
-import { avtar } from "../../../constant";
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+
 import { IoVideocamOutline, IoCallOutline } from "react-icons/io5";
 const CallSection = ({showAllUser,user}) => {
   return (
@@ -14,7 +16,7 @@ const CallSection = ({showAllUser,user}) => {
             >
               <div className="flex  items-center justify-between w-full">
                 <div className="flex items-center">
-              <img src={img} height={60} width={60} alt="h" />
+              <img src={img} className="h-16 w-16 rounded-full" alt="h" />
               <h1 className="mx-2 capitalize font-bold text-lg">{fullName}</h1>
 
                 </div>

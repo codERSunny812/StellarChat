@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { avtar } from "../../../constant"
+
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoVideocamOutline, IoCallOutline } from "react-icons/io5";
 import { HiOutlinePaperClip } from "react-icons/hi2";
@@ -18,9 +18,7 @@ updateSentMessageForMobile(e.target.value);
   }
 
 
-
-
-
+  console.log(messages);
   return (
     <>
     <div className="h-screen">
@@ -30,7 +28,7 @@ updateSentMessageForMobile(e.target.value);
         <div className="flex items-center  mx-3 px-1 cursor-pointer">
             <IoIosArrowRoundBack className="h-8 w-8" onClick={()=> handleArrowInChat()} />
             <div className="name flex items-center px-3">
-              <img src={avtar} alt="user photo" className="h-12 w-12" />
+              <img src={messages.img} alt="user photo" className="h-12 w-12" />
               <div className="px-3">
                 <h1 className="capitalize font-semibold text-base">{messages.name}</h1>
                 <p className="py-[-2px]">status</p>
@@ -53,8 +51,8 @@ updateSentMessageForMobile(e.target.value);
 
           <div className=" mx-3 my-4">
             {messages.name ? (
-              messages.data.data.length > 0 ? (
-                messages?.data?.data?.map(
+              messages.data.length > 0 ? (
+                messages?.data?.map(
                   ({ conversationId, message, senderId, _id }) => {
                     return (
                       <div className="mx-3 my-2 " key={_id}>
