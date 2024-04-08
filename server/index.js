@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
@@ -15,11 +14,12 @@ const {connectCloudinary} = require('./utility/Cloudinary.integrate')
 // connecting  to the database
 connectDatabase();
 
-// import the modals
+// importing  the modals
 const { userModal } = require("./models/UserModal");
 const { conversationModal } = require("./models/ConversationModel");
 const { messageModal } = require("./models/MessageModal");
 
+//port allocation
 const port = process.env.PORT;
 
 
@@ -40,6 +40,7 @@ const storage = multer.diskStorage({
 // initilizing multer
 const upload = multer({storage});
 
+
 // middle ware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -56,13 +57,13 @@ const io = new Server(server,{
 
 //connecting  to the entire  socket server 
 
-  // Storing the data of all the connected user in a array
+// Storing the data of all the connected user in a array
 
 let allConnectedUser = [];
 
 
-// console.log("the  connected user array is:");
-// console.log(allConnectedUser);
+console.log("the  connected user array is:");
+console.log(allConnectedUser);
 
 
 io.on("connection",(socket)=>{
@@ -234,7 +235,7 @@ app.post("/api/register", upload.single('uploaded_file'),async (req, res, next) 
 
 });
 
-// login route for  login the user
+// login route 
 app.post("/api/login", async (req, res, next) => {
   try {
 
@@ -353,7 +354,7 @@ app.post("/api/conversation", async (req, res) => {
 });
 
 
-// route to get info about the all conversation of any user using the his id
+// route to get info about the all conversation of any user usingh userId
 app.get("/api/conversation/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
