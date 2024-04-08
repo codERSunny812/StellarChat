@@ -1,11 +1,10 @@
 import { FaApple } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
-import { useContext } from "react";
-import { UserStatusContext } from "../Context/Auth";
+
 
 const SocialMedia = () => {
-  const { isLoggedIn } = useContext(UserStatusContext);
+  
 
   return (
     <div className=" flex gap-4 px-4 my-1">
