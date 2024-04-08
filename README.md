@@ -6,11 +6,14 @@ Chatkro is a cutting-edge messaging platform designed to bring people closer tog
 
 - **ReactJs**: Frontend library for building user interfaces.
 - **React Icons**: Library providing popular icons for React projects.
-- **Firebase**: Real-time database for handling messaging functionalities.
+- **NodeJs**: It's used for creating the backend of this.
 - **ExpressJS**: Backend framework for building APIs and handling server logic.
 - **MongoDB**: NoSQL database for storing user data and chat history.
 - **Socket.io**: Library for enabling real-time, bidirectional communication.
 - **Lottie Animation**: To add animation to our Website.
+- **React-Toastify:** To Show animation to the user.
+- **Cloudinary:** To upload the image on the server.
+- **Multer:** A middleware which is used to  manage the file upload in form.
 
 # 👨🏼‍🍳Features
 
@@ -19,8 +22,11 @@ ChatApp offers a comprehensive suite of features designed to facilitate seamless
 - **User Authentication**: Create personalized accounts and securely log in.
 - **Real-time Messaging**: Engage in text-based communication with instant message delivery.
 - **Video Calls**: Initiate video calls directly within the app.
-- **Data Persistence**: MongoDB ensures the persistence of user data and chat history.
+- **Audio Calls**: User can make audio call with his friend with in the app.
 - **Responsive Design**: Enjoy a consistent and intuitive user experience across all platforms.
+- **Data Persistence**: MongoDB ensures the persistence of user data and chat history.
+- **Status Upload:** The User can upload any picture as his/her Status and  also also see the status of  the people who loggedIn into the app and upload any status.
+- **Profile Picture:** User can upload a picture during the registration in the app and that picture will be shown as the profile picture of the app.
 
 # ⛏️Process
 
@@ -53,6 +59,7 @@ We gained insights and skills in various areas during the development process:
 - **Frontend Development**: Developed interactive interfaces with React and CSS.
 - **CI/CD Implementation**: Set up continuous integration and deployment pipelines for efficiency.
 - **Collaboration Skills**: Improved communication and teamwork through collaborative project work.
+- **Cloudinary :** Gained expertise in file upload and how to the file upload will work  behind the scene.
 
 # ✨Improvement
 
@@ -105,5 +112,62 @@ npm run dev
 - For the Backend
 
 ```bash
-npm start
+npm run  start
 ```
+
+
+## App UI:
+
+###### Splash Screen of the App:
+
+---
+
+
+
+![1712501677029](image/README/1712501677029.png)
+
+
+###### Home of the App:
+
+---
+
+
+
+![1712501743868](image/README/1712501743868.png)
+
+
+###### Registration Page  of the App:
+
+---
+
+
+
+![1712501776943](image/README/1712501776943.png)
+
+
+###### Login Page of the App:
+
+---
+
+
+
+![1712501801927](image/README/1712501801927.png)
+
+
+###### Home Page of the App:
+
+---
+
+
+
+![1712501836663](image/README/1712501836663.png)
+
+
+
+###### Mobile View of the App:
+
+---
+
+
+
+![1712501871372](image/README/1712501871372.png)
