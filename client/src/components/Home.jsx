@@ -21,11 +21,23 @@ const DashBoard = () => {
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
   const [showAllUser, setShowAllUser] = useState([]);
+  const [isOnline , setIsOnline] = useState(true);
 
   // connecting the front end with the  socket server
   const socket = useMemo(() => io('http://localhost:3000'),[]);
 
   
+
+
+
+  // to handle the online and offline status  of the  user
+  useEffect(()=>{
+   window.addEventListener("online",()=> setIsOnline(true));
+
+   window.addEventListener('offline',()=> setIsOnline(false));
+  },[])
+
+  // to handle the socket connection and event
   useEffect(() => {
     // Set up socket event listeners
     socket.on('connect', () => {
@@ -144,6 +156,8 @@ const DashBoard = () => {
  }
   }, []);
 
+
+  // function to fech message of any user
   const fetchMessages = async (conversationId, fullName, receiverId , img) => {
     try {
       const res = await fetch(
@@ -175,6 +189,8 @@ const DashBoard = () => {
     }
   };
 
+
+  // function to send messages
   const sendMessage = async () => {
 
     try {
@@ -213,6 +229,8 @@ const DashBoard = () => {
   };
  
 
+
+  // function to create conversation  between people
   const createConversation = async ({ senderId, receiverId }) => {
     try {
       // Check if conversation already exists
@@ -277,6 +295,7 @@ const DashBoard = () => {
         messages={messages}
         sentMessage={sentMessage}
        updateSentMessageForMobile={updateSentMessageForMobile}  
+       isOnline={isOnline}
         />
       ) : (
     
@@ -296,6 +315,7 @@ const DashBoard = () => {
           sentMessage={sentMessage} 
           sendMessage={sendMessage}
           updateSentMessage={updateSentMessage}
+          isOnline={isOnline}
           />
 
           <People 
