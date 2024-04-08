@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { avtar } from "../../constant";
 import NoPeople from '../anim/NoPeople.json'
 import Lottie from "lottie-react";
 
@@ -29,7 +28,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                                   });
                               }}
                           >
-                              <img src={img} height={50} width={50} className="rounded-full" alt="user image" />
+                              <img src={img}  className=" h-16 w-16 rounded-full" alt="user image" />
                               <div className="accountInfo ml-6 text-white">
                                   <h1 className="text-lg">{fullName}</h1>
                                   <h2 className="text-sm font-light">{email}</h2>
