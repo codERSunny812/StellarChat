@@ -1,5 +1,8 @@
 const { default: mongoose } = require("mongoose");
 
+
+
+// user modal to store the data of the user
 const userSchema = mongoose.Schema({
   fullName: {
     type: String,
