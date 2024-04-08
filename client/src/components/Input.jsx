@@ -1,4 +1,5 @@
 // input component
+
 const Input = ({ label, type, value, onChange}) => {
   return (
     <div className="  py-5 px-3 my-1">
