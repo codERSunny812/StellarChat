@@ -1,4 +1,3 @@
-// code for the database connection
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -13,7 +12,7 @@ exports.connectDatabase = () => {
     })
     .catch((error) => {
       console.log(
-        "the mongodb is not successfully connected with the database due to " +
+        "error in connecting with mongodb server" +
           error
       );
     });
