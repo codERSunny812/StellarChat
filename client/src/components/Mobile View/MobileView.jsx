@@ -12,7 +12,7 @@ import CallSection from "./CallSection";
 import ContactSection  from './ContactSection';
 import Conversation from './ConversationSection';
 import Setting from  './SettingSection';
-import { avtar } from "../../../constant";
+
 
 
 const CONVERSATION = 'CONVERSATION';
@@ -111,7 +111,7 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
         Array(5).fill(null).map((messages, index) => (
           <div key={index}>
             {/* <MdOutlineAccountCircle  /> */}
-            <img src={avtar} alt="status" className="w-12 h-12"  />
+            <img src="https://plus.unsplash.com/premium_photo-1688891564708-9b2247085923?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww" alt="status" className="w-12 h-12"  />
       
           </div>
         ))}
