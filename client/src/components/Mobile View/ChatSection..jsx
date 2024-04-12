@@ -12,39 +12,39 @@ import NoChat from '../../anim/NoChat.json'
 const ChatSection = ({ messages, handleArrowInChat, user, sendMessage, sentMessage, updateSentMessageForMobile }) => {
 
 
-  const handleSentMessage = (e)=>{
-updateSentMessageForMobile(e.target.value);
+  const handleSentMessage = (e) => {
+    updateSentMessageForMobile(e.target.value);
   }
 
 
   console.log(messages);
   return (
     <>
-    <div className="h-screen">
-      {/* top section */}
-      <div className=" flex items-center justify-between">
+      <div className="h-screen">
+        {/* top section */}
+        <div className=" flex items-center justify-between">
 
-        <div className="flex items-center  mx-3 px-1 cursor-pointer">
-            <IoIosArrowRoundBack className="h-8 w-8" onClick={()=> handleArrowInChat()} />
+          <div className="flex items-center  mx-3 px-1 cursor-pointer">
+            <IoIosArrowRoundBack className="h-8 w-8" onClick={() => handleArrowInChat()} />
             <div className="name flex items-center px-3">
               <img src={messages.img} alt="user photo" className="h-12 w-12" />
               <div className="px-3">
                 <h1 className="capitalize font-semibold text-base">{messages.name}</h1>
                 <p className="py-[-2px]">status</p>
-             </div>
+              </div>
             </div>
 
-        </div>
-          
-        <div className="callIcon flex  px-4 mx-2 cursor-pointer">
-          <IoCallOutline className="h-7 w-7 mx-2" />
+          </div>
+
+          <div className="callIcon flex  px-4 mx-2 cursor-pointer">
+            <IoCallOutline className="h-7 w-7 mx-2" />
             <IoVideocamOutline className="h-8 w-7 mx-1" />
+          </div>
+
+
+
         </div>
-          
-
-
-      </div>
-      {/* chat section */}
+        {/* chat section */}
 
         <div className=" h-[81%] overflow-scroll w-full my-4">
 
@@ -69,10 +69,10 @@ updateSentMessageForMobile(e.target.value);
                   }
                 )
               ) : (
-                  <div className=" flex flex-col items-center justify-center mt-[50%]">
-                    <Lottie animationData={NoChat} />
-                    <h1 className="font-semibold uppercase text-4xl">no chat found</h1>
-                  </div>
+                <div className=" flex flex-col items-center justify-center mt-[50%]">
+                  <Lottie animationData={NoChat} />
+                  <h1 className="font-semibold uppercase text-4xl">no chat found</h1>
+                </div>
               )
             ) : (
               <div className="text capitalize flex items-center justify-center my-80 text-2xl font-bold">
@@ -106,17 +106,17 @@ updateSentMessageForMobile(e.target.value);
               className="h-5 w-5 mx-2 cursor-pointer"
               color="black"
             />
-            <MdKeyboardVoice 
+            <MdKeyboardVoice
               className="h-5 w-5 mx-2 cursor-pointer"
-              color="black" 
-              />
+              color="black"
+            />
 
 
 
           </div>
         )}
 
-    </div>
+      </div>
     </>
   )
 }
