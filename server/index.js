@@ -115,16 +115,6 @@ socket?.on("addUser",({id , name})=>{
   
   const user = await userModal.findById(senderId);
   
-  // console.log("the value of the receiver is:");
-  // console.log(receiver);
-  
-  // console.log("the value of the sender is:")
-  // console.log(sender);
-
-  // console.log("the value which is recieved by the front end is:")
-
-  // console.log(conversationId, senderId , message , receiverId);
-
 
   if(receiver){
     io.to(receiver?.socketId).to(sender?.socketId).emit("getMessage",{
@@ -177,7 +167,7 @@ app.post("/api/register", upload.single('uploaded_file'),async (req, res, next) 
 
     const imageLink = await connectCloudinary(profilePicturePath, {
       transformation: [
-        { width: 50, height: 50, crop: "fill" },
+        { width: 100, height: 100, crop: "fill" },
         { radius: "max" }
       ]
     });
