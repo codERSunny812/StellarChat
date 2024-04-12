@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Registration = () => {
+
   const [profilePicture, setProfilePicture] = useState(null);
   const { setIsLoggedIn } = useContext(UserStatusContext);
   const [pass, setPass] = useState("");
@@ -30,6 +31,13 @@ const Registration = () => {
 
     e.preventDefault();
 
+    if(!data.email || !data.fullName || !data.password){
+      toast.warn("enter the data",{
+        position:"top-center",
+        theme:"dark"
+      })
+    }
+
     if (!profilePicture || !profilePicture.type.startsWith("image")) {
       toast.error("Please select a valid image  file", {
         position: "top-center",
@@ -43,6 +51,7 @@ const Registration = () => {
       });
       return;
     }
+
     if (profilePicture.size > 1024 * 1024) {
       toast.warn("File Size limit exceeds 1MB. Please Select a smaller image", {
         position: "top-center",
@@ -56,6 +65,35 @@ const Registration = () => {
       });
       return;
     }
+
+
+    // checking the size of the uploaded image
+
+    const img = new Image(); // Create a new Image object
+    img.onload = () => {
+      const width = img.width; // Get the width of the image
+      const height = img.height; // Get the height of the image
+      if (width !== 100 || height !== 100) {
+        toast.error("Image dimensions must be 100x100 pixels", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        return;
+      }
+      img.src = URL.createObjectURL(profilePicture); // Set the source of the image
+    }
+    
+    
+
+
+
+    
 
     // show toast if the password doesnt matched
     if (data.password != pass) {
@@ -105,19 +143,12 @@ const Registration = () => {
       body: formData,
     });
 
-    console.log("the response of the api is:");
-    console.log(res);
-
     //checking the response status
     if (res.status === 100) {
       toast.error("All fields are required");
     } else if (res.status === 204) {
       toast.error("User already exists");
     } else {
-      const responseData = await res.json();
-      console.log("the repsones of the data in json is:");
-      console.log(responseData);
-      console.log("the user is successfully registred");
       setIsLoggedIn(true);
       navigate("/login");
       toast.info("User registred successfully", {
@@ -129,6 +160,9 @@ const Registration = () => {
     // Close loading message
     toast.dismiss(registrationToastId);
   };
+ 
+  
+
 
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">

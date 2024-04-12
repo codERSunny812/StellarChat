@@ -3,11 +3,13 @@ import Input from "../components/Input";
 import SocialMedia from "../components/SocialMedia";
 import { UserStatusContext } from "../Context/Auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const LoginPage = () => {
 
-    const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
+    const { isLoggedIn } = useContext(UserStatusContext);
     
     const navigate = useNavigate();
 
@@ -44,12 +46,24 @@ const LoginPage = () => {
 
         //checking the response status
         if (res.status === 100) {
-            alert("all field are required");
-        } else if (res.status === 404) {
-            alert("user not found");
-        } else if (res.status === 401) {
-            alert("invalid credentials");
-        }else {
+            toast.warn("all field are required", {
+                position: "top-center",
+                theme: "dark"
+            });
+        }
+        else if (res.status === 404) {
+           toast.warn("user not found",{
+            position:"top-center",
+            theme:"dark"
+           })
+        }
+        else if (res.status === 401) {
+            toast.info("invalid credentials", {
+                position: "top-center",
+                theme: "dark"
+            })
+        }
+        else {
             const responseData = await res.json();
             console.log("the repsones of the data in json is:")
             console.log(responseData);
@@ -63,6 +77,14 @@ const LoginPage = () => {
                 localStorage.setItem("user-details", JSON.stringify(responseData.user));
                 navigate("/home");
                 console.log("user loggedIn successfully");
+                toast.success("user logged in successfully",{
+                    position:"top-center",
+                    theme:"dark",
+                     hideProgressBar:true, 
+                    autoClose:2000,
+
+                })
+                
             }
         }
     };

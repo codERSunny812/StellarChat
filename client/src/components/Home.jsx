@@ -5,6 +5,8 @@ import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
 import People from "./People";
 import {io} from 'socket.io-client'
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DashBoard = () => {
 
@@ -123,6 +125,7 @@ const DashBoard = () => {
     );
     const resData = await res.json();
     setConversation(resData);
+
   };
 
   // update the conversationList on component mount
@@ -241,7 +244,10 @@ const DashBoard = () => {
       console.log(existingConversation);
 
       if (existingConversation) {
-        alert("conversation is already created");
+        toast.warning("conversation already exist",{
+          position:"top-center",
+          theme:"dark"
+        })
         return; 
       }
 
@@ -257,6 +263,11 @@ const DashBoard = () => {
         console.log("Conversation created successfully");
         // Fetch the newly created conversation
         await fetchConversation();
+        toast.info("a new conversation is created",{
+          position:"top-center",
+          theme:"colored"
+
+        })
       }
       else {
         console.error("Failed to create conversation");
