@@ -4,9 +4,9 @@ require("dotenv").config();
 const URL = process.env.MONGO_URL;
 
 exports.connectDatabase = () => {
-  // connect to the database
+  // connection to the database
   mongoose
-    .connect(`${URL}chatkro`)
+    .connect("mongodb+srv://sengersunny448:ltxX54UPyMn4SOSd@stellarchat.cginm5y.mongodb.net/chatkro")
     .then(() => {
       console.log("the mongodb is successfully connected");
     })
@@ -15,6 +15,5 @@ exports.connectDatabase = () => {
         "error in connecting with mongodb server" +
           error
       );
-    });
-    
+    });    
 };
