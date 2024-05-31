@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { IoSearch } from "react-icons/io5";
-import { MdOutlineAccountCircle } from "react-icons/md";
 import { AiOutlineMessage } from "react-icons/ai";
 import { PiPhoneCall } from "react-icons/pi";
 import { RiContactsLine } from "react-icons/ri";
@@ -12,6 +11,8 @@ import CallSection from "./CallSection";
 import ContactSection  from './ContactSection';
 import Conversation from './ConversationSection';
 import Setting from  './SettingSection';
+import { FcPlus } from "react-icons/fc";
+
 
 
 
@@ -20,7 +21,7 @@ const CALL_SECTION = 'CALL_SECTION';
 const CONTACT_SECTION = 'CONTACT_SECTION';
 const SETTING_SECTION = 'SETTING_SECTION';
 
-const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessages, messages, sentMessage, updateSentMessageForMobile , isOnline }) => {
+const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessages, messages, sentMessage, updateSentMessageForMobile, createConversation }) => {
 
 
   
@@ -28,6 +29,7 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
   const [searchWord , setSearchWord] = useState("");
   const [showState , setShowState] = useState(CONVERSATION);
   const [isChatVisible , setIsChatVisible] = useState(false);
+  const [story,setStory] = useState(null);
 
  
 
@@ -46,7 +48,7 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
 
   const  handleConversationClick = (conversationId , fullName , receiverId , img) =>{
     console.log("im clicked");
-    fetchMessages(conversationId, fullName, receiverId);
+    fetchMessages(conversationId, fullName, receiverId , img);
     setIsChatVisible(conversationId);
 
   }
@@ -55,18 +57,26 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
  setIsChatVisible(false);
   }
 
+
+
+  const handleStory = (e)=>{
+    const file = e.target.files[0];
+    setStory(file);
+  }
+
+
+  console.log("the value of the story is:")
+  console.log(story)
   
-
-
- 
-
-  return isChatVisible ? <ChatSection 
+  return isChatVisible ? (
+  <ChatSection 
   messages={messages} 
   handleArrowInChat={handleArrowInChat} 
   user={user} 
   sendMessage={sendMessage}
     sentMessage={sentMessage}
-    updateSentMessageForMobile={updateSentMessageForMobile}/> :  (
+    updateSentMessageForMobile={updateSentMessageForMobile}
+    /> ) :  (
     <div className="mobileView h-screen overflow-hidden bg-[#1E1E1E] sticky top-0 left-0">
     
 
@@ -101,20 +111,26 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
         
 
         {/* end text */}
-        <MdOutlineAccountCircle className='h-11 w-11' />
+        {/* <MdOutlineAccountCircle className='h-11 w-11' /> */}
+        <img src={user.imageId} alt="user image"  className="h-11 w-11 rounded-full"/>
 
       </div>
 
       {/* mid section */}
-      <div className="midSection text-white mx-[21px] my-[25px] flex justify-evenly">
-        {
-        Array(5).fill(null).map((messages, index) => (
-          <div key={index}>
-            {/* <MdOutlineAccountCircle  /> */}
-            <img src="https://plus.unsplash.com/premium_photo-1688891564708-9b2247085923?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww" alt="status" className="w-12 h-12"  />
-      
-          </div>
-        ))}
+      <div className="midSectionn border-2 border-white text-white mx-[21px] my-[25px]">
+        <div className="">
+          <form >
+          <label htmlFor="file-input">
+              <img src={user.imageId} alt="" className="h-14 rounded-full" />
+              <FcPlus className="relative bottom-5 left-10" />
+              <input id="file-input" type="file" accept="image/*" className="hidden" onChange={handleStory} />
+
+          </label>
+
+            </form>
+           
+        </div>
+        
       </div>
 
       {/* chats section */}
@@ -140,7 +156,7 @@ const MobileView = ({ conversations, showAllUser, user, sendMessage, fetchMessag
           }
 
           {
-            showState === CONTACT_SECTION && <ContactSection showAllUser={showAllUser} user={user} />
+              showState === CONTACT_SECTION && <ContactSection showAllUser={showAllUser} user={user} createConversation={createConversation} />
           }
 
           {

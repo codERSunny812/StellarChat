@@ -27,6 +27,7 @@ const Registration = () => {
 
   // function to handle the form submit
   const handleFormSubmit = async (e) => {
+
     console.log("inside the from submit function");
 
     e.preventDefault();
@@ -92,9 +93,6 @@ const Registration = () => {
     
 
 
-
-    
-
     // show toast if the password doesnt matched
     if (data.password != pass) {
       toast.warn("password didn't matched", {
@@ -138,7 +136,7 @@ const Registration = () => {
     formData.append("uploaded_file", profilePicture);
 
     // api fetch
-    const res = await fetch("http://localhost:3000/api/register", {
+    const res = await fetch("http://localhost:9000/api/register", {
       method: "POST",
       body: formData,
     });
@@ -160,10 +158,6 @@ const Registration = () => {
     // Close loading message
     toast.dismiss(registrationToastId);
   };
- 
-  
-
-
   return (
     <div className="h-screen w-full flex justify-center items-center  bg-[#FAF9F6]">
       <div className=" h-screen w-[400px] rounded-xl shadow-lg bg-white">

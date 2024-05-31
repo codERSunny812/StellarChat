@@ -20,7 +20,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                       return userId !== user.id ? (
                           <div
                               className="cursor-pointer flex items-center px-4 py-4 border-b"
-                              key={Math.random()}
+                              key={userId}
                               onClick={() => {
                                   createConversation({
                                       senderId: user.id,

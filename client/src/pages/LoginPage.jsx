@@ -31,7 +31,7 @@ const LoginPage = () => {
 
         // api fetch 
         const res = await fetch(
-            "http://localhost:3000/api/login",
+            "http://localhost:9000/api/login",
             {
                 method: "POST",
                 headers: { 

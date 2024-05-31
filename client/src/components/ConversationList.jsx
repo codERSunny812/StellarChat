@@ -86,13 +86,13 @@ const ConversationList = ({conversations, fetchMessages , user} ) => {
                   {conversations.length > 0 ? (
                       conversations.map(
                           ({
-                              user: { email, fullName, receiverId , img },
+                              user: { email, fullName, receiverId , img  },
                               conversationId,
                           }) => {
                               return (
                                   <div
                                       className=" cursor-pointer flex  items-center px-4 py-4 border-b "
-                                      key={Math.random()}
+                                      key={conversationId}
                                       onClick={() => {
                                           fetchMessages(conversationId, fullName, receiverId , img);
                                       }}

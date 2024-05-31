@@ -11,17 +11,15 @@ const SettingSection = ({user}) => {
   return (
     <>
       <div>
-    
-
         <div className="flex items-center  mx-[24px] my-[10px] px-3">
-          <img src={user?.imageId} alt="user image" className="h-24 w-24 rounded-full" />
+          <img src={user?.imageId} alt="user image" className="h-20 w-20 rounded-full" />
           <div className="userBio mx-7 capitalize">
             <h1 className="font-semibold text-[24px]">{user.fullName}</h1>
             <p className="text-[15px]">सर्वेषाम् स्वस्तिर्भवतु🫰</p>
           </div>
         </div>
 
-        <div className=" flex flex-col mt-12 gap-6">
+        <div className="flex flex-col mt-12 h-[400px] overflow-y-scroll gap-7">
 
           <div className=" account flex items-center mx-5 px-5 py-1">
 

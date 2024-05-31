@@ -27,7 +27,7 @@ const ChatSection = ({ messages, handleArrowInChat, user, sendMessage, sentMessa
           <div className="flex items-center  mx-3 px-1 cursor-pointer">
             <IoIosArrowRoundBack className="h-8 w-8" onClick={() => handleArrowInChat()} />
             <div className="name flex items-center px-3">
-              <img src={messages.img} alt="user photo" className="h-12 w-12" />
+              <img src={messages.img} alt="user photo" className="h-12 w-12 rounded-full"/>
               <div className="px-3">
                 <h1 className="capitalize font-semibold text-base">{messages.name}</h1>
                 <p className="py-[-2px]">status</p>
@@ -52,9 +52,9 @@ const ChatSection = ({ messages, handleArrowInChat, user, sendMessage, sentMessa
             {messages.name ? (
               messages.data.length > 0 ? (
                 messages?.data?.map(
-                  ({ conversationId, message, senderId, _id }) => {
+                  ({ conversationId, message, senderId}) => {
                     return (
-                      <div className="mx-3 my-2 " key={_id}>
+                      <div className="mx-3 my-2 " key={conversationId}>
                         {senderId == user.id ? (
                           <div className=" max-w-[50%] rounded-4xl  bg-[#20A090] text-white px-2 py-2  ml-auto font-edu-nsw">
                             {message}

@@ -26,7 +26,7 @@ const DashBoard = () => {
   const [isOnline , setIsOnline] = useState(true);
 
   // connecting the front end with the  socket server
-  const socket = useMemo(() => io('http://localhost:3000'),[]);
+  const socket = useMemo(() => io('http://localhost:9000'),[]);
 
   
 
@@ -43,7 +43,7 @@ const DashBoard = () => {
   useEffect(() => {
     // Set up socket event listeners
     socket.on('connect', () => {
-      console.log(`User is connected with socketId: ${socket.id}`);
+      // console.log(`User is connected with socketId: ${socket.id}`);
 
       // Event to send the id of the loggedIn user
       const userData = {
@@ -57,7 +57,7 @@ const DashBoard = () => {
 
       // List active users
       socket.on("getUser", (data) => {
-        console.log(`Active users are -> `, data);
+        // console.log(`Active users are -> `, data);
       });
     });
 
@@ -72,8 +72,8 @@ const DashBoard = () => {
 
   // Function to handle incoming messages
   const handleMessage = (data) => {
-    console.log("Inside the getMessage event");
-    console.log(data);
+    // console.log("Inside the getMessage event");
+    // console.log(data);
 
     // Extract message data from the received object
     const { senderId, conversationId, message, receiverId } = data;
@@ -115,7 +115,7 @@ const DashBoard = () => {
   // fetch conversations of  the loggedIn user
   const fetchConversation = async () => {
     const res = await fetch(
-      `http://localhost:3000/api/conversation/${user.id}`,
+      `http://localhost:9000/api/conversation/${user.id}`,
       {
         method: "GET",
         headers: {
@@ -142,7 +142,7 @@ const DashBoard = () => {
   useEffect(() => {
  try {
    const fetchAllUser = async () => {
-     const res = await fetch("http://localhost:3000/api/users", {
+     const res = await fetch("http://localhost:9000/api/users", {
        method: "GET",
        headers: {
          "Content-type": "application/json",
@@ -164,7 +164,7 @@ const DashBoard = () => {
   const fetchMessages = async (conversationId, fullName, receiverId , img) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/message/${conversationId}`,
+        `http://localhost:9000/api/message/${conversationId}`,
         {
           method: "GET",
           headers: {
@@ -205,7 +205,7 @@ const DashBoard = () => {
         receiverId: messages?.receiverId, 
       })
 
-      const response = await fetch("http://localhost:3000/api/message", {
+      const response = await fetch("http://localhost:9000/api/message", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -219,7 +219,7 @@ const DashBoard = () => {
       });
 
       if (response.ok) {
-        console.log("Message sent successfully");
+        // console.log("Message sent successfully");
         setSentMessage("");
       } 
       else {
@@ -241,7 +241,7 @@ const DashBoard = () => {
         (conv) => conv.user.receiverId === receiverId
       );
 
-      console.log(existingConversation);
+      // console.log(existingConversation);
 
       if (existingConversation) {
         toast.warning("conversation already exist",{
@@ -251,7 +251,7 @@ const DashBoard = () => {
         return; 
       }
 
-      const response = await fetch("http://localhost:3000/api/conversation", {
+      const response = await fetch("http://localhost:9000/api/conversation", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -260,7 +260,7 @@ const DashBoard = () => {
       });
 
       if (response.ok) {
-        console.log("Conversation created successfully");
+        // console.log("Conversation created successfully");
         // Fetch the newly created conversation
         await fetchConversation();
         toast.info("a new conversation is created",{
@@ -288,7 +288,7 @@ const DashBoard = () => {
 
 
   // console.log("the value of the typed message is : ",sentMessage);
-  console.log("the value of the message in the convo between users is: ", messages)
+  // console.log("the value of the message in the convo between users is: ", messages)
   // console.log("the value of the conversation is:",conversation);
   // console.log("the value of the all the user is:",showAllUser);
   
@@ -307,6 +307,7 @@ const DashBoard = () => {
         sentMessage={sentMessage}
        updateSentMessageForMobile={updateSentMessageForMobile}  
        isOnline={isOnline}
+       createConversation={createConversation}
         />
       ) : (
     
