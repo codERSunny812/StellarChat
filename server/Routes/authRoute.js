@@ -23,8 +23,12 @@ router.post('/register', upload.single('uploaded_file'), async (req, res) => {
     try {
         console.log("inside the Registration route");
 
+        console.log(req);
+
         const { fullName, email, password } = req.body;
+
         let profilePicturePath, imageLink;
+        
         console.log("details collected");
 
         if (req.file) {
