@@ -15,7 +15,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                 //    check that user are present or not
                 // we have added 1 because  of our own profile in array so subtracting it
                 showAllUser.length > 1 ? ( 
-                          showAllUser.map(({ userInfo: { email, fullName, userId, img } }) => {
+                          showAllUser.map(({ email, fullName, userId, img }) => {
                       // Use parentheses for conditional rendering
                       return userId !== user.id ? (
                           <div

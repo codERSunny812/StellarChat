@@ -10,16 +10,26 @@ import "react-toastify/dist/ReactToastify.css";
 
 const DashBoard = () => {
 
+
+  // data of the current loggedIn user
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user-details"))
   );
+
+  // to check that screen is of mobile  or not
   const [isMobileView, setIsMobileView] = useState(false);
+
+
+  // state for the messages and conversation 
+
   const [messages, setMessages] = useState({
     data:[], // Initialize with an empty array or an appropriate initial value
     name: '', // Initialize with an empty string or an appropriate initial value
     conversationId: '',
     receiverId: '',
   });
+
+
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
   const [showAllUser, setShowAllUser] = useState([]);
@@ -93,7 +103,7 @@ const DashBoard = () => {
     }));
   };
 
-  // handle responsiveness
+  // to handle responsiveness of app
   useEffect(() => {
     
     const handleResize = () => {
@@ -157,7 +167,7 @@ const DashBoard = () => {
  catch (error) {
   console.log(error)
  }
-  }, []);
+  },[]);
 
 
   // function to fech message of any user
@@ -278,6 +288,7 @@ const DashBoard = () => {
     }
   };
 
+
   const updateSentMessage = (newSentMessage) => {
     setSentMessage(newSentMessage);
   };
@@ -286,17 +297,25 @@ const DashBoard = () => {
     setSentMessage(newSentMessageFromMobile);
   };
 
+  console.log("the data of all the state isn given below");
 
-  // console.log("the value of the typed message is : ",sentMessage);
-  // console.log("the value of the message in the convo between users is: ", messages)
-  // console.log("the value of the conversation is:",conversation);
-  // console.log("the value of the all the user is:",showAllUser);
+  console.log("the data of the current loggedIn user is:")
+  console.log(user);
+
+  console.log("total user in the DB are:");
+
+  console.log(showAllUser);
   
 
   return (
     <div className="">
-      {isMobileView ? (
-  
+
+      {/* to show  the mobile view or desktop view */}
+
+    {
+      
+      isMobileView ? (
+        // mobile view 
         <MobileView 
         conversations={conversation} 
         showAllUser={showAllUser} 
@@ -311,6 +330,8 @@ const DashBoard = () => {
         />
       ) : (
     
+        // desktop  view of the app
+
         <div className="h-screen grid grid-cols-12 overflow-hidden">
 
           <ConversationList 
@@ -318,9 +339,7 @@ const DashBoard = () => {
           fetchMessages={fetchMessages} 
           user={user}
           />
-         
-
-         
+                 
           <MessageViewList 
           messages={messages} 
           user={user} 
@@ -337,7 +356,8 @@ const DashBoard = () => {
           />
             
         </div>
-      )}
+      )
+    }
     </div>
   );
 };

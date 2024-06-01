@@ -4,8 +4,6 @@ import { FaFacebook } from "react-icons/fa";
 
 
 const SocialMedia = () => {
-  
-
   return (
     <div className=" flex gap-4 px-4 my-1">
       <div className={`border-2  rounded-full p-2`}>
