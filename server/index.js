@@ -7,7 +7,7 @@ const { connectDatabase } = require("./Database/data_connection");
 const dotenv = require('dotenv')
 
 
-//imported the  routes 
+//imported the various  routes 
 const authRoutes = require('./Routes/authRoute');
 const userRoutes = require('./Routes/userRoute');
 const conversationRoutes = require('./Routes/conversationRoute');
@@ -27,6 +27,8 @@ connectDatabase();
 
 
 
+
+
 //server instance 
 const app = express();
 const server = createServer(app);
@@ -34,6 +36,10 @@ const server = createServer(app);
 
 //port allocation
 const port = process.env.PORT || 4001;
+
+
+//static files setup -> static files will be served in this
+app.use(express.static("./Public"))
 
 
 // Middleware
@@ -65,6 +71,9 @@ const io = new Server(server, {
 });
 
 // Socket connection
+
+// array to add the people who joined the socket
+
 let allConnectedUser = [];
 
 io.on("connection", (socket) => {
@@ -109,12 +118,17 @@ io.on("connection", (socket) => {
 
 });
 
+
+// home route
+
 app.get('/',(req,res)=>{
   res.send("hello from the home route");
 })
 
 
 
+
+// server host
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
