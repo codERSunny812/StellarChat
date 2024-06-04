@@ -16,7 +16,7 @@ try {
     console.log(localFilePath);
     if(!localFilePath) return null;
     //upload the file on the cloudinary server
-   const response = await  v2.uploader.upload(localFilePath,{
+   const response = await v2.uploader.upload(localFilePath,{
         resource_type:"auto"
     });
 

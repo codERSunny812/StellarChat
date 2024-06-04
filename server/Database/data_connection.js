@@ -12,9 +12,7 @@ exports.connectDatabase = () => {
     })
     .catch((error) => {
       console.log(
-        "error in connecting with mongodb server" +
-          error
-      );
+        "error in connecting with mongodb server");
     });    
 };
 
