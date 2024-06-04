@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
 const Registration = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const { setIsLoggedIn } = useContext(UserStatusContext);
@@ -16,6 +18,9 @@ const Registration = () => {
     password: "",
     image_Id: "",
   };
+
+  console.log(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
+
   const [data, setData] = useState(initialData);
 
   const handleFormSubmit = async (e) => {
@@ -74,7 +79,7 @@ const Registration = () => {
     // eslint-disable-next-line no-async-promise-executor
     const registrationPromise = new Promise(async (resolve, reject) => {
       try {
-        const res = await fetch("http://localhost:9000/api/register", {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/register`, {
           method: "POST",
           body: formData,
         });

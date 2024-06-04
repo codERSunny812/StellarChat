@@ -24,6 +24,8 @@ const AfterSplash = () => {
           family.
         </h2>
 
+        
+
         {/* login throught social media */}
         <SocialMedia />
 
