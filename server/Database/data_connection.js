@@ -6,7 +6,7 @@ const URL = process.env.MONGO_URL;
 exports.connectDatabase = () => {
   // connection to the database
   mongoose
-    .connect("mongodb+srv://sengersunny448:ltxX54UPyMn4SOSd@stellarchat.cginm5y.mongodb.net/chatkro")
+    .connect(`${process.env.MONGO_URL}/stellarchat`)
     .then(() => {
       console.log("the mongodb is successfully connected");
     })
@@ -17,3 +17,6 @@ exports.connectDatabase = () => {
       );
     });    
 };
+
+
+

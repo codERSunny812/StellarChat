@@ -1,17 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-require("dotenv").config();
 const cors = require("cors");
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { connectDatabase } = require("./Database/data_connection");
+const dotenv = require('dotenv')
 
 
-
-// Connecting to the database
-connectDatabase();
-
-
+//imported the  routes 
 const authRoutes = require('./Routes/authRoute');
 const userRoutes = require('./Routes/userRoute');
 const conversationRoutes = require('./Routes/conversationRoute');
@@ -19,20 +15,37 @@ const messageRoutes = require('./Routes/messageRoute');
 const homeRoute = require('./Routes/homeRoute');
 
 
+
+
+// to handle the environmental variable
+dotenv.config();
+
+
+// Connecting to the database
+connectDatabase();
+
+
+
+
 //server instance 
 const app = express();
 const server = createServer(app);
 
 
-// port allocation
-const port = process.env.PORT || 3000;
+//port allocation
+const port = process.env.PORT || 4001;
+
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin:process.env.CLIENT_ORIGIN_URL,
+  methods:["GET","POST"],
+  credentials:true
+}));
 
-// Use routes
+//diffrent  routes
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', conversationRoutes);
@@ -45,7 +58,7 @@ app.use('/api',homeRoute)
 // Socket server instance
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin:process.env.CLIENT_ORIGIN_URL,
     methods: ["GET", "POST"],
     credentials: true,
   }
@@ -55,6 +68,7 @@ const io = new Server(server, {
 let allConnectedUser = [];
 
 io.on("connection", (socket) => {
+
   socket.on("addUser", ({ id, name }) => {
     if (!allConnectedUser.some(user => user.userId === id)) {
       const user = {
