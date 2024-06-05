@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/codERSunny812/ChatKro#readme",
   "dependencies": {
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cloudinary": "^2.1.0",
@@ -28,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.1",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
     "nodemon": "^3.0.3",
     "socket.io": "^4.7.5"
   }

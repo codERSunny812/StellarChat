@@ -13,12 +13,18 @@ const userRoutes = require('./Routes/userRoute');
 const conversationRoutes = require('./Routes/conversationRoute');
 const messageRoutes = require('./Routes/messageRoute');
 const homeRoute = require('./Routes/homeRoute');
+const runCronJobs = require("./utility/cronJobs");
 
 
 
 
 // to handle the environmental variable
 dotenv.config();
+
+
+
+// cronJobs added to prevent the shutting of the render server
+runCronJobs();
 
 
 // Connecting to the database

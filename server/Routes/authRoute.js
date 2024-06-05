@@ -38,8 +38,14 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
       try {
         imageLink = await connectCloudinary(profilePicturePath, {
           transformation: [
-            { width: 100, height: 100, crop: "fill" },
-            { radius: "max" },
+            { gravity: "face", height: 300, width: 300, crop: "thumb" },
+            { radius: 20 },
+            { effect: "sepia" },
+            { overlay: "cloudinary_icon" },
+            { effect: "brightness:90" },
+            { opacity: 60 },
+            { width: 50, crop: "scale" },
+            { angle: 10 }
           ],
         });
 
