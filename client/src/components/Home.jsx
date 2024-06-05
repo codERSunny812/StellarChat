@@ -273,9 +273,9 @@ const DashBoard = () => {
         // console.log("Conversation created successfully");
         // Fetch the newly created conversation
         await fetchConversation();
-        toast.info("a new conversation is created", {
+        toast.info("conversation created", {
           position: "top-center",
-          theme: "colored"
+          theme: "dark"
 
         })
       }
