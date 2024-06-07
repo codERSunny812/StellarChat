@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-// const multer = require("multer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { userModal } = require("../models/UserModal");
@@ -8,30 +7,21 @@ const { connectCloudinary } = require("../utility/Cloudinary.integrate");
 const fs = require("fs/promises");
 const upload = require('../utility/MulterConfig')
 
-// Multer setup
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => cb(null, "./Public/Images/Uploads"),
-//   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
-// });
-
-// const upload = multer({ storage });
-
 router.get("/register", (req, res) => {
   res.send("hello from  the register");
 });
 
-// Registration route
+// route to register the user
 router.post("/register", upload.single("uploaded_file"), async (req, res) => {
   try {
 
     console.log("inside the Registration route");
 
-
     const { fullName, email, password } = req.body;
 
     let profilePicturePath, imageLink;
 
-    // profile photo is added to the cloudinary
+    // photo is added on cloudinary server
 
     if (req.file) {
       profilePicturePath = req.file.path;
@@ -39,18 +29,15 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
         imageLink = await connectCloudinary(profilePicturePath, {
           transformation: [
             { gravity: "face", height: 300, width: 300, crop: "thumb" },
-            { radius: 20 },
-            { effect: "sepia" },
-            { overlay: "cloudinary_icon" },
-            { effect: "brightness:90" },
-            { opacity: 60 },
-            { width: 50, crop: "scale" },
-            { angle: 10 }
           ],
         });
 
+        // if photo is added on the cdn server then remove it from  out server  to reduce the load
+
         await fs.unlink(profilePicturePath);
-      } catch (cloudinaryError) {
+
+      }
+      catch (cloudinaryError) {
         return res
           .status(500)
           .json({
@@ -58,6 +45,10 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
             error: cloudinaryError,
           });
       }
+    }else{
+      return res.status(400).json({
+        message:"please select an image to upload"
+      })
     }
 
 
@@ -68,6 +59,7 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
     }
     
 
+    // checking for the user in DB
     if (await userModal.findOne({ email })) {
       return res.status(409).json({ message: "User already exists" });
     }
@@ -76,12 +68,15 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
 
+
+    // creating a user in the DB
     const newUser = {
       email,
       fullName,
       password: hashedPassword,
     };
 
+    // photo link is added in the DB
     if (imageLink && imageLink.secure_url) {
       newUser.image_Id = imageLink.secure_url;
     }
@@ -104,7 +99,7 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
   }
 });
 
-// Login route
+// route for login the user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

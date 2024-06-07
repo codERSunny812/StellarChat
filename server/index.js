@@ -32,9 +32,6 @@ connectDatabase();
 
 
 
-
-
-
 //server instance 
 const app = express();
 const server = createServer(app);
@@ -44,11 +41,11 @@ const server = createServer(app);
 const port = process.env.PORT || 4001;
 
 
-//static files setup -> static files will be served in this
+//static files setup -> static files will be served from this
 app.use(express.static("./Public"))
 
 
-// Middleware
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors({
@@ -57,7 +54,7 @@ app.use(cors({
   credentials:true
 }));
 
-//diffrent  routes
+//routes to handle the  functionalities of app
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', conversationRoutes);
@@ -67,7 +64,7 @@ app.use('/api',homeRoute)
 
 
 
-// Socket server instance
+// initilize the socket server
 const io = new Server(server, {
   cors: {
     origin:process.env.CLIENT_ORIGIN_URL,
