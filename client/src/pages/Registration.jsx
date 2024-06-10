@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 const Registration = () => {
+  
   const [profilePicture, setProfilePicture] = useState(null);
   const { setIsLoggedIn } = useContext(UserStatusContext);
   const [retypePass, setretypePass] = useState("");
@@ -79,10 +78,13 @@ const Registration = () => {
     // eslint-disable-next-line no-async-promise-executor
     const registrationPromise = new Promise(async (resolve, reject) => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/register`, {
-          method: "POST",
-          body: formData,
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/register`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (res.status === 400) {
           reject("All fields are required");

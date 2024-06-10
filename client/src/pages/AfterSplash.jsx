@@ -5,16 +5,12 @@ import { useContext } from "react";
 import { UserStatusContext } from "../Context/Auth";
 
 const AfterSplash = () => {
-  const {  isLoggedIn ,  setIsLoggedIn } = useContext(UserStatusContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
   console.log(isLoggedIn);
   return (
     <div className="h-screen  w-full flex justify-center items-center">
       <div className="h-screen w-[400px] bg-gradient-to-tr from-custom-purple-light to-custom-purple-dark flex flex-col  items-center text-white">
-        <img
-          src={Logo}
-          alt="App logo"
-          className=" h-11 w-26 my-7"
-        />
+        <img src={Logo} alt="App logo" className=" h-11 w-26 my-7" />
         <h1 className="text-7xl  capitalize px-5 font-sans my-5">
           connect friends{" "}
           <span className="font-semibold my-2">easily & quickly</span>
@@ -23,8 +19,6 @@ const AfterSplash = () => {
           our app is the perfect way to get connected with the friends and
           family.
         </h2>
-
-        
 
         {/* login throught social media */}
         <SocialMedia />

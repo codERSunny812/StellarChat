@@ -5,6 +5,7 @@ import Registration from "./Registration";
 
 
 const Form = () => {
+  
 
 
   const { isLoggedIn } = useContext(UserStatusContext);
