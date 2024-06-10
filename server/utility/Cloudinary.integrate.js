@@ -13,7 +13,6 @@ exports.connectCloudinary = async (localFilePath) => {
   try {
     console.log("inside the connectCloudinary try block");
 
-    console.log(localFilePath);
 
     if (!localFilePath) return null;
 
