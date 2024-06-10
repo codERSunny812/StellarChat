@@ -10,11 +10,8 @@ exports.connectDatabase = () => {
     .then(() => {
       console.log("the mongodb is successfully connected");
     })
-    .catch((error) => {``
-      console.log(
-        "error in connecting with mongodb server");
-    });    
+    .catch((error) => {
+      ``;
+      console.log("error in connecting with mongodb server");
+    });
 };
-
-
-
