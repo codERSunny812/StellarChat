@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const StorySchema = new mongoose.Schema(
@@ -14,4 +13,4 @@ const StorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-exports.StoryModel = mongoose.model("StoryModel", StorySchema);
+exports.StoryModel = mongoose.model("StoryModel", StorySchema)
