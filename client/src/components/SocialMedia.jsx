@@ -2,7 +2,6 @@ import { FaApple } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
-
 const SocialMedia = () => {
   return (
     <div className=" flex gap-4 px-4 my-1">
