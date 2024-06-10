@@ -1,14 +1,13 @@
 /* eslint-disable react/prop-types */
 
-const ContactSection = ({ showAllUser , user , createConversation }) => {
-  console.log(showAllUser)
+const ContactSection = ({ showAllUser, user, createConversation }) => {
+  console.log(showAllUser);
   return (
     <div>
-      {
-      showAllUser.map(({userInfo:{email,fullName,userId , img}}) => {
+      {showAllUser.map(({ userInfo: { email, fullName, userId, img } }) => {
         // Use parentheses for conditional rendering
-        console.log(`the name of the user  is ${fullName} and id is ${userId}`)
-        return user.id  != userId ? (
+        console.log(`the name of the user  is ${fullName} and id is ${userId}`);
+        return user.id != userId ? (
           <div
             className="cursor-pointer flex items-center px-4 py-4 border-b"
             key={userId}
@@ -26,11 +25,10 @@ const ContactSection = ({ showAllUser , user , createConversation }) => {
             </div>
             <hr />
           </div>
-        ):
-        null
+        ) : null;
       })}
     </div>
-  )
-}
+  );
+};
 
-export default ContactSection
+export default ContactSection;
