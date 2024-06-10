@@ -1,5 +1,4 @@
 import DashBoard from "./components/Home";
-import Form from "./pages/Form";
 import { Outlet, createBrowserRouter } from "react-router-dom";
 import Screen from "./pages/Screen";
 import { useEffect, useState } from "react";
@@ -9,8 +8,7 @@ import Registration from "./pages/Registration";
 
 export const App = () => {
   const [showSplash, setSplash] = useState(true);
-  // const {id} = useParams();
-  // console.log(id);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
