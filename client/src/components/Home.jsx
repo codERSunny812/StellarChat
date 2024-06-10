@@ -4,13 +4,11 @@ import MobileView from "./Mobile View/MobileView";
 import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
 import People from "./People";
-import { io } from 'socket.io-client'
+import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const DashBoard = () => {
-
-
   // data of the current loggedIn user
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user-details"))
@@ -19,16 +17,14 @@ const DashBoard = () => {
   // to check that screen is of mobile  or not
   const [isMobileView, setIsMobileView] = useState(false);
 
-
-  // state for the messages and conversation 
+  // state for the messages and conversation
 
   const [messages, setMessages] = useState({
     data: [], // Initialize with an empty array or an appropriate initial value
-    name: '', // Initialize with an empty string or an appropriate initial value
-    conversationId: '',
-    receiverId: '',
+    name: "", // Initialize with an empty string or an appropriate initial value
+    conversationId: "",
+    receiverId: "",
   });
-
 
   const [conversation, setConversation] = useState([]);
   const [sentMessage, setSentMessage] = useState("");
@@ -36,30 +32,29 @@ const DashBoard = () => {
   const [isOnline, setIsOnline] = useState(true);
 
   // connecting the front end with the  socket server
-  const socket = useMemo(() => io("import.meta.env.VITE_BACKEND_CHAT_APP_URL"), []);
-
-
-
-
+  const socket = useMemo(
+    () => io("import.meta.env.VITE_BACKEND_CHAT_APP_URL"),
+    []
+  );
 
   // to handle the online and offline status  of the  user
   useEffect(() => {
     window.addEventListener("online", () => setIsOnline(true));
 
-    window.addEventListener('offline', () => setIsOnline(false));
-  }, [])
+    window.addEventListener("offline", () => setIsOnline(false));
+  }, []);
 
   // to handle the socket connection and event
   useEffect(() => {
     // Set up socket event listeners
-    socket.on('connect', () => {
+    socket.on("connect", () => {
       // console.log(`User is connected with socketId: ${socket.id}`);
 
       // Event to send the id of the loggedIn user
       const userData = {
         id: user?.id,
         name: user?.fullName,
-      }
+      };
       socket?.emit("addUser", userData);
 
       // Listen for incoming messages
@@ -79,7 +74,6 @@ const DashBoard = () => {
     };
   }, [socket, user]);
 
-
   // Function to handle incoming messages
   const handleMessage = (data) => {
     // console.log("Inside the getMessage event");
@@ -89,7 +83,7 @@ const DashBoard = () => {
     const { senderId, conversationId, message, receiverId } = data;
 
     // Update the messages state with the received message
-    setMessages(prevMessages => ({
+    setMessages((prevMessages) => ({
       ...prevMessages,
       data: [
         ...prevMessages.data,
@@ -97,15 +91,14 @@ const DashBoard = () => {
           senderId,
           conversationId,
           message,
-          receiverId
-        }
-      ]
+          receiverId,
+        },
+      ],
     }));
   };
 
   // to handle responsiveness of app
   useEffect(() => {
-
     const handleResize = () => {
       setIsMobileView(window.innerWidth <= 768);
     };
@@ -125,7 +118,9 @@ const DashBoard = () => {
   // fetch conversations of  the loggedIn user
   const fetchConversation = async () => {
     const res = await fetch(
-      `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/conversation/${user.id}`,
+      `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/conversation/${
+        user.id
+      }`,
       {
         method: "GET",
         headers: {
@@ -135,16 +130,14 @@ const DashBoard = () => {
     );
     const resData = await res.json();
     setConversation(resData);
-
   };
 
   // update the conversationList on component mount
   useEffect(() => {
     try {
       fetchConversation();
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }, []);
 
@@ -152,29 +145,32 @@ const DashBoard = () => {
   useEffect(() => {
     try {
       const fetchAllUser = async () => {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/users`, {
-          method: "GET",
-          headers: {
-            "Content-type": "application/json",
-          },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/users`,
+          {
+            method: "GET",
+            headers: {
+              "Content-type": "application/json",
+            },
+          }
+        );
 
         const resData = await res.json();
         setShowAllUser(resData);
       };
       fetchAllUser();
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }, []);
-
 
   // function to fech message of any user
   const fetchMessages = async (conversationId, fullName, receiverId, img) => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/message/${conversationId}`,
+        `${
+          import.meta.env.VITE_BACKEND_CHAT_APP_URL
+        }/api/message/${conversationId}`,
         {
           method: "GET",
           headers: {
@@ -185,63 +181,58 @@ const DashBoard = () => {
       const resData = await res.json();
       // console.log(resData.data);
       // Append new messages to the existing ones in the state and take care of the previous state too.
-      setMessages(prevMessages => {
+      setMessages((prevMessages) => {
         return {
           ...prevMessages,
           data: [...prevMessages.data, ...resData.data],
           name: fullName,
           conversationId,
           receiverId,
-          img
-        }
-
+          img,
+        };
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.log("error in fetching the message route");
     }
   };
 
-
   // function to send messages
   const sendMessage = async () => {
-
     try {
-      // sending a message event 
+      // sending a message event
       socket.emit("send-message", {
         conversationId: messages?.conversationId,
         senderId: user?.id,
         message: sentMessage, // Corrected field name to 'message'
         receiverId: messages?.receiverId,
-      })
-
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/message`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          conversationId: messages?.conversationId,
-          senderId: user?.id,
-          message: sentMessage,
-          receiverId: messages?.receiverId,
-        }),
       });
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/message`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            conversationId: messages?.conversationId,
+            senderId: user?.id,
+            message: sentMessage,
+            receiverId: messages?.receiverId,
+          }),
+        }
+      );
 
       if (response.ok) {
         // console.log("Message sent successfully");
         setSentMessage("");
-      }
-      else {
+      } else {
         console.error("Failed to send message");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log("Error in sending the message:", error);
     }
   };
-
-
 
   // function to create conversation  between people
   const createConversation = async ({ senderId, receiverId }) => {
@@ -256,18 +247,21 @@ const DashBoard = () => {
       if (existingConversation) {
         toast.warning("conversation already exist", {
           position: "top-center",
-          theme: "dark"
-        })
+          theme: "dark",
+        });
         return;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/conversation`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ senderId, receiverId }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/conversation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({ senderId, receiverId }),
+        }
+      );
 
       if (response.ok) {
         // console.log("Conversation created successfully");
@@ -275,19 +269,15 @@ const DashBoard = () => {
         await fetchConversation();
         toast.info("conversation created", {
           position: "top-center",
-          theme: "dark"
-
-        })
-      }
-      else {
+          theme: "dark",
+        });
+      } else {
         console.error("Failed to create conversation");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log("error in creating the conversation");
     }
   };
-
 
   const updateSentMessage = (newSentMessage) => {
     setSentMessage(newSentMessage);
@@ -299,65 +289,57 @@ const DashBoard = () => {
 
   console.log("the data of all the state isn given below");
 
-  console.log("the data of the current loggedIn user is:")
+  console.log("the data of the current loggedIn user is:");
   console.log(user);
 
   console.log("total user in the DB are:");
 
   console.log(showAllUser);
 
-
   return (
     <div className="">
-
       {/* to show  the mobile view or desktop view */}
 
-      {
+      {isMobileView ? (
+        // mobile view
+        <MobileView
+          conversations={conversation}
+          showAllUser={showAllUser}
+          user={user}
+          sendMessage={sendMessage}
+          fetchMessages={fetchMessages}
+          messages={messages}
+          sentMessage={sentMessage}
+          updateSentMessageForMobile={updateSentMessageForMobile}
+          isOnline={isOnline}
+          createConversation={createConversation}
+        />
+      ) : (
+        // desktop  view of the app
 
-        isMobileView ? (
-          // mobile view 
-          <MobileView
+        <div className="h-screen grid grid-cols-12 overflow-hidden">
+          <ConversationList
             conversations={conversation}
+            fetchMessages={fetchMessages}
+            user={user}
+          />
+
+          <MessageViewList
+            messages={messages}
+            user={user}
+            sentMessage={sentMessage}
+            sendMessage={sendMessage}
+            updateSentMessage={updateSentMessage}
+            isOnline={isOnline}
+          />
+
+          <People
             showAllUser={showAllUser}
             user={user}
-            sendMessage={sendMessage}
-            fetchMessages={fetchMessages}
-            messages={messages}
-            sentMessage={sentMessage}
-            updateSentMessageForMobile={updateSentMessageForMobile}
-            isOnline={isOnline}
             createConversation={createConversation}
           />
-        ) : (
-
-          // desktop  view of the app
-
-          <div className="h-screen grid grid-cols-12 overflow-hidden">
-
-            <ConversationList
-              conversations={conversation}
-              fetchMessages={fetchMessages}
-              user={user}
-            />
-
-            <MessageViewList
-              messages={messages}
-              user={user}
-              sentMessage={sentMessage}
-              sendMessage={sendMessage}
-              updateSentMessage={updateSentMessage}
-              isOnline={isOnline}
-            />
-
-            <People
-              showAllUser={showAllUser}
-              user={user}
-              createConversation={createConversation}
-            />
-
-          </div>
-        )
-      }
+        </div>
+      )}
     </div>
   );
 };
