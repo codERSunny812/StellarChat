@@ -76,6 +76,7 @@ const ConversationList = ({ conversations, fetchMessages, user }) => {
           </div>
 
           <h1 className="capitalize px-3 mt-2 text-white">messages</h1>
+          {/* <h1 className="capitalize px-3 mt-2 text-white">group</h1> */}
           {conversations.length > 0 ? (
             conversations.map(
               ({
