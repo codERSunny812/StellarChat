@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { messageModal } = require("../models/MessageModal");
-const { userModal } = require("../models/UserModal");
-const { conversationModal } = require("../models/ConversationModel");
+const { messageModal } = require("../models/message.modal");
+const { userModal } = require("../models/user.modal");
+const { conversationModal } = require("../models/conversation.model");
 
 // Send a new message
 router.post("/message", async (req, res) => {

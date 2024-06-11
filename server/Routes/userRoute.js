@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { userModal } = require("../models/UserModal");
+const { userModal } = require("../models/user.modal");
 
 // Get all users
 router.get("/users", async (req, res) => {

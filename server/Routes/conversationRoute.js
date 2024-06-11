@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { conversationModal } = require("../models/ConversationModel");
-const { userModal } = require("../models/UserModal");
+const { conversationModal } = require("../models/conversation.model");
+const { userModal } = require("../models/user.modal");
 
 // Create a new conversation
 router.post("/conversation", async (req, res) => {
