@@ -30,8 +30,9 @@ const server = createServer(app);
 //port allocation
 const port = process.env.PORT || 4001;
 
-//static files setup -> static files will be served from this
+//static files -> static files will be served from this
 app.use(express.static("./Public"));
+
 
 // Middlewares
 app.use(bodyParser.urlencoded({ extended: false }));

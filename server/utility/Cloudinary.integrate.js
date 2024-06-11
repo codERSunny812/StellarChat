@@ -8,6 +8,7 @@ v2.config({
   api_secret: process.env.CLOUDINARY_API_KEY_SECRET,
 });
 
+
 // function to upload the photo on the cdn server
 exports.connectCloudinary = async (localFilePath) => {
   try {
@@ -26,6 +27,8 @@ exports.connectCloudinary = async (localFilePath) => {
 
     return response;
   } catch (error) {
+
+    console.log("getting error in upload the image")
     //as the operation got faild then it will remove the file
     await fs.unlink(localFilePath);
 
