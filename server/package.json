@@ -1,7 +1,7 @@
 {
   "name": "chatapp",
   "version": "1.0.0",
-  "description": "this is the backend for the chatapp",
+  "description": "this is the backend of my chatapp in which i have used the commonjs to import and export the modules",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
