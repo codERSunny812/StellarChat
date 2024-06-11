@@ -23,6 +23,7 @@ const Registration = () => {
   const [data, setData] = useState(initialData);
 
   const handleFormSubmit = async (e) => {
+
     e.preventDefault();
 
     if (!data.email || !data.fullName || !data.password) {
@@ -87,17 +88,15 @@ const Registration = () => {
         );
 
         if (res.status === 400) {
-          reject("All fields are required");
+          reject("All fields are required📌");
         } else if (res.status === 409) {
-          reject("User already exists");
+          reject("User already exists💢");
         } else if (res.status >= 200 && res.status < 300) {
           setIsLoggedIn(true);
-          resolve("Registration successful!");
-        } else {
-          reject("Registration failed!");
+          resolve("Registration successful!✅");
         }
       } catch (error) {
-        reject("Registration failed!");
+        reject(" Error in Registration");
       }
     });
 
@@ -113,11 +112,15 @@ const Registration = () => {
             return "Registration successful!👌";
           },
         },
-        error: "Registration failed!🤯",
+        error: {
+          render({ data }) {
+            return data; // data contains the specific error message
+          },
+        },
       },
       {
         position: "top-center",
-        autoClose: 2600,
+        autoClose: 2000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
