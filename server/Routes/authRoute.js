@@ -7,6 +7,8 @@ const { connectCloudinary } = require("../utility/Cloudinary.integrate");
 const fs = require("fs/promises");
 const upload = require("../utility/MulterConfig");
 
+
+
 router.get("/register", (req, res) => {
   res.send("hello from  the register");
 });
@@ -21,6 +23,8 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
     let profilePicturePath, imageLink;
 
     // photo is added on cloudinary server
+
+    console.log("photo is start adding on cloudinary");
 
     if (req.file) {
       profilePicturePath = req.file.path;
@@ -45,6 +49,10 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
         message: "please select an image to upload",
       });
     }
+    console.log("photo is added on cloudinary");
+
+
+    console.log("taking the data from the front end");
 
     if (!fullName || !email || !password) {
       return res
@@ -52,19 +60,33 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
         .json({ message: "Please provide all the details" });
     }
 
+    console.log("data has been colllected from the front end");
+
+    console.log("checking for the user in the DB");
+
     // checking for the user in DB
-    if (await userModal.findOne({ email })) {
+    if (await userModal.findOne({email})) {
       return res.status(409).json({ message: "User already exists" });
     }
 
+    console.log("the user is not found in the DB");
+
+    console.log("password encryption start");
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    console.log("password encryption done");
+
+    console.log("start creating new user in the DB");
     // creating a user in the DB
     const newUser = {
       email,
       fullName,
       password: hashedPassword,
     };
+    
+
+
 
     // photo link is added in the DB
     if (imageLink && imageLink.secure_url) {
