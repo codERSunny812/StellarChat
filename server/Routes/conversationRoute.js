@@ -3,12 +3,20 @@ const router = express.Router();
 const { conversationModal } = require("../models/conversation.model");
 const { userModal } = require("../models/user.modal");
 
-// Create a new conversation
+// Create a new conversation between two people
+
 router.post("/conversation", async (req, res) => {
   try {
     const { senderId, receiverId } = req.body;
+
+    // to created conversation  between the user we should know the senderName and receiverName
+
     const senderName = await userModal.findById(senderId);
     const receiverName = await userModal.findById(receiverId);
+
+
+
+    // now storing the data  of the conversation in the conversation modal
 
     const newConversation = new conversationModal({
       members: [
@@ -19,7 +27,10 @@ router.post("/conversation", async (req, res) => {
       ],
     });
 
+    // savig in the DB
     await newConversation.save();
+
+    // sending the response
 
     res.status(201).json({
       message: "New conversation created",
@@ -29,7 +40,9 @@ router.post("/conversation", async (req, res) => {
         img: receiverName.image_Id,
       },
     });
-  } catch (error) {
+
+  }
+  catch (error) {
     res
       .status(500)
       .json({ message: `Error in creating conversation: ${error}` });
@@ -39,6 +52,7 @@ router.post("/conversation", async (req, res) => {
 // Get all conversations of a user
 router.get("/conversation/:userId", async (req, res) => {
   try {
+
     const { userId } = req.params;
     const conversations = await conversationModal.find({
       members: { $in: [userId] },
@@ -46,6 +60,7 @@ router.get("/conversation/:userId", async (req, res) => {
 
     const conversationUserData = await Promise.all(
       conversations.map(async (conversation) => {
+        // getting the reciever id
         const receiverId = conversation.members.find(
           (member) => member !== userId
         );
@@ -64,7 +79,8 @@ router.get("/conversation/:userId", async (req, res) => {
     );
 
     res.status(200).json(conversationUserData);
-  } catch (error) {
+  }
+  catch (error) {
     res
       .status(500)
       .json({ message: `Error in fetching conversations: ${error}` });

@@ -10,7 +10,7 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  message: {
+  message:{
     type: String,
   },
   receiverId: {

@@ -9,18 +9,18 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const DashBoard = () => {
-  // data of the current loggedIn user
+
+  // data of the current loggedIn user will get through the local storage
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user-details"))
   );
 
-  // to check that screen is of mobile  or not
+  // to check that screen is off mobile  or not
   const [isMobileView, setIsMobileView] = useState(false);
 
-  // state for the messages and conversation
 
   const [messages, setMessages] = useState({
-    data: [], // Initialize with an empty array or an appropriate initial value
+    data: [],// Initialize with an empty array or an appropriate initial value
     name: "", // Initialize with an empty string or an appropriate initial value
     conversationId: "",
     receiverId: "",
@@ -75,6 +75,7 @@ const DashBoard = () => {
   }, [socket, user]);
 
   // Function to handle incoming messages
+
   const handleMessage = (data) => {
     // console.log("Inside the getMessage event");
     // console.log(data);
@@ -99,6 +100,7 @@ const DashBoard = () => {
 
   // to handle responsiveness of app
   useEffect(() => {
+
     const handleResize = () => {
       setIsMobileView(window.innerWidth <= 768);
     };
@@ -115,7 +117,7 @@ const DashBoard = () => {
     };
   }, []);
 
-  // fetch conversations of  the loggedIn user
+  // function to show the conversation of the currenlty loggedIn user
   const fetchConversation = async () => {
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/conversation/${
@@ -237,17 +239,17 @@ const DashBoard = () => {
   // function to create conversation  between people
   const createConversation = async ({ senderId, receiverId }) => {
     try {
-      // Check if conversation already exists
-      const existingConversation = conversation.find(
-        (conv) => conv.user.receiverId === receiverId
-      );
+      // if conversation already exist in the array then 
+      // const existingConversation = ;
 
       // console.log(existingConversation);
 
-      if (existingConversation) {
+      if (conversation.find((conv) => conv.user.receiverId === receiverId
+      )) {
         toast.warning("conversation already exist", {
           position: "top-center",
           theme: "dark",
+          autoClose:1500,
         });
         return;
       }
@@ -270,6 +272,7 @@ const DashBoard = () => {
         toast.info("conversation created", {
           position: "top-center",
           theme: "dark",
+          autoClose:1500
         });
       } else {
         console.error("Failed to create conversation");
@@ -293,8 +296,19 @@ const DashBoard = () => {
   console.log(user);
 
   console.log("total user in the DB are:");
-
   console.log(showAllUser);
+
+  console.log("the conversation of the current loggedIn user is:")
+  console.log(conversation);
+
+
+  console.log("the value of the message is:")
+  console.log(messages);
+
+  console.log("the value of the sent messgae is");
+  console.log(sentMessage)
+
+
 
   return (
     <div className="">

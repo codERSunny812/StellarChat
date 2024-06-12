@@ -13,7 +13,7 @@ router.get("/register", (req, res) => {
   res.send("hello from  the register");
 });
 
-// route to register the user
+//route to register the user
 router.post("/register", upload.single("uploaded_file"), async (req, res) => {
   try {
     console.log("inside the Registration route");
@@ -109,7 +109,7 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
   }
 });
 
-// route for login the user
+//route for login the user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

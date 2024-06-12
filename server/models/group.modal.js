@@ -10,10 +10,9 @@ const groupSchema = mongoose.Schema({
     avtar:{
     type:String
     },
-    members: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User'
-     }],
+    members: { 
+        type:Array
+    },
     createdAt: { 
         type: Date, 
         default: Date.now 

@@ -10,7 +10,7 @@ const People = ({ showAllUser, user, createConversation }) => {
           <h1>people</h1>
         </div>
         {/* show all the user which */}
-        <div className="people h-3/4 overflow-y-scroll">
+        <div className="people h-2/3 overflow-y-scroll">
           {
             //    check that user are present or not
             // we have added 1 because  of our own profile in array so subtracting it

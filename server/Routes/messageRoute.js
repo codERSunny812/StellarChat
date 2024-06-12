@@ -7,9 +7,10 @@ const { conversationModal } = require("../models/conversation.model");
 // Send a new message
 router.post("/message", async (req, res) => {
   try {
+
     const { conversationId, senderId, message, receiverId } = req.body;
 
-    if (!senderId || !message) {
+    if (!senderId||!message) {
       return res.status(400).json({
         message: "Please fill all the required fields (senderId, message)",
       });
@@ -18,6 +19,7 @@ router.post("/message", async (req, res) => {
     const senderName = await userModal.findById(senderId);
     const receiverName = await userModal.findById(receiverId);
 
+    // if there is not conversation then create one
     if (!conversationId && receiverId) {
       const newConversation = new conversationModal({
         members: [
@@ -51,6 +53,7 @@ router.post("/message", async (req, res) => {
         receiverId,
         img: receiverName.image_Id,
       });
+
       await newMessage.save();
 
       return res.status(201).json({
@@ -68,7 +71,8 @@ router.post("/message", async (req, res) => {
         .status(400)
         .json({ message: "Conversation ID or Receiver ID is required" });
     }
-  } catch (error) {
+  }
+  catch (error) {
     res.status(500).json({ message: `Error in sending message: ${error}` });
   }
 });
