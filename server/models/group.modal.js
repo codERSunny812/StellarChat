@@ -8,7 +8,7 @@ const groupSchema = mongoose.Schema({
     },
     avtar:{
     type:String,
-    required:true
+    required:t
     },
     members: [{ 
         type: Schema.Types.ObjectId, 
