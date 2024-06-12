@@ -4,14 +4,14 @@ const { default: mongoose } = require("mongoose");
 const groupSchema = mongoose.Schema({
     name: { 
         type: String, 
-        required: true 
+        required: true,
+        unique:true
     },
     avtar:{
-    type:String,
-    required:t
+    type:String
     },
     members: [{ 
-        type: Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'User'
      }],
     createdAt: { 

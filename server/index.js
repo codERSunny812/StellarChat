@@ -12,6 +12,7 @@ const userRoutes = require("./Routes/userRoute");
 const conversationRoutes = require("./Routes/conversationRoute");
 const messageRoutes = require("./Routes/messageRoute");
 const homeRoute = require("./Routes/homeRoute");
+const groupRoute = require('./Routes/groupCreateRoute');
 const runCronJobs = require("./utility/cronJobs");
 
 // to handle the environmental variable
@@ -51,6 +52,7 @@ app.use("/api", userRoutes);
 app.use("/api", conversationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", homeRoute);
+app.use('/api',groupRoute);
 
 // initilize the socket server
 const io = new Server(server, {
