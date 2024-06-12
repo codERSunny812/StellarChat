@@ -5,12 +5,12 @@ import Lottie from "lottie-react";
 const People = ({ showAllUser, user, createConversation }) => {
   return (
     <>
-      <div className="col-span-3  bg-[#5D3587] text-white h-screen">
+      <div className="col-span-3  bg-[#5D3587] text-white">
         <div className="top capitalize h-[10%] mx-4 mt-16 font-semibold text-lg ">
           <h1>people</h1>
         </div>
         {/* show all the user which */}
-        <div className="people h-3/4 overflow-scroll">
+        <div className="people h-3/4 overflow-y-scroll">
           {
             //    check that user are present or not
             // we have added 1 because  of our own profile in array so subtracting it

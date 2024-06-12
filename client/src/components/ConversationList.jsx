@@ -7,9 +7,11 @@ import Lottie from "lottie-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserStatusContext } from "../Context/Auth";
+import Group from "./Group";
 
-const ConversationList = ({ conversations, fetchMessages, user }) => {
+const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) => {
   const [isLogoutDropDown, setLogOutDropDown] = useState(false);
+  const [activeTab , setActiveTab] = useState('messages');
   const logoutNavigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
 
@@ -64,7 +66,7 @@ const ConversationList = ({ conversations, fetchMessages, user }) => {
         <hr />
 
         {/* conversation list of the user */}
-        <div className="messages ">
+        <div className="message">
           {/* search panel to search people */}
           <div className="searchBar  flex items-center">
             <input
@@ -75,44 +77,75 @@ const ConversationList = ({ conversations, fetchMessages, user }) => {
             <IoSearchCircle className="h-10 w-10 mx-1 my-1" color="white" />
           </div>
 
-          <h1 className="capitalize px-3 mt-2 text-white">messages</h1>
-          {/* <h1 className="capitalize px-3 mt-2 text-white">group</h1> */}
-          {conversations.length > 0 ? (
-            conversations.map(
-              ({
-                user: { email, fullName, receiverId, img },
-                conversationId,
-              }) => {
-                return (
-                  <div
-                    className=" cursor-pointer flex  items-center px-4 py-4 border-b "
-                    key={conversationId}
-                    onClick={() => {
-                      fetchMessages(conversationId, fullName, receiverId, img);
-                    }}
-                  >
-                    <img
-                      src={img}
-                      className="h-[68px] w-[68px]  rounded-full"
-                      alt={fullName}
-                    />
-                    <div className="accountInfo ml-6 text-white">
-                      <h1 className="text-lg">{fullName}</h1>
-                      <h2 className="text-sm font-light">{email}</h2>
-                    </div>
-                    <hr />
-                  </div>
-                );
-              }
+          {/* message and group section */}
+
+          <div className=" flex cursor-pointer">
+            <h1 className={`capitalize px-3 mt-2 text-white ${activeTab === "messages" ? "border-b-2 border-white" : ""}`} onClick={()=> setActiveTab('messages')}>messages</h1>
+            <h1 className={`capitalize px-6 mt-2 text-white ${activeTab === "groups" ? "border-b-2 border-white" : ""}`} onClick={()=>  setActiveTab("groups")}>group</h1>
+          </div>
+
+
+          {/* conditional rendering of the active tab */}
+
+          {
+            activeTab == 'messages' ? (
+              
+              conversations.length > 0 ? (
+                conversations.map(
+                  ({
+                    user: { email, fullName, receiverId, img },
+                    conversationId,
+                  }) => {
+                    return (
+                      <div
+                        className=" cursor-pointer flex  items-center px-4 py-4 border-b "
+                        key={conversationId}
+                        onClick={() => {
+                          fetchMessages(conversationId, fullName, receiverId, img);
+                        }}
+                      >
+                        <img
+                          src={img}
+                          className="h-[68px] w-[68px]  rounded-full"
+                          alt={fullName}
+                        />
+                        <div className="accountInfo ml-6 text-white">
+                          <h1 className="text-lg">{fullName}</h1>
+                          <h2 className="text-sm font-light">{email}</h2>
+                        </div>
+                        <hr />
+                      </div>
+                    );
+                  }
+                )
+              ) : (
+                <div className="mt-6 mx-2 px-5">
+                  <Lottie animationData={NoMessage} />
+                  <h1 className="text-center capitalize text-white font-semibold text-lg my-4">
+                    no conversation is available
+                  </h1>
+                </div>
+              )
+
+            ) : (
+              <Group
+                  showAllUser={showAllUser}
+                  user={user}
+              
+              />
             )
-          ) : (
-            <div className="mt-6 mx-2 px-5">
-              <Lottie animationData={NoMessage} />
-              <h1 className="text-center capitalize text-white font-semibold text-lg my-4">
-                no conversation is available
-              </h1>
-            </div>
-          )}
+          }
+
+
+          {
+          
+        
+        }
+
+
+        {/* group section */}
+
+
         </div>
       </div>
     </>

@@ -322,6 +322,8 @@ const DashBoard = () => {
             conversations={conversation}
             fetchMessages={fetchMessages}
             user={user}
+            showAllUser={showAllUser}
+             
           />
 
           <MessageViewList
