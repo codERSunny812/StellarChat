@@ -52,7 +52,7 @@ Router.get('/user-group/:userId',async(req,res)=>{
 
     try {
         
-        const {userId} = req.params.userId;
+        const {userId} = req.params;
 
         // Fetch groups where the user is a member
         const groups = await groupModal.find({ 'members.userId': userId });
@@ -67,7 +67,7 @@ Router.get('/user-group/:userId',async(req,res)=>{
 
 
 
-})
+});
 
 
 
