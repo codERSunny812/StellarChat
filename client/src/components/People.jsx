@@ -19,7 +19,7 @@ const People = ({ showAllUser, user, createConversation }) => {
                 // Use parentheses for conditional rendering
                 return userId !== user.id ? (
                   <div
-                    className="cursor-pointer flex items-center px-4 py-4 border-b"
+                    className="cursor-pointer flex items-center px-4 py-[13px] border-b"
                     key={userId}
                     onClick={() => {
                       createConversation({

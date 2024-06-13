@@ -5,32 +5,42 @@ import Nogroup from "../anim/Nogroup.json";
 import { RxCross2 } from "react-icons/rx";
 
 const Group = ({ showAllUser, user }) => {
-  // console.log(user.id)
+  
   const [groups, setGroups] = useState([]);
   const [modal, setModal] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [selectedUser, setSelectedUser] = useState([])
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/user-group/${user.id}`, {
-          method: 'GET',
-          credentials: 'include' // Ensures cookies are included in the request
-        });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch groups');
-        }
+  console.log("the data of the state variables for the group component are:");
+   console.log("group name is:")
+  console.log(groupName);
+  console.log("the modal is ");
+  console.log(modal);
+  console.log("selectedUser for the group is:");
+  console.log(selectedUser);
+  console.log("the groups which is created by the user is:");
+  console.log(groups)
 
-        const data = await response.json();
-        setGroups(data);
-      } catch (error) {
-        console.error('Error fetching groups:', error);
+
+  const fetchGroupData  = async()=>{
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/user-group/${user.id}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch groups');
       }
-    };
-    fetchGroups();
-  }, [user.id]);
+      const data = await response.json();
+      console.log("the data of the group created by the user are:",data);
+      setGroups(data);
+    } catch (error) {
+      console.error('Error fetching groups:', error);
+    }
+  }
+
+  useEffect(()=>{
+  fetchGroupData();
+  },[])
 
 
   const handleUserClick = (selectedUser)=>{
@@ -44,14 +54,7 @@ const Group = ({ showAllUser, user }) => {
     });
   }
 
-  console.log("the value of the group is:");
-  console.log(groups);
-
-
   const handleCreateGroup = async () => {
-    alert("hello")
-    // const memberIds = selectedUser.map(user => user.userId);
-    // console.log(memberIds)
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/create-group`, {
         method: 'POST',
@@ -65,12 +68,17 @@ const Group = ({ showAllUser, user }) => {
         throw new Error('Failed to create group');
       }
 
-      const data = await response.json();
-      console.log('Group created:', data);
-      // setGroups([...groups, data.data]);
-      setModal(false);
-      setGroupName('');
-      setSelectedUser([]);
+      if(response.ok){
+        const data = await response.json();
+       console.log("the group is successfully created:",data);
+       fetchGroupData();
+        setGroupName('');
+        setSelectedUser([]);
+        setModal(false);
+
+      }
+    
+      
     } catch (error) {
       console.error('Error creating group:', error);
     }
@@ -152,28 +160,24 @@ const Group = ({ showAllUser, user }) => {
 
         {groups.length > 0 ? (
 
-          <h1>hello</h1>
+          groups.map((grp)=>{
+            return(
+              <div className="py-1 my-1" key={grp._id}>
+
+                <div className="groups  flex items-center my-2 mx-4">
+
+                  <img src="https://imgs.search.brave.com/Ck8a-drXsaTr4fTvCMF9CdwmX71w6DUjDykJjNzn_fg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAzLzkxLzM3LzEy/LzM2MF9GXzM5MTM3/MTIyN19PT1BLdXl3/bWY2ZHF3T1RzdzRE/ZnUwaURlakxLeVpa/Qy5qcGc" alt="" className="h-11 w-11 rounded-full" />
+                  <p className="mx-4 text-white text-lg font-semibold">{grp.name}</p>
+                </div>
+
+               
 
 
-        //  groups.data.map((group)=>{
+              </div>
+            )
+          })
 
-        //   return(
-        //     <div className="border-2 border-gray-400" key={group._id}>
-
-        //       <img
-        //         src="https://stock.adobe.com/search?k=friends+and+family+logo"
-        //         className=" h-16 w-16 rounded-full"
-        //         alt="user image"
-        //       />
-
-        //       <h1>{group.name}</h1>
-
-
-
-        //     </div>
-        //   )
-
-        //  })
+        
         ) : (
           <div className="flex flex-col justify-center items-center py-4 px-2 my-5">
             <Lottie animationData={Nogroup} className="h-48" />

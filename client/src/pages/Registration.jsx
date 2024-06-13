@@ -11,25 +11,22 @@ const Registration = () => {
   const { setIsLoggedIn } = useContext(UserStatusContext);
   const [retypePass, setretypePass] = useState("");
   const navigate = useNavigate();
-  const initialData = {
+  const [data, setData] = useState({
     fullName: "",
     email: "",
     password: "",
     image_Id: "",
-  };
-
-  console.log(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
-
-  const [data, setData] = useState(initialData);
+  });
 
   const handleFormSubmit = async (e) => {
 
     e.preventDefault();
 
     if (!data.email || !data.fullName || !data.password) {
-      toast.warn("Please fill the input boxes", {
+      toast.warn("Please fill all the input boxes", {
         position: "top-center",
         theme: "dark",
+        autoClose:1500
       });
       return;
     }
@@ -37,7 +34,7 @@ const Registration = () => {
     if (!profilePicture || !profilePicture.type.startsWith("image")) {
       toast.error("Please select a valid image file", {
         position: "top-center",
-        autoClose: 3000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -51,7 +48,7 @@ const Registration = () => {
     if (profilePicture.size > 1024 * 1024) {
       toast.warn("File Size limit exceeds 1MB. Please Select a smaller image", {
         position: "top-center",
-        autoClose: 3000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -66,11 +63,13 @@ const Registration = () => {
       toast.warn("password didn't match", {
         position: "top-center",
         theme: "dark",
+        autoClose:1500
       });
       return;
     }
 
     const formData = new FormData();
+
     formData.append("fullName", data.fullName);
     formData.append("email", data.email);
     formData.append("password", data.password);
@@ -96,7 +95,7 @@ const Registration = () => {
           resolve("Registration successful!✅");
         }
       } catch (error) {
-        reject(" Error in Registration");
+        reject("Can't register the  user🚫");
       }
     });
 

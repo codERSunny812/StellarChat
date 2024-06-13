@@ -7,77 +7,100 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage = () => {
-  const { isLoggedIn } = useContext(UserStatusContext);
+  const { isLoggedIn , setIsLoggedIn } = useContext(UserStatusContext);
 
   const navigate = useNavigate();
 
-  const initialData = {
+  // state to store the data  of the user
+  const [data, setData] = useState({
     email: "",
     password: "",
-  };
-
-  // state to store the data  of the user
-  const [data, setData] = useState(initialData);
+  });
 
   // function to handle the form submit
   const handleFormSubmit = async (e) => {
-    console.log("inside the from submit function");
+
+    console.log("inside the login form");
 
     e.preventDefault();
 
-    // api fetch
-    const res = await fetch(
-      `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-
-    console.log("the response of the api is:");
-    console.log(res);
-
-    //checking the response status
-    if (res.status === 100) {
-      toast.warn("all field are required", {
+    // Validate form data
+    if (!data.email || !data.password) {
+      toast.warn("All fields are required", {
         position: "top-center",
         theme: "dark",
+        autoClose: 1500,
       });
-    } else if (res.status === 404) {
-      toast.warn("user not found", {
-        position: "top-center",
-        theme: "dark",
-      });
-    } else if (res.status === 401) {
-      toast.info("invalid credentials", {
-        position: "top-center",
-        theme: "dark",
-      });
-    } else {
-      const responseData = await res.json();
-      console.log("the repsones of the data in json is:");
-      console.log(responseData);
-      console.log("the user is loggedIn successfully");
+      return;
+    }
 
-      if (isLoggedIn && responseData.user.token) {
-        // Clear form data
-        setData(initialData);
+    try {
 
+      // api fetch
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      console.log("the response of the api is:");
+      console.log(res);
+
+      //checking the response status
+      if (res.status === 100) {
+        toast.warn("all field are required", {
+          position: "top-center",
+          theme: "dark",
+          autoClose: 1500
+        });
+      } else if (res.status === 404) {
+        toast.warn("user not found", {
+          position: "top-center",
+          theme: "dark",
+          autoClose: 1500
+        });
+      } else if (res.status === 401) {
+        toast.info("invalid credentials", {
+          position: "top-center",
+          theme: "dark",
+          autoClose: 1500
+        });
+      } else if (res.ok) {
+        const responseData = await res.json();
         localStorage.setItem("user-token", responseData.user.token);
         localStorage.setItem("user-details", JSON.stringify(responseData.user));
+        setIsLoggedIn(true);
+        // Clear form data
+        setData({ email: "", password: "" });
         navigate("/home");
-        console.log("user loggedIn successfully");
-        toast.success("user logged in successfully", {
+        toast.success("User logged in successfully", {
           position: "top-center",
           theme: "dark",
           hideProgressBar: true,
-          autoClose: 2000,
+          autoClose: 1500,
+        });
+      } else {
+        toast.error("An unexpected error occurred", {
+          position: "top-center",
+          theme: "dark",
+          autoClose: 1500,
         });
       }
+      
+    } catch (error) {
+      console.error("Error during API call:", error);
+      toast.error("An unexpected error occurred", {
+        position: "top-center",
+        theme: "dark",
+        autoClose: 1500,
+      });
     }
+    
   };
 
   return (

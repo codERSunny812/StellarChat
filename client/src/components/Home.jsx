@@ -75,7 +75,6 @@ const DashBoard = () => {
   }, [socket, user]);
 
   // Function to handle incoming messages
-
   const handleMessage = (data) => {
     // console.log("Inside the getMessage event");
     // console.log(data);
@@ -305,7 +304,7 @@ const DashBoard = () => {
   console.log("the value of the message is:")
   console.log(messages);
 
-  console.log("the value of the sent messgae is");
+  console.log("the sent message is:");
   console.log(sentMessage)
 
 

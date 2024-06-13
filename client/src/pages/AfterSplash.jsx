@@ -6,6 +6,7 @@ import { UserStatusContext } from "../Context/Auth";
 
 const AfterSplash = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
+  console.log("the user is currenlty loggedIn")
   console.log(isLoggedIn);
   return (
     <div className="h-screen  w-full flex justify-center items-center">
