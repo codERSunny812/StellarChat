@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import Nogroup from "../anim/Nogroup.json";
 import { RxCross2 } from "react-icons/rx";
+import { imageUrl as groupPic}  from '../Utils/Constant'
+import {toast} from 'react-toastify'
 
-const Group = ({ showAllUser, user }) => {
+const Group = ({ showAllUser, user, fetchMessages }) => {
   
   const [groups, setGroups] = useState([]);
   const [modal, setModal] = useState(false);
@@ -69,6 +71,12 @@ const Group = ({ showAllUser, user }) => {
       }
 
       if(response.ok){
+        toast("group created 🍀", {
+          position: "top-center",
+          theme: "dark",
+          autoClose: 1500,
+        });
+        
         const data = await response.json();
        console.log("the group is successfully created:",data);
        fetchGroupData();
@@ -100,14 +108,14 @@ const Group = ({ showAllUser, user }) => {
         {/* modal to show the peoples */}
 
         {modal && (
-          <div className="absolute top-5 left-96 z-50 flex flex-col justify-center bg-[#ffff] shadow-3xl px-4 rounded-lg ">
+          <div className="absolute top-5 left-96 z-50 flex flex-col justify-center bg-black shadow-3xl px-4 rounded-lg ">
             {/* top part of the model  */}
             <div className="topPart flex justify-between items-center my-2 mx-2">
 
-              <h1 className="text-lg font-semibold capitalize">create the group</h1>
+              <h1 className="text-lg text-center font-semibold capitalize text-white">create the group</h1>
 
               <RxCross2
-                color="black"
+                color="white"
                 className="h-6 w-6 cursor-pointer"
                 onClick={() => setModal(false)}
               />
@@ -122,18 +130,20 @@ const Group = ({ showAllUser, user }) => {
             />
 
             {/* middle part of the model  */}
-            <div className="bg-lime-400 h-96 overflow-y-scroll rounded-xl">
+            <div className="bg-gray-400 h-96 overflow-y-scroll rounded-xl"
+              onClick={() => fetchMessages() }
+            >
               {showAllUser.map(({ email, fullName, userId, img }) => {
                 // Use parentheses for conditional rendering
                 return userId !== user.id ? (
                   <div
-                    className="cursor-pointer flex items-center px-4 py-4 border-b"
+                    className="cursor-pointer flex items-center px-4 py-3 border-b"
                     key={userId}
                     onClick={() => handleUserClick({userId , fullName})}
                   >
                     <img
                       src={img}
-                      className=" h-16 w-16 rounded-full"
+                      className=" h-14 w-14 rounded-full"
                       alt="user image"
                     />
                     <div className="accountInfo ml-6 text-white">
@@ -150,7 +160,7 @@ const Group = ({ showAllUser, user }) => {
             {/* end part of the model  */}
             <button 
             type="button" 
-            className="border-none outline-none bg-black text-white w-1/2 mx-auto py-2 px-1 rounded-3xl my-4"
+            className="border-none outline-none bg-white text- w-1/2 black mx-auto py-2 px-1 rounded-3xl my-4"
               onClick={() => handleCreateGroup() }
             >create group</button>
           </div>
@@ -158,20 +168,18 @@ const Group = ({ showAllUser, user }) => {
 
         {/* conditional rendering to show the group */}
 
-        {groups.length > 0 ? (
+        {
+        groups.length > 0 ? (
 
           groups.map((grp)=>{
             return(
-              <div className="py-1 my-1" key={grp._id}>
+              <div className="py-1 my-1 cursor-pointer hover:bg-gray-400" key={grp._id}>
 
-                <div className="groups  flex items-center my-2 mx-4">
+                <div className="groups  flex items-center my-2 mx-4 hover:text-black capitalize">
 
-                  <img src="https://imgs.search.brave.com/Ck8a-drXsaTr4fTvCMF9CdwmX71w6DUjDykJjNzn_fg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAzLzkxLzM3LzEy/LzM2MF9GXzM5MTM3/MTIyN19PT1BLdXl3/bWY2ZHF3T1RzdzRE/ZnUwaURlakxLeVpa/Qy5qcGc" alt="" className="h-11 w-11 rounded-full" />
+                  <img src={groupPic} alt="" className="h-11 w-11 rounded-full" />
                   <p className="mx-4 text-white text-lg font-semibold">{grp.name}</p>
                 </div>
-
-               
-
 
               </div>
             )

@@ -37,13 +37,11 @@ const MessageViewList = ({
     setIsEmojiMart(false); // Close the Emoji Mart picker
   };
 
-  // console.log(messages);
-
-  const val = true
 
   return (
     <>
       <div className=" col-span-6  h-screen">
+        
         {messages.name && (
           <div className="flex items-center justify-between bg-[#392467] shadow-3xl rounded-lg py-1 mt-2 mx-1 relative top-0">
             <div className="px-4 flex items-center ">
@@ -169,6 +167,7 @@ const MessageViewList = ({
             />
           </div>
         )}
+
       </div>
     </>
   );

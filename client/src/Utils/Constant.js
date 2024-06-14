@@ -1,0 +1,1 @@
+export const imageUrl = "https://images.unsplash.com/photo-1478479405421-ce83c92fb3ba?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGdyb3VwfGVufDB8fDB8fHww"

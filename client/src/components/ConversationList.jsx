@@ -131,6 +131,7 @@ const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) =
               <Group
                   showAllUser={showAllUser}
                   user={user}
+                  fetchMessages={fetchMessages}
               
               />
             )

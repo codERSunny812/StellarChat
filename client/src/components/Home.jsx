@@ -266,7 +266,6 @@ const DashBoard = () => {
           messages={messages}
           sentMessage={sentMessage}
           updateSentMessageForMobile={updateSentMessageForMobile}
-          isOnline={isOnline}
           createConversation={createConversation}
         />
       ) : (
