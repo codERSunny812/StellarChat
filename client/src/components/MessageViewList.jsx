@@ -15,12 +15,15 @@ const MessageViewList = ({
   sentMessage,
   sendMessage,
   updateSentMessage,
-  isOnline,
+  activeUser,
 }) => {
   const [isEmojiMartVisible, setIsEmojiMart] = useState(false); //state to show the emoji mart
   const [selectedEmoji, setSelectedEmoji] = useState(""); // State to store the selected emoji
 
-  console.log(selectedEmoji);
+  console.log(activeUser);
+
+  console.log(messages.receiverId);
+
 
   const handleSentMessageChange = (e) => {
     const updatedMessage = e.target.value;
@@ -35,6 +38,8 @@ const MessageViewList = ({
   };
 
   // console.log(messages);
+
+  const val = true
 
   return (
     <>
@@ -52,7 +57,8 @@ const MessageViewList = ({
                   {messages.name || <h1> xyz</h1>}
                 </h1>
                 <span>
-                  {isOnline ? (
+                  {  
+                    activeUser.find((user) => user.userId == messages.receiverId) ? (
                     <h1
                       className="text-green-500 text-sm font-semibold
                                     "
@@ -63,6 +69,10 @@ const MessageViewList = ({
                     <h1 className="text-red-500 text-sm font-semibold">
                       offline
                     </h1>
+
+
+
+
                   )}
                 </span>
               </div>
@@ -92,7 +102,7 @@ const MessageViewList = ({
                   return (
                     <div className="mx-3 my-2 " key={conversationId}>
                       {senderId == user.id ? (
-                        <div className=" max-w-[40%] rounded-4xl  bg-[#A367B1] text-white px-2 py-2  ml-auto font-edu-nsw">
+                        <div className=" max-w-[40%] rounded-4xl  bg-[#A367B1] text-white px-2 py-2  ml-auto font-edu-nsw ">
                           {message}
                         </div>
                       ) : (
