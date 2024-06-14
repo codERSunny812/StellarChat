@@ -8,6 +8,10 @@ const People = ({ showAllUser, user, createConversation }) => {
       <div className="col-span-3  bg-[#5D3587] text-white">
         <div className="top capitalize h-[10%] mx-4 mt-16 font-semibold text-lg ">
           <h1>people</h1>
+
+          <h1>status area of the component</h1>
+
+
         </div>
         {/* show all the user which */}
         <div className="people h-2/3 overflow-y-scroll">
