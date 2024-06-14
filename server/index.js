@@ -5,6 +5,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { connectDatabase } = require("./Database/data_connection");
 const dotenv = require("dotenv");
+const {userModal} = require('./models/user.modal')
 
 //imported the various  routes
 const authRoutes = require("./Routes/authRoute");
@@ -70,6 +71,7 @@ const io = new Server(server, {
 let allConnectedUser = [];
 
 io.on("connection", (socket) => {
+
   socket.on("addUser", ({ id, name }) => {
     if (!allConnectedUser.some((user) => user.userId === id)) {
       const user = {
@@ -78,7 +80,13 @@ io.on("connection", (socket) => {
         socketId: socket.id,
         message: "The logged in user is added in the array",
       };
+
+      //adding the user in array 
+
       allConnectedUser.push(user);
+
+
+      // notify the all the users
       io.emit("getUser", allConnectedUser);
     }
   });
@@ -86,10 +94,15 @@ io.on("connection", (socket) => {
   socket.on(
     "send-message",
     async ({ conversationId, senderId, message, receiverId }) => {
+      // checking for the receiver in the array 
       const receiver = allConnectedUser.find(
         (user) => user.userId === receiverId
       );
+
+      // checking for the sender in the array 
+
       const sender = allConnectedUser.find((user) => user.userId === senderId);
+
       const user = await userModal.findById(senderId);
 
       if (receiver) {
@@ -116,6 +129,7 @@ io.on("connection", (socket) => {
     );
     io.emit("getUser", allConnectedUser);
   });
+
 });
 
 // home route
