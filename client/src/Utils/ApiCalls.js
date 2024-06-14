@@ -15,3 +15,4 @@ export const fetchAllUsers = async () => {
     });
     return res.json();
 };
+
