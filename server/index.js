@@ -14,12 +14,13 @@ const conversationRoutes = require("./Routes/conversationRoute");
 const messageRoutes = require("./Routes/messageRoute");
 const homeRoute = require("./Routes/homeRoute");
 const groupRoute = require('./Routes/groupCreateRoute');
+const statusRoute = require('./Routes/statusRoute')
 const runCronJobs = require("./utility/cronJobs");
 
 // to handle the environmental variable
 dotenv.config();
 
-// cronJobs added to prevent the shutting of the render server
+//prevent the shutting of the render server
 runCronJobs();
 
 // Connecting to the database
@@ -47,6 +48,7 @@ app.use(
   })
 );
 
+
 //routes to handle the  functionalities of app
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
@@ -54,13 +56,14 @@ app.use("/api", conversationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", homeRoute);
 app.use('/api',groupRoute);
+app.use('/api',statusRoute)
 
 // initilize the socket server
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_ORIGIN_URL,
     methods: ["GET", "POST"],
-    credentials: true,
+    credentials:true,
   },
 });
 

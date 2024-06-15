@@ -36,7 +36,6 @@ router.post("/register", upload.single("uploaded_file"), async (req, res) => {
         });
 
         // if photo is added on the cdn server then remove it from  out server  to reduce the load
-
         await fs.unlink(profilePicturePath);
       } catch (cloudinaryError) {
         return res.status(500).json({
