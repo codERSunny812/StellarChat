@@ -3,15 +3,21 @@ import NoPeople from "../anim/NoPeople.json";
 import Lottie from "lottie-react";
 import { useState } from "react";
 import { FcPlus } from "react-icons/fc";
+import StatusView from "./StatusView";
+import { useEffect } from "react";
+import axios from 'axios'
+
 
 const People = ({ showAllUser, user, createConversation }) => {
 
   const [selectedFile , setSelectedFile] = useState(null);
+  const [data , setData]= useState({
+    userId:user.id,
+    imageId:""
+  })
+  const [statuses, setStatuses] = useState([]);
 
-  console.log(selectedFile);
-
-
-  // handle the form data 
+  // handle the form data
   const handleFormData = async (e) => {
     e.preventDefault();
     const file = e.target.files[0]; // Get the selected file directly from event
@@ -21,19 +27,33 @@ const People = ({ showAllUser, user, createConversation }) => {
       return; // Exit early if no file is selected
     }
 
-    setSelectedFile(file); // Update selectedFile state with the selected file
+    if(file){
+      setSelectedFile(file); // Update selectedFile state with the selected file
+      setData({...data , imageId:selectedFile});
+    }
+
+    
+    console.log("Selected file:", file);
+    console.log(data);
 
     try {
       console.log("Inside the form submit function");
       const formData = new FormData();
-      formData.append('userId', user.id);
-      formData.append("statusImg", file); // Append the file to formData
 
-      console.log(formData);
+      formData.append('userId', user.id);
+      formData.append('status-image', file); // Append the file to formData
+
+      // formData.append("userId",data.userId);
+      // formData.append("statusImg",data.imageId);
+
+      // Iterate and log formData entries
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
 
       // Upload the status
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/story/upload`,
+        `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/status/upload`,
         {
           method: "POST",
           body: formData,
@@ -50,6 +70,23 @@ const People = ({ showAllUser, user, createConversation }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/status/view-status`);
+      setStatuses(response.data.data);
+    };
+
+    fetchStatuses();
+
+    // socket.on('new-status', fetchStatuses);
+
+    // return () => {
+    //   socket.off('new-status', fetchStatuses);
+    // };
+  }, []);
+
+
+  // console.log(statuses)
 
   return (
     <>
@@ -59,27 +96,36 @@ const People = ({ showAllUser, user, createConversation }) => {
 
           {/* heading and the status part  */}
           
-        <div className="border-2 border-gray-400 capitalize h-[10%] mx-4 mt-8 mb-2 font-semibold text-lg ">
+        <div className=" capitalize h-[10%] mx-4 mt-8 mb-2 font-semibold text-lg ">
 
           <h1>people</h1>
 
            {/* status section  */}
-            <div className="">
-            <form encType='multipart/form-data'>
-                <label htmlFor="file-input">
-                  <img src={user.imageId} alt="" className="h-12 w-12 rounded-full" />
-                  <FcPlus className="relative bottom-4 left-8" />
-                  <input
-                    id="file-input"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    name="status-image"
-                    onChange={(e)=> handleFormData(e) }
-                  />
-                </label>
-              </form>
-            </div>
+          <div className=" flex items-center">
+            <form encType='multipart/form-data' className="flex items-center">
+              <label htmlFor="file-input" className="relative">
+                <img src={user.imageId} alt="" className="h-12 w-12 rounded-full" />
+                <FcPlus className="absolute bottom-0 right-0" />
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  name="status-image"
+                  onChange={(e) => handleFormData(e)}
+                />
+              </label>
+            </form>
+            {/* now other user status */}
+            {
+              statuses.length > 0 && (
+                <div className="flex items-center">
+                  <StatusView statuses={statuses} showAllUser={showAllUser} />
+                </div>
+              )
+            }
+          </div>
+
       
 
          
@@ -127,6 +173,7 @@ const People = ({ showAllUser, user, createConversation }) => {
             )
           }
         </div>
+
       </div>
     </>
   );

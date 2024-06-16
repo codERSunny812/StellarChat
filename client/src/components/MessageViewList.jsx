@@ -20,14 +20,14 @@ const MessageViewList = ({
   const [isEmojiMartVisible, setIsEmojiMart] = useState(false); //state to show the emoji mart
   const [selectedEmoji, setSelectedEmoji] = useState(""); // State to store the selected emoji
 
-  console.log(activeUser);
+  // console.log(activeUser);
 
-  console.log(messages.receiverId);
+  // console.log(messages.receiverId);
 
 
   const handleSentMessageChange = (e) => {
     const updatedMessage = e.target.value;
-    console.log(updatedMessage);
+    // console.log(updatedMessage);
     updateSentMessage(updatedMessage);
     setSelectedEmoji("");
   };

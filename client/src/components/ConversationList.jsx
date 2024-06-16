@@ -15,7 +15,7 @@ const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) =
   const logoutNavigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
 
-  console.log(isLoggedIn);
+  // console.log(isLoggedIn);
 
   // function to logout the user
   const logOutHandler = () => {

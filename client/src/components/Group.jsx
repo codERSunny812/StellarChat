@@ -14,15 +14,15 @@ const Group = ({ showAllUser, user, fetchMessages }) => {
   const [selectedUser, setSelectedUser] = useState([])
 
 
-  console.log("the data of the state variables for the group component are:");
-   console.log("group name is:")
-  console.log(groupName);
-  console.log("the modal is ");
-  console.log(modal);
-  console.log("selectedUser for the group is:");
-  console.log(selectedUser);
-  console.log("the groups which is created by the user is:");
-  console.log(groups)
+  // console.log("the data of the state variables for the group component are:");
+  //  console.log("group name is:")
+  // console.log(groupName);
+  // console.log("the modal is ");
+  // console.log(modal);
+  // console.log("selectedUser for the group is:");
+  // console.log(selectedUser);
+  // console.log("the groups which is created by the user is:");
+  // console.log(groups)
 
 
   const fetchGroupData  = async()=>{

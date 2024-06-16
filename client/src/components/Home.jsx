@@ -42,6 +42,7 @@ const DashBoard = () => {
 
   // Connecting the front end with the socket server
   useEffect(() => {
+
     const newSocket = io(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
     setSocket(newSocket);
 
@@ -50,6 +51,7 @@ const DashBoard = () => {
         newSocket.disconnect();
       }
     };
+    
   }, [user]);
 
 
