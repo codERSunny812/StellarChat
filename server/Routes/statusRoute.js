@@ -16,6 +16,8 @@ router.post('/status/upload', upload.single('status-image'),async(req,res)=>{
 try {
     console.log("inside the status upload route");
     const {userId} = req.body;
+    console.log(req.body);
+    console.log(req.file)
     
     let statusImgPath, statusImg;
 
@@ -25,6 +27,7 @@ try {
         try {
             console.log("trying to upload the file on the cloudinary");
             statusImg = await connectCloudinary(statusImgPath); //image is sent to the cloudinary
+            console.log("file is successfully uploaded on cloudinary")
 
             //remove the image from the local too
             await fs.unlink(statusImgPath);
@@ -33,15 +36,21 @@ try {
         }
     }
 
+    const statusImgLink = statusImg.secure_url;
+
+    console.log("storing the data into the DB");
+
     // storing the data into the storymodal
-    const userStatus = new statusModal({ userId, statusImg });
+    const userStatus = statusModal.create({ userId, statusImg:statusImgLink });
 
-    await userStatus.save();
+    // await userStatus.save();
 
-    res.status(201).json({ message: 'Status uploaded successfully', status: newStatus });
+    console.log("data saved successfully into the DB");
+
+    res.status(201).json({ message: 'Status uploaded successfully', status: userStatus });
 
 } catch (error) {
-    console.log("error in uploading the  files");
+    console.log("error in uploading the status");
     res.status(500).json({ error: 'Failed to upload status' });
 }
 
