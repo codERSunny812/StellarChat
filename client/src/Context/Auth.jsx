@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import PropTypes from 'prop-types'
+
 
 export const UserStatusContext = createContext();
 
@@ -12,6 +14,10 @@ const UserStatusContextProvider = (props) => {
       {props.children}
     </UserStatusContext.Provider>
   );
+};
+
+UserStatusContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default UserStatusContextProvider;
