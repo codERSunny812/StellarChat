@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 const { connectDatabase } = require("./Database/data_connection");
 const dotenv = require("dotenv");
 const {userModal} = require('./models/user.modal')
+const {runCronJobs , deletedOldStatus}= require("./utility/cronJobs");
+
 
 //imported the various  routes
 const authRoutes = require("./Routes/authRoute");
@@ -15,13 +17,15 @@ const messageRoutes = require("./Routes/messageRoute");
 const homeRoute = require("./Routes/homeRoute");
 const groupRoute = require('./Routes/groupCreateRoute');
 const statusRoute = require('./Routes/statusRoute')
-const runCronJobs = require("./utility/cronJobs");
 
 // to handle the environmental variable
 dotenv.config();
 
 //prevent the shutting of the render server
 runCronJobs();
+
+// deleting the status after 24 hours
+deletedOldStatus();
 
 // Connecting to the database
 connectDatabase();
@@ -67,10 +71,12 @@ const io = new Server(server, {
   },
 });
 
+
+
+
 // Socket connection
 
 // array to add the people who joined the socket
-
 let allConnectedUser = [];
 
 io.on("connection", (socket) => {
@@ -123,8 +129,13 @@ io.on("connection", (socket) => {
             },
           });
       }
+      
     }
   );
+
+  socket.on('send-status',()=>{
+    io.emit('new-status');
+  })
 
   socket.on("disconnect", () => {
     allConnectedUser = allConnectedUser.filter(

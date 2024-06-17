@@ -60,7 +60,6 @@ try {
 
 // route to view the status
 router.get('/status/view-status',async(req,res)=>{
-
     try {
         console.log("inside the view status route");
 

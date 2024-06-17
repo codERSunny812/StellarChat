@@ -14,7 +14,6 @@ exports.connectCloudinary = async (localFilePath) => {
   try {
     console.log("inside the connectCloudinary try block");
 
-
     if (!localFilePath) return null;
 
     //upload the file on the cloudinary server
@@ -22,8 +21,8 @@ exports.connectCloudinary = async (localFilePath) => {
       resource_type: "auto",
     });
 
-    console.log("file is successfully uploaded");
-    console.log(`url is ${response.url}`);
+    console.log("file is successfully uploaded on cloudinary");
+
 
     return response;
   } catch (error) {
