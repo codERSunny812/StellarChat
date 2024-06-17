@@ -3,55 +3,58 @@ import MobileView from "./Mobile View/MobileView";
 import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
 import People from "./People";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchConversations, fetchAllUsers } from "../Utils/ApiCalls";
 import NoUser from "../anim/NoUser.json";
 import Lottie from "lottie-react";
 import { debounce } from "lodash";
+import {useSocket} from '../Utils/useSocket'
 
 // Custom Hook for managing socket connection
 
-const useSocket = (user, handleMessage) => {
-  const [socket, setSocket] = useState(null);
-  const [activeUser, setActiveUser] = useState([]);
 
-  useEffect(() => {
-    if (!user) return;
+// const useSocket = (user, handleMessage) => {
 
-    const newSocket = io(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
-    setSocket(newSocket);
+//   const [socket, setSocket] = useState(null);
+//   const [activeUser, setActiveUser] = useState([]);
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [user]);
+//   useEffect(() => {
+//     if (!user) return;
 
-  useEffect(() => {
-    if (!socket || !user) return;
+//     const newSocket = io(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
+//     setSocket(newSocket);
 
-    const userData = { id: user.id, name: user.fullName };
+//     return () => {
+//       newSocket.disconnect();
+//     };
+//   }, [user]);
 
-    socket.on("connect", () => {
-      socket.emit("addUser", userData);
-    });
+//   useEffect(() => {
+//     if (!socket || !user) return;
 
-    socket.on("getUser", (data) => {
-      setActiveUser(data);
-    });
+//     const userData = { id: user.id, name: user.fullName };
 
-    socket.on("getMessage", handleMessage);
+//     socket.on("connect", () => {
+//       socket.emit("addUser", userData);
+//     });
 
-    return () => {
-      socket.off("connect");
-      socket.off("getUser");
-      socket.off("getMessage", handleMessage);
-    };
-  }, [socket, user, handleMessage]);
+//     socket.on("getUser", (data) => {
+//       setActiveUser(data);
+//     });
 
-  return { socket, activeUser };
-};
+//     socket.on("getMessage", handleMessage);
+
+//     return () => {
+//       socket.off("connect");
+//       socket.off("getUser");
+//       socket.off("getMessage", handleMessage);
+//     };
+//   }, [socket, user, handleMessage]);
+
+//   return { socket, activeUser };
+// };
 
 const DashBoard = () => {
   const [user, setUser] = useState(null);
