@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import MobileView from "./Mobile View/MobileView";
 import ConversationList from "./ConversationList";
 import MessageViewList from "./MessageViewList";
@@ -8,93 +7,94 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchConversations, fetchAllUsers } from "../Utils/ApiCalls";
+import NoUser from "../anim/NoUser.json";
+import Lottie from "lottie-react";
+import { debounce } from "lodash";
 
-const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-};
+// Custom Hook for managing socket connection
 
+const useSocket = (user, handleMessage) => {
+  const [socket, setSocket] = useState(null);
+  const [activeUser, setActiveUser] = useState([]);
 
-const DashBoard = () => {
-
-  
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user-details"))
-  );
-
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  const [messages, setMessages] = useState({
-    data: [], // Initialize with an empty array or an appropriate initial value
-    name: "", // Initialize with an empty string or an appropriate initial value
-    conversationId: "",
-    receiverId: "",
-  });
-
-  const [conversation, setConversation] = useState([]); //state to store the chats of the user
-  const [sentMessage, setSentMessage] = useState(""); //state for the message that to be send
-  const [showAllUser, setShowAllUser] = useState([]); //state to store the data of the user
-  const [socket,setSocket]= useState(null);
-  const [activeUser,setActiveUser] = useState([]);
-
-  // Connecting the front end with the socket server
   useEffect(() => {
+    if (!user) return;
 
     const newSocket = io(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
     setSocket(newSocket);
 
     return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-      }
+      newSocket.disconnect();
     };
-    
   }, [user]);
 
-
-
-  // socket user adding and getting the active user data 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user) return;
 
-    // collecting the data of the loggedIn user 
-    const userData = { id: user?.id, name: user?.fullName };
+    const userData = { id: user.id, name: user.fullName };
 
     socket.on("connect", () => {
       socket.emit("addUser", userData);
     });
 
-    // listing to the getuser event 
-    socket.on('getUser',(data)=>{
+    socket.on("getUser", (data) => {
       setActiveUser(data);
-    })
+    });
 
-   
+    socket.on("getMessage", handleMessage);
+
     return () => {
       socket.off("connect");
       socket.off("getUser");
+      socket.off("getMessage", handleMessage);
     };
-  }, [socket, user]);
+  }, [socket, user, handleMessage]);
 
-  // to handle responsivness of app
+  return { socket, activeUser };
+};
+
+const DashBoard = () => {
+  const [user, setUser] = useState(null);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [conversation, setConversation] = useState([]);
+  const [sentMessage, setSentMessage] = useState("");
+  const [showAllUser, setShowAllUser] = useState([]);
+  const [messages, setMessages] = useState({
+    data: [],
+    name: "",
+    conversationId: "",
+    receiverId: "",
+  });
+
   useEffect(() => {
-    const handleResize = () => {
+    const storedUser = JSON.parse(localStorage.getItem("user-details"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
+  const handleMessage = useCallback((data) => {
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      data: [...prevMessages.data, data],
+    }));
+  }, []);
+
+  const { socket, activeUser } = useSocket(user, handleMessage);
+
+  useEffect(() => {
+    const handleResize = debounce(() => {
       setIsMobileView(window.innerWidth <= 768);
-    };
+    }, 100);
 
-    const debounceResize = debounce(handleResize, 100);
-    window.addEventListener("resize", debounceResize);
-
+    window.addEventListener("resize", handleResize);
     handleResize();
+
     return () => {
-      window.removeEventListener("resize", debounceResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  // update the conversationList on component mount
   useEffect(() => {
     const fetchData = async () => {
       if (!user?.id) return;
@@ -108,7 +108,6 @@ const DashBoard = () => {
     fetchData();
   }, [user]);
 
-  // fetch all the users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -121,27 +120,10 @@ const DashBoard = () => {
     fetchUsers();
   }, []);
 
-
-  // socket event for the real time communication 
-  useEffect(()=>{
-    if(!socket) return;
-
-    socket.on("getMessage", handleMessage);
-
-    return () => {
-      socket.off("getMessage", handleMessage);
-    };
-
-
-
-  },[socket])
-
-
-  // function to create conversation  between people
   const createConversation = useCallback(
     async ({ senderId, receiverId }) => {
       try {
-        if (conversation.find((conv) => conv.user.receiverId === receiverId)) {
+        if (conversation.some((conv) => conv.user.receiverId === receiverId)) {
           toast.warning("Conversation already exist", {
             position: "top-center",
             theme: "dark",
@@ -160,7 +142,8 @@ const DashBoard = () => {
         );
 
         if (response.ok) {
-          await fetchConversations();
+          const updatedConversations = await fetchConversations(user.id);
+          setConversation(updatedConversations);
           toast.info("Conversation created", {
             position: "top-center",
             theme: "dark",
@@ -173,25 +156,14 @@ const DashBoard = () => {
         console.error("Error in creating the conversation:", error);
       }
     },
-    [conversation]
+    [conversation, user]
   );
 
-  // Function to handle incoming messages for socket
-  const handleMessage = useCallback((data) => {
-    setMessages((prevMessages) => ({
-      ...prevMessages,
-      data: [...prevMessages.data, data],
-    }));
-  }, []);
-
-  // function to fetch message of any particular conversation
   const fetchMessages = useCallback(
     async (conversationId, fullName, receiverId, img) => {
       try {
         const res = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_CHAT_APP_URL
-          }/api/message/${conversationId}`,
+          `${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/message/${conversationId}`,
           {
             method: "GET",
             headers: { "Content-type": "application/json" },
@@ -200,7 +172,7 @@ const DashBoard = () => {
         const resData = await res.json();
         setMessages((prevMessages) => ({
           ...prevMessages,
-          data: [...prevMessages.data, ...resData.data],
+          data: resData.data,
           name: fullName,
           conversationId,
           receiverId,
@@ -213,14 +185,15 @@ const DashBoard = () => {
     []
   );
 
-  // function to send messages
   const sendMessage = useCallback(async () => {
     try {
+      if (!socket) return;
+
       socket.emit("send-message", {
-        conversationId: messages?.conversationId,
-        senderId: user?.id,
+        conversationId: messages.conversationId,
+        senderId: user.id,
         message: sentMessage,
-        receiverId: messages?.receiverId,
+        receiverId: messages.receiverId,
       });
 
       const response = await fetch(
@@ -229,10 +202,10 @@ const DashBoard = () => {
           method: "POST",
           headers: { "Content-type": "application/json" },
           body: JSON.stringify({
-            conversationId: messages?.conversationId,
-            senderId: user?.id,
+            conversationId: messages.conversationId,
+            senderId: user.id,
             message: sentMessage,
-            receiverId: messages?.receiverId,
+            receiverId: messages.receiverId,
           }),
         }
       );
@@ -245,7 +218,7 @@ const DashBoard = () => {
     } catch (error) {
       console.error("Error in sending the message:", error);
     }
-  }, [messages, sentMessage, user , socket]);
+  }, [messages, sentMessage, user, socket]);
 
   const updateSentMessage = useCallback((newSentMessage) => {
     setSentMessage(newSentMessage);
@@ -255,10 +228,17 @@ const DashBoard = () => {
     setSentMessage(newSentMessageFromMobile);
   };
 
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center my-60">
+        <Lottie animationData={NoUser} className="h-80" />
+      </div>
+    );
+  }
+
   return (
     <div className="">
       {isMobileView ? (
-        // mobile view
         <MobileView
           conversations={conversation}
           showAllUser={showAllUser}
@@ -278,7 +258,6 @@ const DashBoard = () => {
             user={user}
             showAllUser={showAllUser}
           />
-
           <MessageViewList
             messages={messages}
             user={user}
@@ -287,11 +266,11 @@ const DashBoard = () => {
             updateSentMessage={updateSentMessage}
             activeUser={activeUser}
           />
-
           <People
             showAllUser={showAllUser}
             user={user}
             createConversation={createConversation}
+            socket={socket}
           />
         </div>
       )}

@@ -1,4 +1,4 @@
-// input component
+import PropTypes from 'prop-types';
 
 const Input = ({ label, type, value, onChange }) => {
   return (
@@ -17,5 +17,12 @@ const Input = ({ label, type, value, onChange }) => {
     </div>
   );
 };
+
+Input.propTypes={
+  label:PropTypes.string.isRequired,
+  type:PropTypes.string.isRequired,
+  value:PropTypes.string.isRequired,
+  onChange:PropTypes.func.isRequired
+}
 
 export default Input;

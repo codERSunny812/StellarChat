@@ -1,21 +1,21 @@
-/* eslint-disable react/prop-types */
 import NoPeople from "../anim/NoPeople.json";
 import Lottie from "lottie-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FcPlus } from "react-icons/fc";
 import StatusView from "./StatusView";
-import { useEffect } from "react";
 import axios from 'axios'
+import { FaCircleChevronRight, FaCircleChevronLeft } from "react-icons/fa6";
+import PropTypes from 'prop-types';
+import { toast } from 'react-toastify'
 
-
-const People = ({ showAllUser, user, createConversation }) => {
-
-  const [selectedFile , setSelectedFile] = useState(null);
-  const [data , setData]= useState({
-    userId:user.id,
-    imageId:""
-  })
+const People = ({ showAllUser, user, createConversation, socket }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
   const [statuses, setStatuses] = useState([]);
+
+  // console.log("all user is:")
+  // console.log(showAllUser);
+  // console.log("statuses uploaded:")
+  // console.log(statuses)
 
   // handle the form data
   const handleFormData = async (e) => {
@@ -27,14 +27,12 @@ const People = ({ showAllUser, user, createConversation }) => {
       return; // Exit early if no file is selected
     }
 
-    if(file){
+    if (file) {
       setSelectedFile(file); // Update selectedFile state with the selected file
-      setData({...data , imageId:selectedFile});
     }
 
-    
-    console.log("Selected file:", file);
-    console.log(data);
+    // console.log("Selected file:", file);
+    // console.log(selectedFile);
 
     try {
       console.log("Inside the form submit function");
@@ -42,9 +40,6 @@ const People = ({ showAllUser, user, createConversation }) => {
 
       formData.append('userId', user.id);
       formData.append('status-image', file); // Append the file to formData
-
-      // formData.append("userId",data.userId);
-      // formData.append("statusImg",data.imageId);
 
       // Iterate and log formData entries
       for (const [key, value] of formData.entries()) {
@@ -61,7 +56,12 @@ const People = ({ showAllUser, user, createConversation }) => {
       );
 
       if (response.ok) {
-        alert("File uploaded successfully");
+        if (socket) {
+          socket.emit('status-upload');
+        }
+        toast.info('Status is successfully uploaded');
+        console.log("the status is successfully uploaded");
+        fetchStatuses();
       } else {
         alert("Status failed to upload");
       }
@@ -70,65 +70,72 @@ const People = ({ showAllUser, user, createConversation }) => {
     }
   };
 
+  const fetchStatuses = async () => {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/status/view-status`);
+    // console.log(response);
+    setStatuses(response.data.data);
+  };
+
   useEffect(() => {
-    const fetchStatuses = async () => {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/status/view-status`);
-      setStatuses(response.data.data);
-    };
-
     fetchStatuses();
+    if (socket) {
+      socket.on('new-status', fetchStatuses);
+    }
 
-    // socket.on('new-status', fetchStatuses);
-
-    // return () => {
-    //   socket.off('new-status', fetchStatuses);
-    // };
-  }, []);
-
-
-  // console.log(statuses)
+    return () => {
+      if (socket) {
+        socket.off('new-status', fetchStatuses);
+      }
+    };
+  }, [socket]);
 
   return (
     <>
       <div className="border-2 border-pink-300 col-span-3  bg-[#5D3587] text-white">
+        {/* heading and the status part  */}
 
-
-
-          {/* heading and the status part  */}
-          
         <div className=" capitalize h-[10%] mx-4 mt-8 mb-2 font-semibold text-lg ">
 
           <h1>people</h1>
 
-           {/* status section  */}
-          <div className=" flex items-center">
-            <form encType='multipart/form-data' className="flex items-center">
-              <label htmlFor="file-input" className="relative">
-                <img src={user.imageId} alt="" className="h-12 w-12 rounded-full" />
-                <FcPlus className="absolute bottom-0 right-0" />
-                <input
-                  id="file-input"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  name="status-image"
-                  onChange={(e) => handleFormData(e)}
-                />
-              </label>
-            </form>
-            {/* now other user status */}
-            {
-              statuses.length > 0 && (
-                <div className="flex items-center">
-                  <StatusView statuses={statuses} showAllUser={showAllUser} />
-                </div>
-              )
-            }
+          {/* status section  */}
+
+          <div className=" flex items-center justify-between">
+            <FaCircleChevronLeft className="mx-1" />
+
+            <div className="flex items-center justify-start border-2 border-white">
+
+              <form encType='multipart/form-data' className="flex items-center">
+                <label htmlFor="file-input" className="relative">
+
+                  <img src={user.imageId} alt="" className="h-12 w-12 rounded-full" />
+                  <FcPlus className="absolute bottom-0 right-0" />
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    name="status-image"
+                    onChange={(e) => handleFormData(e)}
+                  />
+
+                </label>
+              </form>
+              {/* now other user status */}
+              {
+                statuses.length > 0 && (
+                  <div className="flex items-center">
+                    <StatusView
+                      statuses={statuses} showAllUser={showAllUser} user={user} />
+                  </div>
+                )
+              }
+
+            </div>
+
+            <FaCircleChevronRight className="mx-1" />
+
           </div>
-
-      
-
-         
         </div>
 
         {/* show all the user which */}
@@ -177,6 +184,13 @@ const People = ({ showAllUser, user, createConversation }) => {
       </div>
     </>
   );
+};
+
+People.propTypes = {
+  showAllUser: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
+  createConversation: PropTypes.func.isRequired,
+  socket: PropTypes.object,
 };
 
 export default People;

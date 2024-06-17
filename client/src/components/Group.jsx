@@ -1,10 +1,12 @@
-/* eslint-disable react/prop-types */
+
 import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import Nogroup from "../anim/Nogroup.json";
 import { RxCross2 } from "react-icons/rx";
 import { imageUrl as groupPic}  from '../Utils/Constant'
 import {toast} from 'react-toastify'
+import PropTypes from 'prop-types';
+
 
 const Group = ({ showAllUser, user, fetchMessages }) => {
   
@@ -197,4 +199,11 @@ const Group = ({ showAllUser, user, fetchMessages }) => {
   );
 };
 
+
+
+Group.propTypes={
+  showAllUser:PropTypes.array.isRequired,
+  user:PropTypes.object.isRequired,
+  fetchMessages:PropTypes.func.isRequired
+}
 export default Group;

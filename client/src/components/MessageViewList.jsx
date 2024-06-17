@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { IoVideocam, IoSend } from "react-icons/io5";
 import { MdAddIcCall } from "react-icons/md";
 import { FaPlusCircle } from "react-icons/fa";
@@ -8,6 +8,7 @@ import Lottie from "lottie-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useState } from "react";
+import PropTypes from 'prop-types';
 
 const MessageViewList = ({
   messages,
@@ -172,5 +173,15 @@ const MessageViewList = ({
     </>
   );
 };
+
+MessageViewList.propTypes={
+  messages:PropTypes.object.isRequired,
+  sendMessage:PropTypes.func.isRequired,
+  sentMessage:PropTypes.string.isRequired,
+  updateSentMessage:PropTypes.func.isRequired,
+  user:PropTypes.object.isRequired,
+  activeUser:PropTypes.array.isRequired,
+
+}
 
 export default MessageViewList;

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { IoSearchCircle } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
@@ -7,7 +6,9 @@ import Lottie from "lottie-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserStatusContext } from "../Context/Auth";
-import Group from "./Group";
+import Group from "./Group"
+import PropTypes from 'prop-types';
+
 
 const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) => {
   const [isLogoutDropDown, setLogOutDropDown] = useState(false);
@@ -15,7 +16,7 @@ const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) =
   const logoutNavigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(UserStatusContext);
 
-  // console.log(isLoggedIn);
+  // console.log(typeof user);
 
   // function to logout the user
   const logOutHandler = () => {
@@ -152,5 +153,14 @@ const ConversationList = ({ conversations, fetchMessages, user, showAllUser }) =
     </>
   );
 };
+
+
+
+ConversationList.propTypes={
+  conversations:PropTypes.array.isRequired,
+  user:PropTypes.object.isRequired,
+  showAllUser:PropTypes.array.isRequired,
+  fetchMessages:PropTypes.func.isRequired
+}
 
 export default ConversationList;
