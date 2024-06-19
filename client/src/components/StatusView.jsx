@@ -9,17 +9,17 @@ const StatusView = ({ statuses, showAllUser, user }) => {
     <div className="flex space-x-4">
       {statuses.map((status) => {
         // checking the post uploaded by the loggedIn user
-        if (user.id === status.userId) {
+        if (user?.id === status?.userId) {
           return;
         }
         const allUserData = showAllUser.find(
-          (userData) => userData.userId === status.userId
+          (userData) => userData?.userId === status?.userId
         );
         return user ? (
-          <div key={status._id}>
+          <div key={status?._id}>
             <img
-              src={allUserData.img}
-              alt={allUserData.fullName}
+              src={allUserData?.img}
+              alt={allUserData?.fullName}
               className="h-12 w-12 rounded-full object-cover"
               onClick={()=> setShowStatus(true)}
             />
@@ -31,7 +31,7 @@ const StatusView = ({ statuses, showAllUser, user }) => {
 
                     <div className="image border-2 border-red-700 absolute top-0 ">
 
-                    <img src={status.statusImg} alt="" />
+                    <img src={status?.statusImg} alt="" />
 
                     </div>
                     )

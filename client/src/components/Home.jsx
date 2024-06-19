@@ -12,49 +12,7 @@ import Lottie from "lottie-react";
 import { debounce } from "lodash";
 import {useSocket} from '../Utils/useSocket'
 
-// Custom Hook for managing socket connection
 
-
-// const useSocket = (user, handleMessage) => {
-
-//   const [socket, setSocket] = useState(null);
-//   const [activeUser, setActiveUser] = useState([]);
-
-//   useEffect(() => {
-//     if (!user) return;
-
-//     const newSocket = io(import.meta.env.VITE_BACKEND_CHAT_APP_URL);
-//     setSocket(newSocket);
-
-//     return () => {
-//       newSocket.disconnect();
-//     };
-//   }, [user]);
-
-//   useEffect(() => {
-//     if (!socket || !user) return;
-
-//     const userData = { id: user.id, name: user.fullName };
-
-//     socket.on("connect", () => {
-//       socket.emit("addUser", userData);
-//     });
-
-//     socket.on("getUser", (data) => {
-//       setActiveUser(data);
-//     });
-
-//     socket.on("getMessage", handleMessage);
-
-//     return () => {
-//       socket.off("connect");
-//       socket.off("getUser");
-//       socket.off("getMessage", handleMessage);
-//     };
-//   }, [socket, user, handleMessage]);
-
-//   return { socket, activeUser };
-// };
 
 const DashBoard = () => {
   const [user, setUser] = useState(null);
@@ -102,7 +60,7 @@ const DashBoard = () => {
     const fetchData = async () => {
       if (!user?.id) return;
       try {
-        const resData = await fetchConversations(user.id);
+        const resData = await fetchConversations(user?.id);
         setConversation(resData);
       } catch (error) {
         console.error(error);
@@ -126,7 +84,7 @@ const DashBoard = () => {
   const createConversation = useCallback(
     async ({ senderId, receiverId }) => {
       try {
-        if (conversation.some((conv) => conv.user.receiverId === receiverId)) {
+        if (conversation.some((conv) => conv?.user?.receiverId === receiverId)) {
           toast.warning("Conversation already exist", {
             position: "top-center",
             theme: "dark",
@@ -145,7 +103,7 @@ const DashBoard = () => {
         );
 
         if (response.ok) {
-          const updatedConversations = await fetchConversations(user.id);
+          const updatedConversations = await fetchConversations(user?.id);
           setConversation(updatedConversations);
           toast.info("Conversation created", {
             position: "top-center",
@@ -205,10 +163,10 @@ const DashBoard = () => {
           method: "POST",
           headers: { "Content-type": "application/json" },
           body: JSON.stringify({
-            conversationId: messages.conversationId,
-            senderId: user.id,
+            conversationId: messages?.conversationId,
+            senderId: user?.id,
             message: sentMessage,
-            receiverId: messages.receiverId,
+            receiverId: messages?.receiverId,
           }),
         }
       );

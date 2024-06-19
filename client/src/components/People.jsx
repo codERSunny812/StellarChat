@@ -73,7 +73,7 @@ const People = ({ showAllUser, user, createConversation, socket }) => {
   const fetchStatuses = async () => {
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_CHAT_APP_URL}/api/status/view-status`);
     // console.log(response);
-    setStatuses(response.data.data);
+    setStatuses(response?.data?.data);
   };
 
   useEffect(() => {
