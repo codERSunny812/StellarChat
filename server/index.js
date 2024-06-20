@@ -150,6 +150,7 @@ io.on("connection", (socket) => {
 
 app.get("/", (req, res) => {
   res.send("hello from the home route");
+  
 });
 
 // server host

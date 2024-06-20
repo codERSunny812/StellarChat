@@ -71,7 +71,7 @@ router.get('/status/view-status',async(req,res)=>{
         })
 
     } catch (error) {
-        res.send(404).json({
+        res.status(404).json({
             message:"error in showing the data",
             error: 'Failed to retrieve statuses' 
         })

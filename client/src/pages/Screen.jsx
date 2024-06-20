@@ -1,4 +1,4 @@
-import Splash from "../assets/Splash.jpg";
+import Splash from "../assets/Splash.png";
 
 const Screen = () => {
   return (

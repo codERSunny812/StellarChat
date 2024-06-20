@@ -1,4 +1,4 @@
-import Logo from "../assets/toplogo.png";
+import Logo from "../assets/topLogo.png";
 import { Link } from "react-router-dom";
 import SocialMedia from "../components/SocialMedia";
 import { useContext } from "react";
