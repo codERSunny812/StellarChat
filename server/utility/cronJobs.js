@@ -12,7 +12,7 @@ const runCronJobs = () => {
       const response = await axios.get(`${process.env.SERVER_BACKEND_URL}`);
       console.log("Pinged the service:", response.status);
     } catch (error) {
-      console.error("Error pinging the service:", error);
+      console.error("Error pinging the service:",error.message);
     }
   });
 };
@@ -29,7 +29,7 @@ const deletedOldStatus = ()=>{
 
       
     } catch (error) {
-      console.log("error in deleting the status")
+      console.log("error in deleting the status",error.message)
     }
   })
 }
