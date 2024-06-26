@@ -100,10 +100,10 @@ const People = ({ showAllUser, user, createConversation, socket }) => {
 
           {/* status section  */}
 
-          <div className=" flex items-center justify-between">
+          <div className="border-2 border-pink-400 flex items-center justify-between">
             <FaCircleChevronLeft className="mx-1" />
 
-            <div className="flex items-center justify-start border-2 border-white">
+            <div className="border-2 border-green-400 flex w-full">
 
               <form encType='multipart/form-data' className="flex items-center">
                 <label htmlFor="file-input" className="relative">
