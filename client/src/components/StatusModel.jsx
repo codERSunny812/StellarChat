@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 
 const StatusModal = ({ isOpen, onClose, status }) => {
+    
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="relative bg-black  rounded-lg max-w-lg w-full">
+            <div className="relative bg-black p-24  rounded-lg max-w-lg w-full">
                 <button
                     className="absolute top-1 right-2 h-7 w-7 text-white hover:text-gray-700"
                     onClick={onClose}
