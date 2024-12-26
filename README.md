@@ -1,6 +1,6 @@
-# 💬Chatkro
+# 💬Stellar Chat
 
-Chatkro is a cutting-edge messaging platform designed to bring people closer together, no matter where they are. With our intuitive interface and robust features, staying connected with friends and loved ones has never been easier.
+StellarChat is a cutting-edge messaging platform designed to bring people closer together, no matter where they are. With our intuitive interface and robust features, staying connected with friends and loved ones has never been easier.
 
 # 📦Tech Stack
 
