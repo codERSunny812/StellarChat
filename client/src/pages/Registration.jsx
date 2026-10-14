@@ -95,6 +95,7 @@ const Registration = () => {
           resolve("Registration successful!✅");
         }
       } catch (error) {
+        console.log(error)
         reject("Can't register the  user🚫");
       }
     });
