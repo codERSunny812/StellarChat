@@ -46,7 +46,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN_URL,
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   })

@@ -13,97 +13,91 @@ router.get("/register", (req, res) => {
   res.send("hello from  the register");
 });
 
+// delete the temporary photo from our server; ignore it if it is already gone
+const removeLocalFile = async (filePath) => {
+  if (!filePath) return;
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    if (error.code !== "ENOENT") console.error("Could not delete temp file:", error.message);
+  }
+};
+
 //route to register the user
 router.post("/register", upload.single("uploaded_file"), async (req, res) => {
+  const profilePicturePath = req.file?.path;
+
   try {
     console.log("inside the Registration route");
 
-    const { fullName, email, password } = req.body;
+    const fullName = req.body.fullName?.trim();
+    const email = req.body.email?.trim().toLowerCase();
+    const password = req.body.password;
 
-    let profilePicturePath, imageLink;
-
-    // photo is added on cloudinary server
-
-    console.log("photo is start adding on cloudinary");
-
-    if (req.file) {
-      profilePicturePath = req.file.path;
-      try {
-        imageLink = await connectCloudinary(profilePicturePath, {
-          transformation: [
-            { gravity: "face", height: 300, width: 300, crop: "thumb" },
-          ],
-        });
-
-        // if photo is added on the cdn server then remove it from  out server  to reduce the load
-        await fs.unlink(profilePicturePath);
-      } catch (cloudinaryError) {
-        return res.status(500).json({
-          message: "Error uploading image to Cloudinary",
-          error: cloudinaryError,
-        });
-      }
-    } else {
-      return res.status(400).json({
-        message: "please select an image to upload",
-      });
-    }
-    console.log("photo is added on cloudinary");
-
-
-    console.log("taking the data from the front end");
-
+    // 1. check the details first, so we don't upload a photo for a request that will fail
     if (!fullName || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide all the details" });
+      await removeLocalFile(profilePicturePath);
+      return res.status(400).json({ message: "Please provide all the details" });
     }
 
-    console.log("data has been colllected from the front end");
+    if (!req.file) {
+      return res.status(400).json({ message: "please select an image to upload" });
+    }
 
-    console.log("checking for the user in the DB");
-
-    // checking for the user in DB
-    if (await userModal.findOne({email})) {
+    // 2. checking for the user in DB
+    if (await userModal.findOne({ email })) {
+      await removeLocalFile(profilePicturePath);
       return res.status(409).json({ message: "User already exists" });
     }
 
-    console.log("the user is not found in the DB");
+    // 3. photo is added on cloudinary server
+    console.log("photo is start adding on cloudinary");
 
-    console.log("password encryption start");
+    let imageLink;
+    try {
+      imageLink = await connectCloudinary(profilePicturePath, {
+        transformation: [{ gravity: "face", height: 300, width: 300, crop: "thumb" }],
+      });
+    } catch (cloudinaryError) {
+      return res.status(500).json({
+        message: "Error uploading image to Cloudinary",
+        error: cloudinaryError?.message || String(cloudinaryError),
+      });
+    } finally {
+      // the photo is on the cdn (or the upload failed), so remove it from our server
+      await removeLocalFile(profilePicturePath);
+    }
 
+    console.log("photo is added on cloudinary");
+
+    // 4. creating a user in the DB
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("password encryption done");
-
-    console.log("start creating new user in the DB");
-    // creating a user in the DB
-    const newUser = {
+    const createdUser = await userModal.create({
       email,
       fullName,
       password: hashedPassword,
-    };
-    
-
-
-
-    // photo link is added in the DB
-    if (imageLink && imageLink.secure_url) {
-      newUser.image_Id = imageLink.secure_url;
-    }
-
-    const createdUser = await userModal.create(newUser);
+      image_Id: imageLink?.secure_url,
+    });
 
     console.log("new user is created successfully in the DB");
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", data: createdUser });
+    // never send the password hash back to the browser
+    res.status(201).json({
+      message: "User registered successfully",
+      data: {
+        id: createdUser._id,
+        email: createdUser.email,
+        fullName: createdUser.fullName,
+        imageId: createdUser.image_Id,
+      },
+    });
   } catch (error) {
+    await removeLocalFile(profilePicturePath);
     console.error("Error during user registration:", error);
     res.status(500).json({
       message: "Internal server error, can't register the user at this time",
-      error,
+      error: error?.message || String(error),
     });
   }
 });
